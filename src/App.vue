@@ -1,14 +1,21 @@
 <script>
 // <script setup lang="ts">
-import BasicInfo from './components/BasicInfo.vue'
+import Navbar from './components/Navbar.vue'
 export default {
   components: {
-    BasicInfo
+    Navbar
   }
 }
 </script>
 <template>
-  <BasicInfo />
+  <Navbar />
 </template>
 
-<style></style>
+<style lang="scss">
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+}
+</style>
