@@ -29,4 +29,11 @@ export default defineComponent({
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+div {
+  /* Styles!!! */
+  display: grid;
+  align-items: center;
+  border: 5px solid black;
+}
+</style>

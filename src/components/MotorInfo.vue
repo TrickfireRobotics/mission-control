@@ -1,5 +1,8 @@
 <script lang="ts">
 import { MotorInfo } from '.././types'
+export default {
+  props = definedProps<MotorInfo>
+}
 </script>
 <template>
   <div>

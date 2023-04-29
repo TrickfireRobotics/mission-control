@@ -20,7 +20,6 @@ export default {
     // When the Rosbridge server connects, fill the span with id “status" with “successful"
     ros.on('connection', () => {
       console.log(this)
-      // this.webSocketStatus = true
       this.webSocketStatus = true
       // document.getElementById('status').innerHTML = 'successful'
       ros.on('error', (error) => {
