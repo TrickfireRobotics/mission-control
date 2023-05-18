@@ -1,4 +1,4 @@
-export interface MotorInfo {
+export interface MotorData {
   velocity: Number
   id: Number
 }

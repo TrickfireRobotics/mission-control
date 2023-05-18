@@ -1,14 +1,17 @@
 <script>
 // <script setup lang="ts">
 import Navbar from './components/Navbar.vue'
+import MotorGrid from './components/MotorGrid.vue'
 export default {
   components: {
-    Navbar
+    Navbar,
+    MotorGrid
   }
 }
 </script>
 <template>
   <Navbar />
+  <MotorGrid />
 </template>
 
 <style lang="scss">

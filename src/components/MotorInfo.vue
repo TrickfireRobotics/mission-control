@@ -1,16 +1,29 @@
 <script lang="ts">
-import { MotorInfo } from '.././types'
+import type { MotorData } from '.././types'
 export default {
-  props = definedProps<MotorInfo>
+  data() {
+    return {
+      // motor
+    }
+  }
+  // props = definedProps<MotorInfo>
 }
 </script>
 <template>
   <div>
     <ul>
-      <li></li>
-      <li></li>
+      <!-- <li>props.velocity</li>
+      <li>props.id</li>
+      <li>props.</li> -->
     </ul>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Styles */
+div {
+  display: flex;
+  gap: 5px;
+  align-content: end;
+}
+</style>

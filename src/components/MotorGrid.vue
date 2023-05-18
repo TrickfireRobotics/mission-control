@@ -1,30 +1,35 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { MotorInfo } from '.././types'
-// import MotorInfo from './MotorInfo.vue'
+// import { defineComponent } from 'vue'
+import type { MotorData } from '../types'
+import MotorInfo from './MotorInfo.vue'
 
-export default defineComponent({
+export default {
+  components: {
+    MotorInfo
+  },
   data() {
     return {
-      motorsData: [{}]
+      motorDataList: [{}]
     }
   },
   computed: {
-    // addMotor() {
-    //   this.motorsData.push()
-    // }
+    addMotor() {
+      this.motorDataList.push()
+    }
   },
   mounted() {
-    let tempMotorsData: Array<MotorInfo> = []
+    let tempMotorsData: Array<MotorData> = []
     for (let i = 0; i < 6; i++) {
       tempMotorsData.push({ velocity: i, id: i })
-      this.motorsData = tempMotorsData
+      this.motorDataList = tempMotorsData
     }
   }
-})
+}
 </script>
 <template>
   <div>
+    <h1>Test</h1>
+    <MotorInfo v-for="motorData in motorDataList"></MotorInfo>
     <!-- <MotorInfo /> -->
   </div>
 </template>
@@ -32,8 +37,8 @@ export default defineComponent({
 <style scoped>
 div {
   /* Styles!!! */
-  display: grid;
+  /* display: grid;
   align-items: center;
-  border: 5px solid black;
+  border: 5px solid black; */
 }
 </style>
