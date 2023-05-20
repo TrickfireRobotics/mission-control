@@ -9,7 +9,7 @@ export default {
   },
   data() {
     return {
-      motorDataList: [{}]
+      motorDataList: [{}] as MotorData[]
     }
   },
   computed: {
