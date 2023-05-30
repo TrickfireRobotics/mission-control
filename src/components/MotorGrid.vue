@@ -29,7 +29,11 @@ export default {
 <template>
   <div>
     <h1>Test</h1>
-    <MotorInfo v-for="motorData in motorDataList"></MotorInfo>
+    <MotorInfo
+      v-for="(motorData, index) in motorDataList"
+      :motorData="motorData"
+      key="data.id"
+    ></MotorInfo>
     <!-- <MotorInfo /> -->
   </div>
 </template>
