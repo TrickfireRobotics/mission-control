@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { onMounted, ref } from 'vue'
 const webSocketStatus = ref(false)
 const latency = ref(-1)
@@ -6,6 +6,7 @@ const latency = ref(-1)
 onMounted(() => {
   console.log('Created')
   // Create ros object to communicate over your Rosbridge connection
+  // @ts-ignore
   const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' })
 
   // When the Rosbridge server connects, fill the span with id “status" with “successful"
@@ -13,6 +14,7 @@ onMounted(() => {
     console.log(this)
     webSocketStatus.value = true
     // document.getElementById('status').innerHTML = 'successful'
+    // @ts-ignore
     ros.on('error', (error) => {
       webSocketStatus.value = false
       console.log(error)
@@ -26,12 +28,14 @@ onMounted(() => {
     })
   })
   //listens to mission_control
+  // @ts-ignore
   const latency_listener = new ROSLIB.Topic({
     ros,
     name: '/latency',
     messageType: 'std_msgs/String'
   })
   // When we receive a message on /my_topic, add its data as a list item to the “messages" ul
+  // @ts-ignore
   latency_listener.subscribe((message) => {
     let currTime = Date.now()
     let start = message.data.indexOf('=')
@@ -60,10 +64,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 nav {
+  grid-area: nav;
   display: flex;
   align-items: center;
   gap: 15px;
-  width: 100vw;
+  width: 100%;
   background-color: #dfdfdf;
   height: 4rem;
   .container {
