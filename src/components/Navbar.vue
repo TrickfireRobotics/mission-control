@@ -1,57 +1,47 @@
-<script>
-export default {
-  data() {
-    return {
-      webSocketStatus: false,
-      latency: -1
-    }
-  },
+<script setup>
+import { onMounted, ref } from 'vue'
+const webSocketStatus = ref(false)
+const latency = ref(-1)
 
-  method: {
-    setWebSocketStatus(status) {
-      webSocketStatus = status
-    }
-  },
-  mounted() {
-    console.log('Created')
-    // Create ros object to communicate over your Rosbridge connection
-    const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' })
+onMounted(() => {
+  console.log('Created')
+  // Create ros object to communicate over your Rosbridge connection
+  const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' })
 
-    // When the Rosbridge server connects, fill the span with id “status" with “successful"
-    ros.on('connection', () => {
-      console.log(this)
-      this.webSocketStatus = true
-      // document.getElementById('status').innerHTML = 'successful'
-      ros.on('error', (error) => {
-        this.webSocketStatus = false
-        console.log(error)
-        // document.getElementById('status').innerHTML = `errored out (${error})`
-      })
+  // When the Rosbridge server connects, fill the span with id “status" with “successful"
+  ros.on('connection', () => {
+    console.log(this)
+    webSocketStatus.value = true
+    // document.getElementById('status').innerHTML = 'successful'
+    ros.on('error', (error) => {
+      webSocketStatus.value = false
+      console.log(error)
+      // document.getElementById('status').innerHTML = `errored out (${error})`
+    })
 
-      // When the Rosbridge server shuts down, fill the “status" span with “closed"
-      ros.on('close', () => {
-        this.webSocketStatus = false
-        // document.getElementById('status').innerHTML = 'closed'
-      })
+    // When the Rosbridge server shuts down, fill the “status" span with “closed"
+    ros.on('close', () => {
+      webSocketStatus.value = false
+      // document.getElementById('status').innerHTML = 'closed'
     })
-    //listens to mission_control
-    const latency_listener = new ROSLIB.Topic({
-      ros,
-      name: '/latency',
-      messageType: 'std_msgs/String'
-    })
-    // When we receive a message on /my_topic, add its data as a list item to the “messages" ul
-    latency_listener.subscribe((message) => {
-      let currTime = Date.now()
-      let start = message.data.indexOf('=')
-      let end = message.data.indexOf(',')
-      let rosTime = message.data.substring(start + 1, end)
-      let decimalPlaces = 1
-      rosTime = rosTime.substring(0, currTime.toString().length)
-      this.latency = currTime - rosTime
-    })
-  }
-}
+  })
+  //listens to mission_control
+  const latency_listener = new ROSLIB.Topic({
+    ros,
+    name: '/latency',
+    messageType: 'std_msgs/String'
+  })
+  // When we receive a message on /my_topic, add its data as a list item to the “messages" ul
+  latency_listener.subscribe((message) => {
+    let currTime = Date.now()
+    let start = message.data.indexOf('=')
+    let end = message.data.indexOf(',')
+    let rosTime = message.data.substring(start + 1, end)
+    let decimalPlaces = 1
+    rosTime = rosTime.substring(0, currTime.toString().length)
+    latency.value = currTime - rosTime
+  })
+})
 
 // When the Rosbridge server experiences an error, fill the “status" span with the returned error
 </script>
