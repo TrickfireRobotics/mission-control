@@ -1,39 +1,24 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue'
 import type { MotorData } from '.././types'
-// const props = defineProps<{
-//   motorData : MotorData
-// }>()
-// defineProps<MotorData>()
-export default defineComponent({
-  props: {
-    motorData: MotorData
-    }
-  },
-  data() {
-    return {
-      // motor
-    }
-  }
-  // props = definedProps<MotorInfo>
-})
+
+interface Props {
+  motorData: MotorData
+}
+const props = defineProps<Props>()
 </script>
 <template>
-  <div>
-    <ul>
-      <li>this.motorData</li>
-      <!-- <li>props.velocity</li>
-      <li>props.id</li>
-      <li>props.</li> -->
-    </ul>
-  </div>
+  <ul>
+    <li>ID: {{ motorData.id }}</li>
+    <li>Velocity: {{ motorData.velocity }}</li>
+  </ul>
 </template>
 
-<style scoped>
-/* Styles */
-div {
+<style lang="scss" scoped>
+ul {
   display: flex;
-  gap: 5px;
-  align-content: end;
+  height: 100px;
+  flex-direction: column;
+  flex: 50%;
 }
 </style>

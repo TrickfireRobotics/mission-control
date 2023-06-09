@@ -1,5 +1,11 @@
-<script></script>
+<script setup lang="ts"></script>
 <template>
-  <div></div>
+  <div>
+    <h1>CAMERA</h1>
+  </div>
 </template>
-<style scoped></style>
+<style lang="scss" scoped>
+div {
+  grid-area: camera;
+}
+</style>

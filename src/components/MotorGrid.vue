@@ -1,48 +1,35 @@
-<script lang="ts">
-// import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+// import type { Ref } from 'vue'
 import type { MotorData } from '../types'
 import MotorInfo from './MotorInfo.vue'
 
-export default {
-  components: {
-    MotorInfo
-  },
-  data() {
-    return {
-      motorDataList: [{}] as MotorData[]
-    }
-  },
-  computed: {
-    addMotor() {
-      this.motorDataList.push()
-    }
-  },
-  mounted() {
-    let tempMotorsData: Array<MotorData> = []
-    for (let i = 0; i < 6; i++) {
-      tempMotorsData.push({ velocity: i, id: i })
-      this.motorDataList = tempMotorsData
-    }
+const motorDataList = ref<MotorData[]>()
+
+onMounted(() => {
+  let tempMotorsData: Array<MotorData> = []
+  for (let i = 1; i <= 6; i++) {
+    tempMotorsData.push({ velocity: i, id: i })
   }
-}
+  motorDataList.value = tempMotorsData
+})
 </script>
 <template>
-  <div>
-    <h1>Test</h1>
+  <ul>
     <MotorInfo
       v-for="(motorData, index) in motorDataList"
       :motorData="motorData"
       key="data.id"
     ></MotorInfo>
     <!-- <MotorInfo /> -->
-  </div>
+  </ul>
 </template>
 
-<style scoped>
-div {
-  /* Styles!!! */
-  /* display: grid;
-  align-items: center;
-  border: 5px solid black; */
+<style lang="scss" scoped>
+ul {
+  grid-area: motor-grid;
+  display: flex;
+  // align-items: center;
+  border: 2px solid black;
 }
 </style>
