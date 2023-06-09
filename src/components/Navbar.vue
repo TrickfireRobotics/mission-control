@@ -95,8 +95,8 @@ nav {
     border-radius: 50%;
     background-color: inherit;
     // border-radius: 50%;
-    height: 15px;
-    width: 15px;
+    height: 18px;
+    width: 20px;
     border: 2px black solid;
     border-radius: 50%;
   }

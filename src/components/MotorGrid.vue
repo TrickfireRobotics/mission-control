@@ -15,21 +15,28 @@ onMounted(() => {
 })
 </script>
 <template>
-  <ul>
-    <MotorInfo
-      v-for="(motorData, index) in motorDataList"
-      :motorData="motorData"
-      key="data.id"
-    ></MotorInfo>
-  </ul>
+  <div>
+    <h2>Motors</h2>
+    <ul>
+      <MotorInfo
+        v-for="(motorData, index) in motorDataList"
+        :motorData="motorData"
+        key="data.id"
+      ></MotorInfo>
+    </ul>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-ul {
-  // grid-area: motor-grid;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  // align-items: center;
-  border: 2px solid black;
+div {
+  background-color: #dfdfdf;
+  ul {
+    padding: 0.5rem;
+    // grid-area: motor-grid;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    // align-items: center;
+  }
 }
 </style>

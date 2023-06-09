@@ -18,6 +18,8 @@ import CameraContainer from './components/CameraContainer.vue'
   margin: 0;
   padding: 0;
   list-style-type: none;
+  box-sizing: border-box;
+  // border-collapse: separate;
 }
 #page {
   display: grid;
