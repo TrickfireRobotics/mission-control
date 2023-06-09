@@ -20,5 +20,6 @@ ul {
   height: 100px;
   flex-direction: column;
   flex: 50%;
+  // max-width: 50%;
 }
 </style>

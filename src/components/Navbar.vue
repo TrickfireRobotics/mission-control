@@ -51,8 +51,18 @@ onMounted(() => {
 </script>
 <template>
   <nav>
+    <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
+    <h1>Mission Control</h1>
     <div class="container">
       <h4 id="status">WebSocket</h4>
+      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+    </div>
+    <div class="container">
+      <h4 id="status">Robot Interface</h4>
+      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+    </div>
+    <div class="container">
+      <h4 id="status">Camera Feed</h4>
       <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
     </div>
     <div class="container">
@@ -64,6 +74,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 nav {
+  padding: 0rem 1rem;
   grid-area: nav;
   display: flex;
   align-items: center;
@@ -71,6 +82,10 @@ nav {
   width: 100%;
   background-color: #dfdfdf;
   height: 4rem;
+  #logo {
+    max-width: 100%;
+    max-height: 100%;
+  }
   .container {
     display: flex;
     flex-direction: column;

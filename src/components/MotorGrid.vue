@@ -21,14 +21,14 @@ onMounted(() => {
       :motorData="motorData"
       key="data.id"
     ></MotorInfo>
-    <!-- <MotorInfo /> -->
   </ul>
 </template>
 
 <style lang="scss" scoped>
 ul {
-  grid-area: motor-grid;
-  display: flex;
+  // grid-area: motor-grid;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   // align-items: center;
   border: 2px solid black;
 }
