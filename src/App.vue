@@ -25,11 +25,12 @@ import CameraContainer from './components/CameraContainer.vue'
   display: grid;
   width: 100%;
   // height: 100vh;
+  gap: 0.5rem;
   grid-template-areas:
     'nav nav nav'
     'camera camera motor-grid'
     'Something Something Something';
-  grid-template-rows: 1fr 1fr 1fr;
+  // grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
 }
 </style>
