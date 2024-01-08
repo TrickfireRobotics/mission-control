@@ -1,6 +1,17 @@
 # trickfire-robotics-mission-control
 
-This template should help get you started developing with Vue 3 in Vite.
+The mission control is a way to communicate bidirectionally (Send and receive information) from a laptop to the rover. Example, sending joystick inputs to the rover. It uses rosbridge_server which is part of the rosbridge_suit library which establishes a WebSocket connection between them.
+
+![ROSbridge and ROS diagram](https://foxglove.dev/images/blog/using-rosbridge-with-ros2/hero.webp)
+
+## Design choices
+Because the coding paradigm that ROS uses is the publisher and subscriber model, we have to use the roslibjs library so javascript can use publisher and subscriber. 
+
+## Library Documentation:
+There is not a lot of documentation/tutorial on each library but here is a collection of resources
+- Overview: [https://foxglove.dev/images/blog/using-rosbridge-with-ros2/hero.webp](https://foxglove.dev/images/blog/using-rosbridge-with-ros2/hero.webp)
+- Roslibjs npm package: https://www.npmjs.com/package/roslib
+- React Example using Roslibjs: https://github.com/RobotWebTools/roslibjs/blob/develop/examples/react-example/src/component_examples/example_functions.jsx
 
 ## Recommended IDE Setup
 
@@ -22,25 +33,33 @@ If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has a
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
-
+Git clone this repository normally **(not in the URC Docker Container)**
+1. Install npm packages
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
+2. Compile and Hot-Reload for Development
 ```sh
 npm run dev
 ```
+3. open up the localhost window
+4. In another VSCode window, open the urc repo in the docker environment
+-Run these commands in the container terminal
+```sh
+./build.sh
+./launch.sh (the launch.sh should have either 6 or 8 comment out aka one of them is not commented out but the other is)
+```
+5. Open up launch.sh
+uncomment 6 or 8 and comment the one that wasn't (aka the one that was uncommented before should be commented and the one that was commented should now be uncommented)
+6. Run This command in container terminal 
+```sh
+./launch.sh
+```
+7. Reload mission control page
+8. If the Websocket circle becomes **green**, you are connected!
 
-### Type-Check, Compile and Minify for Production
-
+### Create static html for deployment
 ```sh
 npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
