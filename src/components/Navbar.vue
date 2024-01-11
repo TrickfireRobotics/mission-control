@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
+import {startControllerCode} from "../script/controller.js"; 
+
 const webSocketStatus = ref(false)
 const latency = ref(-1)
 
@@ -13,6 +15,7 @@ onMounted(() => {
   ros.on('connection', () => {
     console.log(this)
     webSocketStatus.value = true
+    startControllerCode(ros)
     // document.getElementById('status').innerHTML = 'successful'
     // @ts-ignore
     ros.on('error', (error) => {
@@ -34,6 +37,7 @@ onMounted(() => {
     name: '/latency',
     messageType: 'std_msgs/String'
   })
+  
   // When we receive a message on /my_topic, add its data as a list item to the “messages" ul
   // @ts-ignore
   latency_listener.subscribe((message) => {
@@ -45,6 +49,10 @@ onMounted(() => {
     rosTime = rosTime.substring(0, currTime.toString().length)
     latency.value = currTime - rosTime
   })
+  
+
+
+  
 })
 
 // When the Rosbridge server experiences an error, fill the “status" span with the returned error
