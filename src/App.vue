@@ -2,6 +2,19 @@
 import Navbar from './components/Navbar.vue'
 import MotorGrid from './components/MotorGrid.vue'
 import CameraContainer from './components/CameraContainer.vue'
+import ROSLIB from 'roslib'
+import { provide, ref } from 'vue'
+import useRos from './hooks/useRos'
+const webSocketStatus = ref(false)
+
+provide('test', 100)
+// provide('ros', { webSocketStatus })
+// Create ros object to communicate over your Rosbridge connection
+const { ros } = useRos('ws://localhost:9090')
+console.log(ros)
+provide('ros', ros)
+// console.log(isWebSocketConnected)
+// console.log(isWebSocketConnected)
 </script>
 <template>
   <div id="page">

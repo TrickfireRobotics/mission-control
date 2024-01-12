@@ -12,6 +12,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@types/roslib": "^1.3.4",
+    "roslib": "^1.4.1",
     "vue": "^3.2.47"
   },
   "devDependencies": {
