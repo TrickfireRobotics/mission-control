@@ -4,4 +4,4 @@ export type MotorData = {
   velocity: Number
   id: Number
 }
-// export type Ros2 = ROSLIB.Ros
+export type Ros = ROSLIB.Ros

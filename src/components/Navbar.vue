@@ -1,12 +1,17 @@
 <script lang="ts" setup>
-import ROSLIB from 'roslib'
+import ROSLIB, { Ros } from 'roslib'
 import { inject, onMounted, ref } from 'vue'
-const webSocketStatus = inject('isWebSocketConnected')
+const webSocketStatus = inject<boolean>('isWebSocketConnected')
 const test = inject('test')
-const ros = inject('ros')
+const ros = inject<Ros>('ros')
 console.log(test)
 console.log(ros)
 const latency = ref(-1)
+// const latency_listener = new ROSLIB.Topic({
+//   ros,
+//   name: '/latency',
+//   messageType: 'std_msgs/String'
+// })
 // onMounted(() => {
 //   console.log('Created')
 //   // Create ros object to communicate over your Rosbridge connection

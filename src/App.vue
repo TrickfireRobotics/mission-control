@@ -7,14 +7,12 @@ import { provide, ref } from 'vue'
 import useRos from './hooks/useRos'
 const webSocketStatus = ref(false)
 
-provide('test', 100)
 // provide('ros', { webSocketStatus })
 // Create ros object to communicate over your Rosbridge connection
-const { ros } = useRos('ws://localhost:9090')
+const { ros, isWebSocketConnected } = useRos('ws://localhost:9090')
 console.log(ros)
+provide('isWebSocketConnected', isWebSocketConnected)
 provide('ros', ros)
-// console.log(isWebSocketConnected)
-// console.log(isWebSocketConnected)
 </script>
 <template>
   <div id="page">
