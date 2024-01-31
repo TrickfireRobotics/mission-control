@@ -10,9 +10,8 @@ export default function examplePub(ros: ROSLIB.Ros) {
     name: '/exampleData',
     messageType: 'std_msgs/String'
   })
-  // Function to publish a heartbeat message
-  let data = new ROSLIB.Message({
-    data: '1'
+  //subscribe to topic and prints out message
+  exampleTopic.subscribe((message) => {
+    console.log(message)
   })
-  exampleTopic.publish(data)
 }
