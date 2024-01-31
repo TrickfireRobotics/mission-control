@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import ROSLIB, { Ros } from 'roslib'
 import { inject, onMounted, ref } from 'vue'
-const webSocketStatus = inject<boolean>('isWebSocketConnected')
-const test = inject('test')
-const ros = inject<Ros>('ros')
-console.log(test)
-console.log(ros)
+const webSocketStatus = inject<boolean>('isWebSocketConnected', false)
+
+// const test = inject('test')
+// console.log(test)
 const latency = ref(-1)
 // const latency_listener = new ROSLIB.Topic({
 //   ros,

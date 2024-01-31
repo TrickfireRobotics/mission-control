@@ -1,13 +1,13 @@
 import ROSLIB from 'roslib'
 import { ref, provide } from 'vue'
 
-import type { Ros } from '../types'
-let isWebSocketConnected = ref<boolean>(true)
-export default function useRos(serverHost: string): {
-  ros: Ros
+let isWebSocketConnected = ref<boolean>(false)
+export default function rosInit(serverHost: string): {
+  ros: ROSLIB.Ros
   isWebSocketConnected: typeof isWebSocketConnected
 } {
   const ros = new ROSLIB.Ros({ url: serverHost })
+
   console.count()
   ros.on('connection', () => {
     isWebSocketConnected.value = true
