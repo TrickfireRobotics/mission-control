@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import CameraFeed from './CameraFeed.vue'
-import CameraFeedPreview from './CameraFeedPreview.vue'
-import { ref } from 'vue'
+import CameraFeed from './CameraFeed.vue';
+import CameraFeedPreview from './CameraFeedPreview.vue';
+import { ref } from 'vue';
 
-const currentFeed = ref(1)
+const currentFeed = ref(1);
 
 const switchCameraFeedTo = (cameraId: number) => {
-  currentFeed.value = cameraId
-}
+  currentFeed.value = cameraId;
+};
 </script>
 
 <template>

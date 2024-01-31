@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import Navbar from './components/Navbar.vue'
-import MotorGrid from './components/MotorGrid.vue'
-import CameraContainer from './components/CameraContainer.vue'
-import { provide, ref } from 'vue'
-import rosInit from './roslib/rosInit'
-import examplePub from './roslib/examplePub'
-const webSocketStatus = ref(false)
+import Navbar from './components/Navbar.vue';
+import MotorGrid from './components/MotorGrid.vue';
+import CameraContainer from './components/CameraContainer.vue';
+import { provide, ref } from 'vue';
+import rosInit from './roslib/rosInit';
+import examplePub from './roslib/examplePub';
+const webSocketStatus = ref(false);
 
 // provide('ros', { webSocketStatus })
 // Create ros object to communicate over your Rosbridge connection
-const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090')
-console.log(ros)
-provide('isWebSocketConnected', isWebSocketConnected)
-provide('ros', ros)
-examplePub(ros)
+const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
+console.log(ros);
+provide('isWebSocketConnected', isWebSocketConnected);
+provide('ros', ros);
+examplePub(ros);
 ros.getTopics((topic) => {
-  console.log(topic)
-})
+  console.log(topic);
+});
 </script>
 <template>
   <div id="page">
