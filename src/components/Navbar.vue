@@ -54,8 +54,6 @@ const latency = ref(-1);
 //     latency.value = currTime - rosTime
 //   })
 // })
-
-// When the Rosbridge server experiences an error, fill the “status" span with the returned error
 </script>
 <template>
   <nav>
@@ -67,11 +65,11 @@ const latency = ref(-1);
     </div>
     <div class="container">
       <h4 id="status">Robot Interface</h4>
-      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+      <div class="circle red"></div>
     </div>
     <div class="container">
       <h4 id="status">Camera Feed</h4>
-      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+      <div class="circle red"></div>
     </div>
     <div class="container">
       <h4>Ping</h4>

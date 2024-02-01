@@ -16,6 +16,5 @@ export default function examplePub(ros: ROSLIB.Ros, exampleInput: number) {
     data: exampleInput,
   });
   //publishes data under topic
-  console.log(exampleInput);
   exampleTopic.publish(data);
 }
