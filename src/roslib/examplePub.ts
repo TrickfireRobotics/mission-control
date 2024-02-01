@@ -1,17 +1,20 @@
-import ROSLIB, { Ros } from 'roslib';
-import { inject } from 'vue';
-export default function examplePub(ros: ROSLIB.Ros) {
-  //guarantee ros is defined
-  // use this instead want to handle case where ros is undefined
-  // const ros = inject<Ros>('ros')
+import ROSLIB from 'roslib';
+import type { Ref } from 'vue';
 
+//from my best understanding, the data passed in doesn't need to be in a ref as it is just going to publish it right away
+//Does not need reactivity since it doesn't interact with the UI
+export default function examplePub(ros: ROSLIB.Ros, exampleInput: string) {
   let exampleTopic = new ROSLIB.Topic({
     ros,
+    //topic name
     name: '/exampleData',
-    messageType: 'std_msgs/String',
+    //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
+    messageType: 'std_msgs/Int32',
   });
-  //subscribe to topic and prints out message
-  exampleTopic.subscribe((message) => {
-    console.log(message);
+  // Function to publish a heartbeat message
+  let data = new ROSLIB.Message({
+    data: exampleInput,
   });
+  //publishes data under topic
+  exampleTopic.publish(data);
 }

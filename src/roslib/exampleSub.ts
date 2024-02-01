@@ -1,22 +1,24 @@
-import ROSLIB from 'roslib';
-import { Ref, inject, ref } from 'vue';
+import type { RosMessage } from '@/types';
+import ROSLIB, { Ros } from 'roslib';
+import { ref } from 'vue';
+import type { Ref } from 'vue';
 //in order to have reactive behavior, store the ros data in a ref
 let exampleData = ref<string>();
-//Ref
-export default function exampleSub(ros: ROSLIB.Ros): Ref<string | undefined> {
-  //guarantee ros is defined
-  // use this instead want to handle case where ros is undefined
-  // const ros = inject<Ros>('ros')
-
+//Since we are going to return exampleData anyway, use typeof
+export default function exampleSub(ros: ROSLIB.Ros): typeof exampleData {
   let exampleTopic = new ROSLIB.Topic({
     ros,
+    //topic name
     name: '/exampleData',
-    messageType: 'std_msgs/String',
+    //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
+    messageType: 'std_msgs/Int32',
   });
-  // Function to publish a heartbeat message
-  let data = new ROSLIB.Message({
-    data: 'Hello World!',
-  });
-  exampleTopic.publish(data);
+  const bob = ROSLIB.Message;
+  //subscribe to topic and sets ref data
+  exampleTopic.subscribe(subscriberCallBack);
+  //
   return exampleData;
+}
+function subscriberCallBack(message): RosMessage<string> {
+  console.log(message);
 }
