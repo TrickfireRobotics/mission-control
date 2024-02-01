@@ -34,10 +34,5 @@ function clickHandler(id: number) {
       }
     }
   }
-  div {
-    // widgt:
-  }
-  // grid-template-rows: 1fr 1fr;
-  // grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 </style>
