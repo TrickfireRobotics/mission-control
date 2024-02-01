@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import {startControllerCode} from "../script/controller.js"; 
+import {startControllerCode} from "../script/controller/controllerEntry.js"; 
 
 const webSocketStatus = ref(false)
 const latency = ref(-1)

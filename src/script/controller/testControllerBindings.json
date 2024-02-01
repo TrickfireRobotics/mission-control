@@ -1,0 +1,105 @@
+{
+    "length": 20,
+    "bindings": [
+      {
+        "name": "aButton",
+        "index": 0,
+        "publisherTopic": "someTopicName0"
+      },
+      {
+        "name": "bButton",
+        "index": 1,
+        "publisherTopic": "someTopicName1"
+      },
+      {
+        "name": "xButton",
+        "index": 2,
+        "publisherTopic": "someTopicName2"
+      },
+      {
+        "name": "yButton",
+        "index": 3,
+        "publisherTopic": "someTopicName3"
+      },
+      {
+        "name": "leftBumperButton",
+        "index": 4,
+        "publisherTopic": "someTopicName4"
+      },
+      {
+        "name": "rightBumperButton",
+        "index": 5,
+        "publisherTopic": "someTopicName5"
+      },
+      {
+        "name": "leftTriggerButton",
+        "index": 6,
+        "publisherTopic": "someTopicName6"
+      },
+      {
+        "name": "rightTriggerButton",
+        "index": 7,
+        "publisherTopic": "someTopicName7"
+      },
+      {
+        "name": "backButton",
+        "index": 8,
+        "publisherTopic": "someTopicName8"
+      },
+      {
+        "name": "startButton",
+        "index": 9,
+        "publisherTopic": "someTopicName9"
+      },
+      {
+        "name": "leftJoyStickButton",
+        "index": 10,
+        "publisherTopic": "someTopicName10"
+      },
+      {
+        "name": "rightJoystickButton",
+        "index": 11,
+        "publisherTopic": "someTopicName11"
+      },
+      {
+        "name": "dpadUPButton",
+        "index": 12,
+        "publisherTopic": "someTopicName12"
+      },
+      {
+        "name": "dpadDOWNButton",
+        "index": 13,
+        "publisherTopic": "someTopicName13"
+      },
+      {
+        "name": "dpadLEFTButton",
+        "index": 14,
+        "publisherTopic": "someTopicName14"
+      },
+      {
+        "name": "dpadRIGHTButton",
+        "index": 15,
+        "publisherTopic": "someTopicName15"
+      },
+      {
+        "name": "leftJoyXAxis",
+        "index": 16,
+        "publisherTopic": "someTopicName16"
+      },
+      {
+        "name": "leftJoyYAxis",
+        "index": 17,
+        "publisherTopic": "move_left_drivebase_side_message"
+      },
+      {
+        "name": "rightJoyXAxis",
+        "index": 18,
+        "publisherTopic": "someTopicName18"
+      },
+      {
+        "name": "rightJoyYAxis",
+        "index": 19,
+        "publisherTopic": "move_right_drivebase_side_message"
+      }
+    ]
+  }
