@@ -15,10 +15,9 @@ export default function exampleSub(ros: ROSLIB.Ros): typeof exampleData {
   });
   const bob = ROSLIB.Message;
   //subscribe to topic and sets ref data
-  exampleTopic.subscribe(subscriberCallBack);
+  exampleTopic.subscribe<string>((message) => {
+    console.log(message.data);
+  });
   //
   return exampleData;
-}
-function subscriberCallBack(message): RosMessage<string> {
-  console.log(message);
 }
