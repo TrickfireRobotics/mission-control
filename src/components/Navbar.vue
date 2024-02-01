@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import ROSLIB, { Ros } from 'roslib';
 import { inject, onMounted, ref } from 'vue';
+//guarantee ros is defined
+// use this instead want to handle case where ros is undefined
+// const ros = inject<Ros>('ros')
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
 
-// const test = inject('test')
-// console.log(test)
+//TODO FIX CODE
 const latency = ref(-1);
 // const latency_listener = new ROSLIB.Topic({
 //   ros,
