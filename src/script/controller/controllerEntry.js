@@ -2,7 +2,7 @@ import {ControllerObject} from "./controllerObj";
 
 // This connect us to the rosbridge object
 let ros = null;
-let pollingHateInHertz = 60
+let pollingHateInHertz = 20
 let controllerSet = new Set()
 let controllerMap = new Map() // index -> controllerObj
 let controllerScheme1 = new ControllerObject();
