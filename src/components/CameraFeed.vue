@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface Props {
-  currentFeed: number
+  currentFeed: number;
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 </script>
 
 <template>

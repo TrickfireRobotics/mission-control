@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { defineComponent } from 'vue'
-import type { MotorData } from '.././types'
+import { defineComponent } from 'vue';
+import type { MotorData } from '.././types';
 
 interface Props {
-  motorData: MotorData
+  motorData: MotorData;
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 </script>
 <template>
   <ul>

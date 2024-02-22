@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const emit = defineEmits<{ (e: 'switchCameraFeedTo', id: number): void }>()
+const emit = defineEmits<{ (e: 'switchCameraFeedTo', id: number): void }>();
 function clickHandler(id: number) {
-  emit('switchCameraFeedTo', id)
+  emit('switchCameraFeedTo', id);
 }
 </script>
 <template>
@@ -34,10 +34,5 @@ function clickHandler(id: number) {
       }
     }
   }
-  div {
-    // widgt:
-  }
-  // grid-template-rows: 1fr 1fr;
-  // grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 </style>
