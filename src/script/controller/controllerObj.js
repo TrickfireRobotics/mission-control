@@ -5,6 +5,9 @@ class ControllerObject {
     leftJoyStickArray = Array(2).fill(0)  // [0] = x-axis [1] = y-axis
     rightJoyStickArray = Array(2).fill(0) // [0] = x-axis [1] = y-axis
 
+    isLeftJoyAtZero = true
+    isRightJoyAtZero = true
+
     leftJoystickButtonState = 0
     rightJoystickButtonState = 0
 
@@ -108,8 +111,29 @@ class ControllerObject {
         //dpad right 15
 
         //Publish left joystick x axis and y axis
-        this.publishJoystick(this.pubIDToPubObj.get(17), this.leftJoyStickArray[1]);
-        this.publishJoystick(this.pubIDToPubObj.get(19), this.rightJoyStickArray[1]);
+        if (Math.abs(this.rightJoyStickArray[1]) > 0.05) {
+            this.publishJoystick(this.pubIDToPubObj.get(19), this.rightJoyStickArray[1]);
+            this.isRightJoyAtZero = false
+        }
+        else {
+            if (!this.isRightJoyAtZero) {
+                this.publishJoystick(this.pubIDToPubObj.get(19), 0);
+                this.isRightJoyAtZero = true
+            }
+        }
+
+        if (Math.abs(this.leftJoyStickArray[1]) > 0.05) {
+            this.publishJoystick(this.pubIDToPubObj.get(17), this.leftJoyStickArray[1]);
+            this.isLeftJoyAtZero = false
+        }
+        else {
+            if (!this.isLeftJoyAtZero) {
+                this.publishJoystick(this.pubIDToPubObj.get(17), 0);
+                this.isLeftJoyAtZero = true
+            }
+        }
+
+        
 
 
 
