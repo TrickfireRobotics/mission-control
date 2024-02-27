@@ -49,10 +49,10 @@ class ControllerState{
         this.leftJoyStickArray[1] = joystickArray[1];
 
         // RIght joystick X and y axis
-        this.rightJoyStickArrayDELTA[0] = joystickArray[2] - this.rightJoyStickArray[2];
-        this.rightJoyStickArrayDELTA[1] = joystickArray[3] - this.rightJoyStickArray[3];
-        this.rightJoyStickArray[2] = joystickArray[2];
-        this.rightJoyStickArray[3] = joystickArray[3];
+        this.rightJoyStickArrayDELTA[0] = joystickArray[2] - this.rightJoyStickArray[0];
+        this.rightJoyStickArrayDELTA[1] = joystickArray[3] - this.rightJoyStickArray[1];
+        this.rightJoyStickArray[0] = joystickArray[2];
+        this.rightJoyStickArray[1] = joystickArray[3];
 
 
 
@@ -84,11 +84,11 @@ class ControllerState{
     }
 
     printNumbers () {
-        console.log("LEFT JOYSTICK X" + this.leftJoyStickArray[0]);
-        console.log("LEFT JOYSTICK Y" + this.leftJoyStickArray[1]);
+        console.log("LEFT JOYSTICK DELTA X" + this.leftJoyStickArrayDELTA[0]);
+        console.log("LEFT JOYSTICK DELTA Y" + this.leftJoyStickArrayDELTA[1]);
 
-        console.log("RIGHT JOYSTICK X" + this.rightJoyStickArray[2]);
-        console.log("RIGHT JOYSTICK Y" + this.rightJoyStickArray[3]);
+        console.log("RIGHT JOYSTICK DELTA X" + this.rightJoyStickArrayDELTA[0]);
+        console.log("RIGHT JOYSTICK DELTA Y" + this.rightJoyStickArrayDELTA[1]);
     }
 
 }
