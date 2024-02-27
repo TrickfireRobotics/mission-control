@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import {ControllerState} from "./controllerState"; 
 
 const POLLING_RATE_IN_HERTZ = 20;
+const DELTA_SENSITIVTY = 0.01;
 let indexToControllerName = new Map();
 let indexToControllerState = new Map();
 //let indexToJSCGamepad = new Map();
@@ -16,7 +17,7 @@ export default function getControllerStatus(passedRos : ROSLIB.Ros){
     window.addEventListener("gamepadconnected", (e) => {
         console.log("Controller connected with index %d\n" + e.gamepad.id, e.gamepad.index);
         indexToControllerName.set(e.gamepad.index, e.gamepad.id)
-        let state = new ControllerState();
+        let state = new ControllerState("src\\script\\controller\\testControllerBindings.json", DELTA_SENSITIVTY);
         indexToControllerState.set(e.gamepad.index, state);
         //indexToJSCGamepad.set(e.gamepad.index, e.gamepad);
 
@@ -54,7 +55,8 @@ function processInput(state : ControllerState, key : number, map : Map<number, G
 
     if (jsGamepad != null) {
         state.updateState(jsGamepad, 1000 - POLLING_RATE_IN_HERTZ);
-        state.printNumbers();
+        state.publishController(ros);
+        //state.printNumbers();
     }
     
     

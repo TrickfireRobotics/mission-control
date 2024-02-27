@@ -49,27 +49,27 @@
 //             .then(json => this.createPublishers(this.controllerBindings))
 //     }
 
-//     createPublishers(json){
-//         console.log("create publishers")
+    // createPublishers(json){
+    //     console.log("create publishers")
 
-//         json = JSON.stringify(json)
-//         json = JSON.parse(json)
-//         //console.log(json.bindings[0])
+    //     json = JSON.stringify(json)
+    //     json = JSON.parse(json)
+    //     //console.log(json.bindings[0])
 
-//         for (let inputIndex = 0; inputIndex < json.length; inputIndex++) {
-//             let controlSchemeEntry = json.bindings[inputIndex]
-//             let topicName = "/" + controlSchemeEntry.publisherTopic
+    //     for (let inputIndex = 0; inputIndex < json.length; inputIndex++) {
+    //         let controlSchemeEntry = json.bindings[inputIndex]
+    //         let topicName = "/" + controlSchemeEntry.publisherTopic
 
-//             let aPublisher = new ROSLIB.Topic({
-//                 ros: this.ros,
-//                 name: topicName,
-//                 messageType: 'std_msgs/Float32'
-//             })
+    //         let aPublisher = new ROSLIB.Topic({
+    //             ros: this.ros,
+    //             name: topicName,
+    //             messageType: 'std_msgs/Float32'
+    //         })
 
-//             this.pubIDToPubObj.set(inputIndex, aPublisher)
-//         }
+    //         this.pubIDToPubObj.set(inputIndex, aPublisher)
+    //     }
 
-//     }
+    // }
 
 //     updateController(jsControllerObject){
 //         //console.log("updating")

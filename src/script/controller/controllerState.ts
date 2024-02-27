@@ -1,4 +1,6 @@
-    
+import controllerPub from '../../roslib/controllerPub';
+
+
 class ControllerState{
 
     // Joysticks
@@ -35,8 +37,49 @@ class ControllerState{
     leftJoystickButtonStateDELTA = 0
     rightJoystickButtonStateDELTA = 0
 
-    constructor() {
+    //
+    deltaSensitivity = 0;
 
+    //Key bindings
+    buttonIndexToPublisherName = new Map() ;
+    joystickIndexToPublisherName = new Map();
+
+
+
+    constructor(jsonControllerBinding : string, deltaSensitivity : number) {
+        this.deltaSensitivity = deltaSensitivity;
+        
+        fetch(jsonControllerBinding)
+            .then(response => response.json())
+            .then(json => this.readJSONFile(json))
+
+    }
+
+    readJSONFile (jsonInput : JSON) {
+
+        let json :any = JSON.stringify(jsonInput);
+        json = JSON.parse(json);
+
+        for (let entry = 0; entry < json.length; entry++) {
+            let controlSchemeEntry = json.bindings[entry];
+
+            let index = Number(controlSchemeEntry.index);
+            let type = controlSchemeEntry.type;
+            let topicName = "/" + controlSchemeEntry.publisherTopic;
+
+            if (type == "button") {
+                if (topicName != "") {
+                    this.buttonIndexToPublisherName.set(index, topicName);
+                }
+                
+            }
+            else if (type == "joystick") {
+                if (topicName != "") {
+                    this.joystickIndexToPublisherName.set(index, topicName);
+                }
+                
+            }
+        }
     }
 
     updateState(gamepad : Gamepad, deltaT : number) {
@@ -89,6 +132,39 @@ class ControllerState{
 
         console.log("RIGHT JOYSTICK DELTA X" + this.rightJoyStickArrayDELTA[0]);
         console.log("RIGHT JOYSTICK DELTA Y" + this.rightJoyStickArrayDELTA[1]);
+    }
+
+    publishController(ros : ROSLIB.Ros) {
+        //Left joystick X axis
+        if (Math.abs(this.leftJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
+            //console.log("send LEFT joystick X");
+            controllerPub(ros, this.joystickIndexToPublisherName.get(0),this.leftJoyStickArray[0]);
+        }
+
+        //Left joystick Y axis
+        if (Math.abs(this.leftJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
+            //console.log("send LEFT joystick Y");
+            controllerPub(ros, this.joystickIndexToPublisherName.get(1),this.leftJoyStickArray[1]);
+        }
+
+        //Right joystick X axis
+        if (Math.abs(this.rightJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
+            //console.log("send RIGHT joystick X");
+            controllerPub(ros, this.joystickIndexToPublisherName.get(2),this.rightJoyStickArray[0]);
+        }
+
+        //Left joystick Y axis
+        if (Math.abs(this.rightJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
+            //console.log("send RIGHT joystick Y");
+            controllerPub(ros, this.joystickIndexToPublisherName.get(3),this.rightJoyStickArray[1]);
+        }
+
+
+
+
+        
+
+
     }
 
 }
