@@ -13,7 +13,7 @@ const test = ref<number>(10001);
 
 // Create ros object to communicate over your Rosbridge connection
 const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
-const isGamepadConnected = getControllerStatus();
+const isGamepadConnected = getControllerStatus(ros);
 console.log(ros);
 
 provide('isWebSocketConnected', isWebSocketConnected);

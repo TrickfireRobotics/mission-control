@@ -1,19 +1,39 @@
-import ROSLIB, { Ros } from 'roslib';
+import ROSLIB from 'roslib';
 import { ref } from 'vue';
+import {ControllerState} from "./controllerState"; 
 
 const POLLING_RATE_IN_HERTZ = 20;
-let controllerList :Map<number, string>;
+let indexToControllerName = new Map();
+let indexToControllerState = new Map();
+//let indexToJSCGamepad = new Map();
 let isGamepadConnected = ref<boolean>(false);
+let ros : ROSLIB.Ros;
+let test = 0;
 
 
-export default function getControllerStatus(){
+export default function getControllerStatus(passedRos : ROSLIB.Ros){
+    ros = passedRos;
     window.addEventListener("gamepadconnected", (e) => {
         console.log("Controller connected with index %d\n" + e.gamepad.id, e.gamepad.index);
-        isGamepadConnected.value = true;
+        indexToControllerName.set(e.gamepad.index, e.gamepad.id)
+        let state = new ControllerState();
+        indexToControllerState.set(e.gamepad.index, state);
+        //indexToJSCGamepad.set(e.gamepad.index, e.gamepad);
+
+        if (indexToControllerName.has(0)) {
+            isGamepadConnected.value = true;
+            setInterval(pollController, 1000 / POLLING_RATE_IN_HERTZ);
+            //setInterval(function() {pollController(e.gamepad)} , 1000 / POLLING_RATE_IN_HERTZ);
+        }
+
+        
     });
 
     window.addEventListener("gamepaddisconnected", (e) => {
         console.log("Removing controller with index %d\n" + e.gamepad.id, e.gamepad.index);
+        indexToControllerName.delete(e.gamepad.index);
+        indexToControllerState.delete(e.gamepad.index);
+        //indexToJSCGamepad.delete(e.gamepad.index);
         isGamepadConnected.value = false;
     });
 
@@ -21,28 +41,22 @@ export default function getControllerStatus(){
 }
 
 
-// window.addEventListener("gamepadconnected", (e) => {
-//     console.log("Controller connected with index %d\n" + e.gamepad.id, e.gamepad.index);
-//     controllerList.set(e.gamepad.index, e.gamepad.id)
-//     //getControllerStatus();
-// })
+function pollController(){
+    if (ros.isConnected) {
+        indexToControllerState.forEach(processInput);
 
+    }
 
-// window.addEventListener("gamepaddisconnected", (e) => {
-//     console.log("Removing controller with index %d\n" + e.gamepad.id, e.gamepad.index);
-//     controllerList.delete(e.gamepad.index);
-// })
+}
 
-// export default function startControllerCode(){
-//     console.log("Starting controller code");
-//     controllerList = new Map();
-// }
+function processInput(state : ControllerState, key : number, map : Map<number, Gamepad>) {
+    let jsGamepad = navigator.getGamepads()[key];
 
-// export function getControllerStatus() {
-//     console.log("asdasas" + controllerList.has(0));
-//     //isGamepadConnected.value = controllerList.has(0);
-//     isGamepadConnected.value = true;
+    if (jsGamepad != null) {
+        state.updateState(jsGamepad, 1000 - POLLING_RATE_IN_HERTZ);
+        state.printNumbers();
+    }
+    
+    
 
-//     return isGamepadConnected;
-// }
-
+}
