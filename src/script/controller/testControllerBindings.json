@@ -3,102 +3,122 @@
     "bindings": [
       {
         "name": "aButton",
+        "type": "button",
         "index": 0,
-        "publisherTopic": "someTopicName0"
+        "publisherTopic": ""
       },
       {
         "name": "bButton",
+        "type": "button",
         "index": 1,
-        "publisherTopic": "someTopicName1"
+        "publisherTopic": ""
       },
       {
         "name": "xButton",
+        "type": "button",
         "index": 2,
-        "publisherTopic": "someTopicName2"
+        "publisherTopic": ""
       },
       {
         "name": "yButton",
+        "type": "button",
         "index": 3,
-        "publisherTopic": "someTopicName3"
+        "publisherTopic": ""
       },
       {
         "name": "leftBumperButton",
+        "type": "button",
         "index": 4,
-        "publisherTopic": "someTopicName4"
+        "publisherTopic": ""
       },
       {
         "name": "rightBumperButton",
+        "type": "button",
         "index": 5,
-        "publisherTopic": "someTopicName5"
+        "publisherTopic": ""
       },
       {
         "name": "leftTriggerButton",
+        "type": "button",
         "index": 6,
-        "publisherTopic": "someTopicName6"
+        "publisherTopic": ""
       },
       {
         "name": "rightTriggerButton",
+        "type": "button",
         "index": 7,
-        "publisherTopic": "someTopicName7"
+        "publisherTopic": ""
       },
       {
         "name": "backButton",
+        "type": "button",
         "index": 8,
-        "publisherTopic": "someTopicName8"
+        "publisherTopic": ""
       },
       {
         "name": "startButton",
+        "type": "button",
         "index": 9,
-        "publisherTopic": "someTopicName9"
+        "publisherTopic": ""
       },
       {
         "name": "leftJoyStickButton",
+        "type": "button",
         "index": 10,
-        "publisherTopic": "someTopicName10"
+        "publisherTopic": ""
       },
       {
         "name": "rightJoystickButton",
+        "type": "button",
         "index": 11,
-        "publisherTopic": "someTopicName11"
+        "publisherTopic": ""
       },
       {
         "name": "dpadUPButton",
+        "type": "button",
         "index": 12,
-        "publisherTopic": "someTopicName12"
+        "publisherTopic": ""
       },
       {
         "name": "dpadDOWNButton",
+        "type": "button",
         "index": 13,
-        "publisherTopic": "someTopicName13"
+        "publisherTopic": ""
       },
       {
         "name": "dpadLEFTButton",
+        "type": "button",
         "index": 14,
-        "publisherTopic": "someTopicName14"
+        "publisherTopic": ""
       },
       {
         "name": "dpadRIGHTButton",
+        "type": "button",
         "index": 15,
-        "publisherTopic": "someTopicName15"
+        "publisherTopic": ""
       },
       {
         "name": "leftJoyXAxis",
-        "index": 16,
-        "publisherTopic": "someTopicName16"
+        "type": "joystick",
+        "index": 0,
+        "publisherTopic": ""
       },
       {
         "name": "leftJoyYAxis",
-        "index": 17,
+        "type": "joystick",
+        "index": 1,
         "publisherTopic": "move_left_drivebase_side_message"
       },
       {
         "name": "rightJoyXAxis",
-        "index": 18,
-        "publisherTopic": "someTopicName18"
+        "type": "joystick",
+        "index": 2,
+        "publisherTopic": ""
       },
       {
         "name": "rightJoyYAxis",
-        "index": 19,
+        "type": "joystick",
+        "index": 3,
         "publisherTopic": "move_right_drivebase_side_message"
       }
     ]

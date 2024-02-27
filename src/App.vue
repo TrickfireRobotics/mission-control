@@ -1,7 +1,28 @@
 <script setup lang="ts">
-import Navbar from './components/Navbar.vue'
-import MotorGrid from './components/MotorGrid.vue'
-import CameraContainer from './components/CameraContainer.vue'
+import Navbar from './components/Navbar.vue';
+import MotorGrid from './components/MotorGrid.vue';
+import CameraContainer from './components/CameraContainer.vue';
+import { provide, ref } from 'vue';
+import rosInit from './roslib/rosInit';
+import examplePub from './roslib/examplePub';
+import exampleSub from './roslib/exampleSub';
+import getControllerStatus from './script/controller/controllerEvents';
+//import startControllerCode from './script/controller/controllerEvents';
+const webSocketStatus = ref(false);
+const test = ref<number>(10001);
+
+// Create ros object to communicate over your Rosbridge connection
+const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
+const isGamepadConnected = getControllerStatus(ros);
+console.log(ros);
+
+provide('isWebSocketConnected', isWebSocketConnected);
+provide('isGamepadConnected', isGamepadConnected);
+provide('ros', ros);
+examplePub(ros, test.value);
+
+const exampleData = exampleSub(ros);
+console.log(exampleData);
 </script>
 <template>
   <div id="page">
