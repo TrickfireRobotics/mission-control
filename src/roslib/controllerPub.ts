@@ -1,8 +1,7 @@
 import ROSLIB from 'roslib';
 import type { Ref } from 'vue';
 
-//from my best understanding, the data passed in doesn't need to be in a ref as it is just going to publish it right away
-//Aka does not need reactivity since it doesn't interact with the UI
+
 export default function controllerPub(ros: ROSLIB.Ros, pubName: string, input: number) {
   if (pubName != "/" && pubName != ""){
     let controllerTopic = new ROSLIB.Topic({

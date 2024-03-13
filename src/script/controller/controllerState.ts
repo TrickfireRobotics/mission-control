@@ -1,6 +1,13 @@
 import controllerPub from '../../roslib/controllerPub';
 
-// TODO - convert the individual fields into an array to reduce the length of this whole thing
+/* This stores controller data for each controller connected to the system.
+* Button data are always sent, no matter what.
+* Joystick/Triggers have to go above a certain threshold (deltaSenitivity)
+* in order to be sent in order to avoid flooding the ROS network with 
+* cotroller data. Essentially, we look at the velocity of the joystick/trigger
+* and determine if it is fast enough to send data.
+*/
+
 class ControllerState{
 
     // Joysticks
@@ -34,7 +41,6 @@ class ControllerState{
     // Same format as currentStateButtons
     deltaStateButtons = Array(16).fill(0)
 
-    //
     deltaSensitivity = 0;
 
     //Key bindings
@@ -42,7 +48,7 @@ class ControllerState{
     joystickIndexToPublisherName = new Map();
 
 
-
+    // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
     constructor(jsonControllerBinding : string, deltaSensitivity : number) {
         this.deltaSensitivity = deltaSensitivity;
         
@@ -91,6 +97,7 @@ class ControllerState{
         }
     }
 
+    // Update both the delta and the current values on the controller
     updateState(gamepad : Gamepad, deltaT: number) {
         let joystickArray = gamepad.axes;
         let buttonArray = gamepad.buttons;
@@ -101,7 +108,7 @@ class ControllerState{
         this.leftJoyStickArray[0] = joystickArray[0];
         this.leftJoyStickArray[1] = joystickArray[1];
 
-        // RIght joystick X and y axis
+        // Right joystick X and y axis
         this.rightJoyStickArrayDELTA[0] = joystickArray[2] - this.rightJoyStickArray[0];
         this.rightJoyStickArrayDELTA[1] = joystickArray[3] - this.rightJoyStickArray[1];
         this.rightJoyStickArray[0] = joystickArray[2];
@@ -115,11 +122,12 @@ class ControllerState{
         }
     }
 
-
+    // Print the current state of the controller as seen by the browser
     printNumbers () {
 
     }
 
+    // Publish the values to the ROS network
     publishController(ros : ROSLIB.Ros) {
 
         //Left joystick X axis
@@ -146,18 +154,24 @@ class ControllerState{
             controllerPub(ros, this.joystickIndexToPublisherName.get(3),this.rightJoyStickArray[1]);
         }
 
-        //Left Trigger
+
+        /*
+        * Triggers are handled the same way as joysticks to prevent spamming
+        */
+
+        // Left Trigger
         if (Math.abs(this.deltaStateButtons[6]) > this.deltaSensitivity) {
             controllerPub(ros, this.buttonIndexToPublisherName.get(6), this.currentStateButtons[6]);
         }
 
+        // Right Trigger
         if (Math.abs(this.deltaStateButtons[7]) > this.deltaSensitivity) {
             controllerPub(ros, this.buttonIndexToPublisherName.get(7), this.currentStateButtons[7]);
         }
 
-        //Buttons
+        // Send button data. Skip index 6 and 7 as that are the triggers
         for (let index = 0; index < 16; index++) {
-            if (index != 6 && index != 7) {
+            if (index != 6 && index != 7 && Math.abs(this.deltaStateButtons[index]) == 1) {
                 controllerPub(ros, this.buttonIndexToPublisherName.get(index), this.currentStateButtons[index]);
             }
         }
