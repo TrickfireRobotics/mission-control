@@ -50,6 +50,7 @@ function pollController(){
 
 }
 
+// LEFT AND RIGHT TRIGGERS ARE AXIS VALUE
 function processInput(state : ControllerState, key : number, map : Map<number, Gamepad>) {
     let jsGamepad = navigator.getGamepads()[key];
 

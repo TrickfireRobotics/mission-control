@@ -5,7 +5,7 @@
         "name": "aButton",
         "type": "button",
         "index": 0,
-        "publisherTopic": ""
+        "publisherTopic": "abutton"
       },
       {
         "name": "bButton",
@@ -47,7 +47,7 @@
         "name": "rightTriggerButton",
         "type": "button",
         "index": 7,
-        "publisherTopic": ""
+        "publisherTopic": "rightTrigger"
       },
       {
         "name": "backButton",

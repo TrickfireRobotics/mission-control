@@ -1,41 +1,38 @@
 import controllerPub from '../../roslib/controllerPub';
 
-
+// TODO - convert the individual fields into an array to reduce the length of this whole thing
 class ControllerState{
 
     // Joysticks
     leftJoyStickArray = Array(2).fill(0)  // [0] = x-axis [1] = y-axis
     rightJoyStickArray = Array(2).fill(0) // [0] = x-axis [1] = y-axis
 
-    leftJoystickButtonState = 0
-    rightJoystickButtonState = 0
-
-    // The four main buttons
-    xButtonState = 0; // 0 = false; 1 = true
-    yButtonState = 0
-    bButtonState = 0
-    aButtonState = 0
-
-    // Bumpers
-    leftBumperButtonState = 0
-    rightBumperButtonState = 0
-
-    // Triggers
-    leftTriggerButtonState = 0
-    rightTriggerButtonState = 0
-
-    // D-Pad
-    dpadUP = 0;
-    dpadDOWN = 0;
-    dpadLEFT = 0;
-    dpadRIGHT = 0;
+    // Buttons
+    currentStateButtons = Array(16).fill(0)
+    // These indices are the same as the one in the JSON file
+    // [0] aButton
+    // [1] bButton
+    // [2] xButton
+    // [3] yButton
+    // [4] leftBumperButton
+    // [5] rightBumperButton
+    // [6] leftTriggerButton (From 0 to 1 with all the decimal values inbetween)
+    // [7] rightTriggerButton (From 0 to 1 with all the decimal values inbetween)
+    // [8] backButton
+    // [9] startButton
+    // [10] leftJoyStickButton
+    // [11] rightJoystickButton
+    // [12] dpadUPButton
+    // [13] dpadDOWNButton
+    // [14] dpadLEFTButton
+    // [15] dpadRIGHTButton
 
     //CHANGE IN THE VARIABLES
     leftJoyStickArrayDELTA = Array(2).fill(0)  // [0] = x-axis [1] = y-axis
     rightJoyStickArrayDELTA = Array(2).fill(0) // [0] = x-axis [1] = y-axis
 
-    leftJoystickButtonStateDELTA = 0
-    rightJoystickButtonStateDELTA = 0
+    // Same format as currentStateButtons
+    deltaStateButtons = Array(16).fill(0)
 
     //
     deltaSensitivity = 0;
@@ -57,10 +54,20 @@ class ControllerState{
 
     readJSONFile (jsonInput : JSON) {
 
+        // These two lines convert the JSON to be read
         let json :any = JSON.stringify(jsonInput);
         json = JSON.parse(json);
 
+        // Since the JSON file is an array of length 20,
+        // each entry has the following properties:
+        // "name"
+        // "type"
+        // "index"
+        // "publisherTopic"
+        // 
+        // "entry" is the index of the JSON array [0,19]
         for (let entry = 0; entry < json.length; entry++) {
+            // Get the JSON entry
             let controlSchemeEntry = json.bindings[entry];
 
             let index = Number(controlSchemeEntry.index);
@@ -68,23 +75,26 @@ class ControllerState{
             let topicName = "/" + controlSchemeEntry.publisherTopic;
 
             if (type == "button") {
-                if (topicName != "") {
+                if (topicName != "/") {
                     this.buttonIndexToPublisherName.set(index, topicName);
+                    console.log("Mapped button with index " + index + " to topic " + topicName);
                 }
                 
             }
             else if (type == "joystick") {
-                if (topicName != "") {
+                if (topicName != "/") {
                     this.joystickIndexToPublisherName.set(index, topicName);
+                    console.log("Mapped button with index " + index + " to topic " + topicName);
                 }
                 
             }
         }
     }
 
-    updateState(gamepad : Gamepad, deltaT : number) {
+    updateState(gamepad : Gamepad, deltaT: number) {
         let joystickArray = gamepad.axes;
-        
+        let buttonArray = gamepad.buttons;
+
         // Left joystick X and Y axis
         this.leftJoyStickArrayDELTA[0] = joystickArray[0] - this.leftJoyStickArray[0];
         this.leftJoyStickArrayDELTA[1] = joystickArray[1] - this.leftJoyStickArray[1];
@@ -97,44 +107,21 @@ class ControllerState{
         this.rightJoyStickArray[0] = joystickArray[2];
         this.rightJoyStickArray[1] = joystickArray[3];
 
+        // Update buttons
 
-
-        let buttonArray = gamepad.buttons;
-
-        this.aButtonState = buttonArray[0].value;
-        this.bButtonState = buttonArray[1].value;
-        this.xButtonState = buttonArray[2].value;
-        this.yButtonState = buttonArray[3].value;
-
-        this.leftBumperButtonState = buttonArray[4].value;
-        this.rightBumperButtonState = buttonArray[5].value;
-
-        this.leftTriggerButtonState = buttonArray[6].value;
-        this.rightBumperButtonState = buttonArray[7].value;
-
-        //backbutton 8
-        //startbutton 9
-
-        this.leftJoystickButtonState = buttonArray[10].value;
-        this.rightBumperButtonState = buttonArray[11].value;
-
-        //dpad up 12
-        //dpad down 13
-        //dpad left 14
-        //dpad right 15
-
-        
+        for (let index = 0; index < 16; index++) {
+            this.deltaStateButtons[index] = buttonArray[index].value - this.currentStateButtons[index];
+            this.currentStateButtons[index] = buttonArray[index].value;
+        }
     }
 
-    printNumbers () {
-        console.log("LEFT JOYSTICK DELTA X" + this.leftJoyStickArrayDELTA[0]);
-        console.log("LEFT JOYSTICK DELTA Y" + this.leftJoyStickArrayDELTA[1]);
 
-        console.log("RIGHT JOYSTICK DELTA X" + this.rightJoyStickArrayDELTA[0]);
-        console.log("RIGHT JOYSTICK DELTA Y" + this.rightJoyStickArrayDELTA[1]);
+    printNumbers () {
+
     }
 
     publishController(ros : ROSLIB.Ros) {
+
         //Left joystick X axis
         if (Math.abs(this.leftJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
             //console.log("send LEFT joystick X");
@@ -159,10 +146,21 @@ class ControllerState{
             controllerPub(ros, this.joystickIndexToPublisherName.get(3),this.rightJoyStickArray[1]);
         }
 
+        //Left Trigger
+        if (Math.abs(this.deltaStateButtons[6]) > this.deltaSensitivity) {
+            controllerPub(ros, this.buttonIndexToPublisherName.get(6), this.currentStateButtons[6]);
+        }
 
+        if (Math.abs(this.deltaStateButtons[7]) > this.deltaSensitivity) {
+            controllerPub(ros, this.buttonIndexToPublisherName.get(7), this.currentStateButtons[7]);
+        }
 
-
-        
+        //Buttons
+        for (let index = 0; index < 16; index++) {
+            if (index != 6 && index != 7) {
+                controllerPub(ros, this.buttonIndexToPublisherName.get(index), this.currentStateButtons[index]);
+            }
+        }
 
 
     }
