@@ -1,0 +1,125 @@
+{
+    "length": 20,
+    "bindings": [
+      {
+        "name": "aButton",
+        "type": "button",
+        "index": 0,
+        "publisherTopic": ""
+      },
+      {
+        "name": "bButton",
+        "type": "button",
+        "index": 1,
+        "publisherTopic": ""
+      },
+      {
+        "name": "xButton",
+        "type": "button",
+        "index": 2,
+        "publisherTopic": ""
+      },
+      {
+        "name": "yButton",
+        "type": "button",
+        "index": 3,
+        "publisherTopic": ""
+      },
+      {
+        "name": "leftBumperButton",
+        "type": "button",
+        "index": 4,
+        "publisherTopic": ""
+      },
+      {
+        "name": "rightBumperButton",
+        "type": "button",
+        "index": 5,
+        "publisherTopic": ""
+      },
+      {
+        "name": "leftTriggerButton",
+        "type": "button",
+        "index": 6,
+        "publisherTopic": ""
+      },
+      {
+        "name": "rightTriggerButton",
+        "type": "button",
+        "index": 7,
+        "publisherTopic": ""
+      },
+      {
+        "name": "backButton",
+        "type": "button",
+        "index": 8,
+        "publisherTopic": ""
+      },
+      {
+        "name": "startButton",
+        "type": "button",
+        "index": 9,
+        "publisherTopic": ""
+      },
+      {
+        "name": "leftJoyStickButton",
+        "type": "button",
+        "index": 10,
+        "publisherTopic": ""
+      },
+      {
+        "name": "rightJoystickButton",
+        "type": "button",
+        "index": 11,
+        "publisherTopic": ""
+      },
+      {
+        "name": "dpadUPButton",
+        "type": "button",
+        "index": 12,
+        "publisherTopic": ""
+      },
+      {
+        "name": "dpadDOWNButton",
+        "type": "button",
+        "index": 13,
+        "publisherTopic": ""
+      },
+      {
+        "name": "dpadLEFTButton",
+        "type": "button",
+        "index": 14,
+        "publisherTopic": ""
+      },
+      {
+        "name": "dpadRIGHTButton",
+        "type": "button",
+        "index": 15,
+        "publisherTopic": ""
+      },
+      {
+        "name": "leftJoyXAxis",
+        "type": "joystick",
+        "index": 0,
+        "publisherTopic": ""
+      },
+      {
+        "name": "leftJoyYAxis",
+        "type": "joystick",
+        "index": 1,
+        "publisherTopic": "move_left_drivebase_side_message"
+      },
+      {
+        "name": "rightJoyXAxis",
+        "type": "joystick",
+        "index": 2,
+        "publisherTopic": ""
+      },
+      {
+        "name": "rightJoyYAxis",
+        "type": "joystick",
+        "index": 3,
+        "publisherTopic": "move_right_drivebase_side_message"
+      }
+    ]
+  }
