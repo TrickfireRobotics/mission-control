@@ -85,12 +85,18 @@ class ControllerState{
                     this.buttonIndexToPublisherName.set(index, topicName);
                     console.log("Mapped button with index " + index + " to topic " + topicName);
                 }
+                else {
+                    this.buttonIndexToPublisherName.set(index, "");
+                }
                 
             }
             else if (type == "joystick") {
                 if (topicName != "/") {
                     this.joystickIndexToPublisherName.set(index, topicName);
-                    console.log("Mapped button with index " + index + " to topic " + topicName);
+                    console.log("Mapped axis with index " + index + " to topic " + topicName);
+                }
+                else {
+                    this.joystickIndexToPublisherName.set(index, "");
                 }
                 
             }
@@ -134,24 +140,28 @@ class ControllerState{
         if (Math.abs(this.leftJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
             //console.log("send LEFT joystick X");
             controllerPub(ros, this.joystickIndexToPublisherName.get(0),this.leftJoyStickArray[0]);
+            console.log("LEFT JOSTICK X: " + this.joystickIndexToPublisherName.get(0));
         }
 
         //Left joystick Y axis
         if (Math.abs(this.leftJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
             //console.log("send LEFT joystick Y");
             controllerPub(ros, this.joystickIndexToPublisherName.get(1),this.leftJoyStickArray[1]);
+            console.log("LEFT JOSTICK Y: " + this.joystickIndexToPublisherName.get(1));
         }
 
         //Right joystick X axis
         if (Math.abs(this.rightJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
             //console.log("send RIGHT joystick X");
             controllerPub(ros, this.joystickIndexToPublisherName.get(2),this.rightJoyStickArray[0]);
+            console.log("RIGHT JOSTICK X: " + this.joystickIndexToPublisherName.get(2));
         }
 
         //Left joystick Y axis
         if (Math.abs(this.rightJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
             //console.log("send RIGHT joystick Y");
             controllerPub(ros, this.joystickIndexToPublisherName.get(3),this.rightJoyStickArray[1]);
+            console.log("RIGHT JOSTICK Y: " + this.joystickIndexToPublisherName.get(3));
         }
 
 
