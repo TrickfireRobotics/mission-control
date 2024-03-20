@@ -5,55 +5,11 @@ import { inject, onMounted, ref } from 'vue';
 // use this instead want to handle case where ros is undefined
 // const ros = inject<Ros>('ros')
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
+const controllerConnectedStatus = inject<boolean>("isGamepadConnected", false);
 
 //TODO FIX CODE
 const latency = ref(-1);
-// const latency_listener = new ROSLIB.Topic({
-//   ros,
-//   name: '/latency',
-//   messageType: 'std_msgs/String'
-// })
-// onMounted(() => {
-//   console.log('Created')
-//   // Create ros object to communicate over your Rosbridge connection
-//   const ros = new ROSLIB.Ros({ url: 'ws://localhost:9090' })
-//   // When the Rosbridge server connects, fill the span with id “status" with “successful"
-//   ros.on('connection', () => {
-//     console.log(this)
-//     webSocketStatus.value = true
-//     // document.getElementById('status').innerHTML = 'successful'
-//     // @ts-ignore
-//     ros.on('error', (error) => {
-//       webSocketStatus.value = false
-//       console.log(error)
-//       // document.getElementById('status').innerHTML = `errored out (${error})`
-//     })
 
-//     // When the Rosbridge server shuts down, fill the “status" span with “closed"
-//     ros.on('close', () => {
-//       webSocketStatus.value = false
-//       // document.getElementById('status').innerHTML = 'closed'
-//     })
-//   })
-//   //listens to mission_control
-//   // @ts-ignore
-//   const latency_listener = new ROSLIB.Topic({
-//     ros,
-//     name: '/latency',
-//     messageType: 'std_msgs/String'
-//   })
-//   // When we receive a message on /my_topic, add its data as a list item to the “messages" ul
-//   // @ts-ignore
-//   latency_listener.subscribe((message) => {
-//     let currTime = Date.now()
-//     let start = message.data.indexOf('=')
-//     let end = message.data.indexOf(',')
-//     let rosTime = message.data.substring(start + 1, end)
-//     let decimalPlaces = 1
-//     rosTime = rosTime.substring(0, currTime.toString().length)
-//     latency.value = currTime - rosTime
-//   })
-// })
 </script>
 <template>
   <nav>
@@ -70,6 +26,10 @@ const latency = ref(-1);
     <div class="container">
       <h4 id="status">Camera Feed</h4>
       <div class="circle red"></div>
+    </div>
+    <div class="container">
+      <h4 id="status">Controller Connected</h4>
+      <div class="circle" :class="{ green: controllerConnectedStatus, red: !controllerConnectedStatus }"></div>
     </div>
     <div class="container">
       <h4>Ping</h4>
