@@ -6,6 +6,7 @@ import { provide, ref } from 'vue';
 import rosInit from './roslib/rosInit';
 import examplePub from './roslib/examplePub';
 import exampleSub from './roslib/exampleSub';
+import heartbeatPub from './roslib/heartbeatPub';
 import getControllerStatus from './script/controller/controllerEvents';
 //import startControllerCode from './script/controller/controllerEvents';
 const webSocketStatus = ref(false);
@@ -20,6 +21,7 @@ provide('isWebSocketConnected', isWebSocketConnected);
 provide('isGamepadConnected', isGamepadConnected);
 provide('ros', ros);
 examplePub(ros, test.value);
+heartbeatPub(ros, 1, 1000);
 
 const exampleData = exampleSub(ros);
 console.log(exampleData);
