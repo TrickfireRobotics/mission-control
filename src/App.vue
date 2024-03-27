@@ -21,8 +21,7 @@ provide('isWebSocketConnected', isWebSocketConnected);
 provide('isGamepadConnected', isGamepadConnected);
 provide('ros', ros);
 examplePub(ros, test.value);
-// Using arrow function to call heartbeatPub with the correct arguments
-setInterval(() => heartbeatPub(ros, 1), 1000);
+heartbeatPub(ros, 1, 1000);
 
 const exampleData = exampleSub(ros);
 console.log(exampleData);
