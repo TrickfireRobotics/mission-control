@@ -32,7 +32,7 @@ export default function getControllerStatus(passedRos : ROSLIB.Ros){
     window.addEventListener("gamepadconnected", (e) => {
         console.log("Controller connected with index %d\n" + e.gamepad.id, e.gamepad.index);
         indexToControllerName.set(e.gamepad.index, e.gamepad.id)
-        let state = new ControllerState("src\\script\\controller\\drivebaseBinding.json", DELTA_SENSITIVTY);
+        let state = new ControllerState("src\\script\\controller\\unveilArmBinding.json", DELTA_SENSITIVTY);
         indexToControllerState.set(e.gamepad.index, state);
 
         if (indexToControllerName.has(0)) {
