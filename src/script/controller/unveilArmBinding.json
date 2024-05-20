@@ -5,25 +5,25 @@
         "name": "aButton",
         "type": "button",
         "index": 0,
-        "publisherTopic": ""
+        "publisherTopic": "gripRotOpen"
       },
       {
         "name": "bButton",
         "type": "button",
         "index": 1,
-        "publisherTopic": ""
+        "publisherTopic": "gripRotClose"
       },
       {
         "name": "xButton",
         "type": "button",
         "index": 2,
-        "publisherTopic": ""
+        "publisherTopic": "gripLinearOpen"
       },
       {
         "name": "yButton",
         "type": "button",
         "index": 3,
-        "publisherTopic": ""
+        "publisherTopic": "gripLinearClose"
       },
       {
         "name": "leftBumperButton",
@@ -53,13 +53,13 @@
         "name": "backButton",
         "type": "button",
         "index": 8,
-        "publisherTopic": ""
+        "publisherTopic": "turntable_ccw"
       },
       {
         "name": "startButton",
         "type": "button",
         "index": 9,
-        "publisherTopic": ""
+        "publisherTopic": "turntable_cw"
       },
       {
         "name": "leftJoyStickButton",
