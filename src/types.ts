@@ -12,5 +12,5 @@ export type CompressedImage = {
     stamp: { sec: number; nanosec: number };
   };
   format: 'jpg' | 'png';
-  data: string[]; //hexadecimal
+  data: string; //hexadecimal
 };

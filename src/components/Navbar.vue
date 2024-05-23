@@ -1,20 +1,23 @@
 <script lang="ts" setup>
 import ROSLIB, { Ros } from 'roslib';
 import { inject, onMounted, ref } from 'vue';
+import NavbarTabs from './NavbarTabs.vue';
+// import HomeVariantOutlineIcon from 'vue-material-design-icons/HomeVariantOutline.vue';
+
 //guarantee ros is defined
 // use this instead want to handle case where ros is undefined
 // const ros = inject<Ros>('ros')
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
-const controllerConnectedStatus = inject<boolean>("isGamepadConnected", false);
-
+const controllerConnectedStatus = inject<boolean>('isGamepadConnected', false);
+console.log(typeof HomeVariantOutlineIcon);
 //TODO FIX CODE
 const latency = ref(-1);
-
 </script>
 <template>
   <nav>
     <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
     <h1>Mission Control</h1>
+    <NavbarTabs text="Testing" :icon="HomeVariantOutlineIcon" />
     <div class="container">
       <h4 id="status">WebSocket</h4>
       <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
@@ -29,12 +32,15 @@ const latency = ref(-1);
     </div>
     <div class="container">
       <h4 id="status">Controller Connected</h4>
-      <div class="circle" :class="{ green: controllerConnectedStatus, red: !controllerConnectedStatus }"></div>
+      <div
+        class="circle"
+        :class="{ green: controllerConnectedStatus, red: !controllerConnectedStatus }"
+      ></div>
     </div>
-    <div class="container">
+    <!-- <div class="container">
       <h4>Ping</h4>
       <p>{{ `${latency}ms` }}</p>
-    </div>
+    </div> -->
   </nav>
 </template>
 
@@ -46,8 +52,15 @@ nav {
   align-items: center;
   gap: 15px;
   width: 100%;
-  background-color: #dfdfdf;
+  background-color: var(--black);
   height: 4rem;
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    color: var(--white);
+  }
   #logo {
     max-width: 100%;
     max-height: 100%;
@@ -67,10 +80,10 @@ nav {
     border-radius: 50%;
   }
   .red {
-    background-color: red;
+    background-color: var(--error);
   }
   .green {
-    background-color: lime;
+    background-color: var(--correct);
   }
 }
 </style>
