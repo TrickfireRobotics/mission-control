@@ -1,14 +1,37 @@
 <script lang="ts" setup>
+import rosInit from '@/roslib/rosInit';
 import ROSLIB, { Ros } from 'roslib';
+import { vModelCheckbox } from 'vue';
+import { shallowReactive } from 'vue';
 import { inject, onMounted, ref } from 'vue';
+
 //guarantee ros is defined
 // use this instead want to handle case where ros is undefined
-// const ros = inject<Ros>('ros')
+const ros = inject<Ros | undefined>('ros');
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
 const controllerConnectedStatus = inject<boolean>("isGamepadConnected", false);
 
 //TODO FIX CODE
 const latency = ref(-1);
+const isButtonDisabled = ref(false);
+
+const reconnectMoteusControllers = () => {
+  if (isButtonDisabled.value || !ros) return;
+
+  isButtonDisabled.value = true;
+
+  console.log("Reconnecting moteus controllers");
+
+  const topic = new ROSLIB.Topic({
+    ros: ros,
+    name: '/reconnectMoteusControllers',
+    messageType: 'std_msgs/String'
+  });
+
+  setTimeout(function() {
+    isButtonDisabled.value = false;
+  }, 5000)
+}
 
 </script>
 <template>
@@ -34,6 +57,9 @@ const latency = ref(-1);
     <div class="container">
       <h4>Ping</h4>
       <p>{{ `${latency}ms` }}</p>
+    </div>
+    <div class="container">
+        <button @click="reconnectMoteusControllers" :disabled="isButtonDisabled">Reconnect Moteus Controllers</button>
     </div>
   </nav>
 </template>
