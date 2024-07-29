@@ -28,6 +28,7 @@ const reconnectMoteusControllers = () => {
     messageType: 'std_msgs/String'
   });
 
+  // The setTimeout() function ensures that there is a five second delay between button clicks
   setTimeout(function() {
     isButtonDisabled.value = false;
   }, 5000)
