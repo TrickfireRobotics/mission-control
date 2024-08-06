@@ -48,16 +48,10 @@ npm run dev
 -Run these commands in the container terminal
 ```sh
 ./build.sh
-./launch.sh (the launch.sh should have either 6 or 8 comment out aka one of them is not commented out but the other is)
-```
-5. Open up launch.sh
-uncomment 6 or 8 and comment the one that wasn't (aka the one that was uncommented before should be commented and the one that was commented should now be uncommented)
-6. Run This command in container terminal 
-```sh
 ./launch.sh
 ```
-7. Reload mission control page
-8. If the Websocket circle becomes **green**, you are connected!
+5. Reload mission control page
+6. If the Websocket circle becomes **green**, you are connected!
 
 ### Create static html for deployment
 ```sh
