@@ -10,6 +10,7 @@ import heartbeatPub from './roslib/heartbeatPub';
 import getControllerStatus from './script/controller/controllerEvents';
 // import cameraSub from './roslib/cameraSub';
 import { cameraSub1 } from './roslib/cameraSub';
+import robotInfoSub from './roslib/robotInfoSub';
 import type { Ref } from 'vue';
 
 //import startControllerCode from './script/controller/controllerEvents';
@@ -18,22 +19,26 @@ const test = ref<number>(10001);
 
 // Create ros object to communicate over your Rosbridge connection
 // const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
-const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
-// const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
-// const isGamepadConnected = getControllerStatus(ros);
+// const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
+const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
+const isGamepadConnected = getControllerStatus(ros);
+const motorInfo = robotInfoSub(ros);
+console.log(motorInfo);
 // const compressedImage = cameraSub(ros);
 // const compressedImages = cameraInit(ros, 0, 1);
 console.log(ros);
 provide('isWebSocketConnected', isWebSocketConnected);
-// provide('isGamepadConnected', isGamepadConnected);
+provide('isGamepadConnected', isGamepadConnected);
+provide('motorInfo', motorInfo);
 provide('ros', ros);
 // provide('compressedImages', compressedImages);
 examplePub(ros, test.value);
-
 const cameras = cameraSub1(ros, 0, 1);
 provide('cameras', cameras);
 const exampleData = exampleSub(ros);
-console.log(exampleData);
+ros.getTopics((e) => {
+  console.log(e);
+});
 </script>
 <template>
   <div id="page">

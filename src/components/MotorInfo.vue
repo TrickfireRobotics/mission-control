@@ -23,5 +23,6 @@ ul {
   // max-width: 50%;
   // border: 2px solid black;
   background-color: white;
+  color: var(--black);
 }
 </style>

@@ -19,26 +19,40 @@ const motorTopics = [
   'back_right_drive_motor_temperature',
 ];
 
+import type { MotorData } from '@/types';
 import ROSLIB, { Ros } from 'roslib';
-import { ref } from 'vue';
+import { provide, reactive, ref } from 'vue';
 import type { Ref } from 'vue';
 //in order to have reactive behavior, store the ros data in a ref
 // let exampleData = ref<number>();
 //Since we are going to return exampleData anyway, use typeof
-export default function robotInfoSub(ros: ROSLIB.Ros) {
-  motorTopics.forEach((topicName) => {
+
+const motorNames = [
+  'front_left',
+  'mid_left',
+  'back_left',
+  'front_right',
+  'mid_right',
+  'back_right',
+];
+const stats = ['motor_velocity'];
+let robotInfo = reactive<any>([0, 0, 0, 0, 0, 0]);
+export default function robotInfoSub(ros: ROSLIB.Ros): typeof robotInfo {
+  motorNames.forEach((motorName, index) => {
     let exampleTopic = new ROSLIB.Topic({
       ros,
       //topic name
-      name: topicName,
+      name: `${motorName}_drive_motor_velocity_from_can`,
       //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
       messageType: 'std_msgs/Float32',
     });
     //subscribe to topic and sets ref data
     exampleTopic.subscribe<number>((message) => {
-      console.log(message.data);
+      robotInfo[index] = message.data;
+      // robotInfo[index].id = motorName;
+      // provide(topicName, message.data);
       // exampleData.value = message.data;
     });
   });
-  // return exampleData;
+  return robotInfo;
 }

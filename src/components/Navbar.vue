@@ -2,14 +2,13 @@
 import ROSLIB, { Ros } from 'roslib';
 import { inject, onMounted, ref } from 'vue';
 import NavbarTabs from './NavbarTabs.vue';
-// import HomeVariantOutlineIcon from 'vue-material-design-icons/HomeVariantOutline.vue';
+import HomeVariantOutlineIcon from 'vue-material-design-icons/HomeVariantOutline.vue';
 
 //guarantee ros is defined
 // use this instead want to handle case where ros is undefined
 // const ros = inject<Ros>('ros')
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
 const controllerConnectedStatus = inject<boolean>('isGamepadConnected', false);
-console.log(typeof HomeVariantOutlineIcon);
 //TODO FIX CODE
 const latency = ref(-1);
 </script>
@@ -17,18 +16,46 @@ const latency = ref(-1);
   <nav>
     <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
     <h1>Mission Control</h1>
-    <NavbarTabs text="Testing" :icon="HomeVariantOutlineIcon" />
+    <li class="container navbar-tab current-page">
+      <h4>Home</h4>
+      <img src="../assets/home_icon.svg" alt="" />
+    </li>
+    <li class="container navbar-tab">
+      <h4>Map</h4>
+      <img src="../assets/map_icon.svg" alt="" />
+    </li>
+    <li class="container navbar-tab">
+      <h4>Autonomous</h4>
+      <img src="../assets/explore_icon.svg" alt="" />
+    </li>
+    <li class="container navbar-tab">
+      <h4>Setting</h4>
+      <img src="../assets/setting_icon.svg" alt="" />
+    </li>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <!-- <NavbarTabs text="Testing" :icon="HomeVariantOutlineIcon" /> -->
     <div class="container">
       <h4 id="status">WebSocket</h4>
       <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
     </div>
     <div class="container">
       <h4 id="status">Robot Interface</h4>
-      <div class="circle red"></div>
+      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
     </div>
     <div class="container">
       <h4 id="status">Camera Feed</h4>
-      <div class="circle red"></div>
+      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
     </div>
     <div class="container">
       <h4 id="status">Controller Connected</h4>
@@ -61,9 +88,21 @@ nav {
   p {
     color: var(--white);
   }
+  .current-page {
+    background-color: var(--light-grey);
+  }
+  .navbar-tab {
+    height: 100%;
+    margin: 0;
+    padding: 0 0.3rem;
+  }
   #logo {
     max-width: 100%;
     max-height: 100%;
+  }
+  .navbar-tab img {
+    height: 30px;
+    width: 30px;
   }
   .container {
     display: flex;

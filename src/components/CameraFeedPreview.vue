@@ -11,7 +11,7 @@ const emit = defineEmits<{ (e: 'switchCameraFeedTo', id: number): void }>();
 function clickHandler(id: number) {
   emit('switchCameraFeedTo', id);
 }
-const compressedImageArray1 = inject('cameras') as string[];
+const compressedImageArray = inject('cameras') as string[];
 </script>
 <template>
   <div id="container">
@@ -24,10 +24,10 @@ const compressedImageArray1 = inject('cameras') as string[];
       </li> -->
 
       <li @click="clickHandler(0)">
-        <img :src="compressedImageArray1[0]" />
+        <img :src="compressedImageArray[0]" />
       </li>
       <li @click="clickHandler(1)">
-        <img :src="compressedImageArray1[1]" />
+        <img :src="compressedImageArray[1]" />
       </li>
 
       <!-- <li @click="clickHandler(1)">1</li>
@@ -41,25 +41,46 @@ const compressedImageArray1 = inject('cameras') as string[];
 #container {
   margin-left: 0.5rem;
   grid-area: camera-feed-preview;
+
   ol {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    li {
-      // width: 100px;
-      // aspect-ratio: 4 /3;
+    li,
+    img {
+      max-height: 150px;
+      max-width: 500px;
+      aspect-ratio: 4 /3;
       background-color: white;
       text-align: center;
       cursor: pointer;
       &:hover {
         background-color: orange;
       }
-      img {
-        width: 100%;
-        height: 100%;
-        margin-bottom: 6rem;
-      }
     }
   }
+  // ol {
+  //   display: flex;
+  //   flex-direction: column;
+  //   gap: 0.5rem;
+  //   li {
+  //     // width: 100px;
+  //     // aspect-ratio: 4 /3;
+  //     background-color: white;
+  //     text-align: center;
+  //     cursor: pointer;
+  //     &:hover {
+  //       background-color: orange;
+  //     }
+  //     img {
+  //       width: 100%;
+  //       height: 100%;
+  //       margin-bottom: 6rem;
+
+  //       max-height: 800px;
+  //       max-width: 400px;
+  //     }
+  //   }
+  // }
 }
 </style>

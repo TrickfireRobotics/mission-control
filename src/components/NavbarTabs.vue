@@ -9,7 +9,7 @@ console.log(props.icon);
 <template>
   <div>
     <h3>{{ props.text }}</h3>
-    <div class="icon" ref="props.icon"></div>
+    <!-- <div class="icon" :ref="props.icon"></div> -->
   </div>
 </template>
 <style lang="scss" scoped>

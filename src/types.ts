@@ -1,8 +1,8 @@
 import ROSLIB from 'roslib';
 
 export type MotorData = {
-  velocity: Number;
-  id: Number;
+  velocity: number;
+  id: string;
 };
 
 export type CompressedImage = {

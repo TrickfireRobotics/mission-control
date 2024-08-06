@@ -34,6 +34,7 @@ const switchCameraFeedTo = (cameraId: number) => {
   background-color: #dfdfdf;
   margin-right: 0.5rem;
   grid-area: camera;
+  color: var(--black);
   .container {
     padding: 0.5rem 0.25rem;
     display: grid;
