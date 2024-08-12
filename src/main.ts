@@ -9,6 +9,7 @@ import Arm from './pages/Arm.vue';
 import Science from './pages/Science.vue';
 import Telemetry from './pages/Telemetry.vue';
 import Settings from './pages/Settings.vue';
+import Help from './pages/Help.vue';
 
 const routes = [
   { path: '/', component: Home },
@@ -16,6 +17,7 @@ const routes = [
   { path: '/Cameras', component: Cameras },
   { path: '/Arm', component: Arm },
   { path: '/Science', component: Science },
+  { path: '/Help', component: Help },
   { path: '/Telemetry', component: Telemetry },
   { path: '/Map', component: Map },
   { path: '/Settings', component: Settings },
