@@ -4,6 +4,7 @@
   "compilerOptions": {
     "importsNotUsedAsValues": "remove",
     "isolatedModules": false,
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

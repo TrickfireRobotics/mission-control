@@ -9,7 +9,7 @@ const motorDataList = ref<MotorData[]>();
 onMounted(() => {
   let tempMotorsData: Array<MotorData> = [];
   for (let i = 1; i <= 6; i++) {
-    tempMotorsData.push({ velocity: i, id: i });
+    tempMotorsData.push({ velocity: i, id: i + '' });
   }
   motorDataList.value = tempMotorsData;
 });
@@ -29,7 +29,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 div {
-  background-color: #dfdfdf;
   ul {
     padding: 0.5rem;
     // grid-area: motor-grid;

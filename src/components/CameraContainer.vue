@@ -21,7 +21,6 @@ const switchCameraFeedTo = (cameraId: number) => {
 </template>
 <style lang="scss" scoped>
 #camera-container {
-  background-color: #dfdfdf;
   margin-right: 0.5rem;
   grid-area: camera;
   .container {
