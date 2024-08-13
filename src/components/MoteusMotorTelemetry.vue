@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import DropDownItem from "../components/DropDownItem.vue"
+import TelemetryDataDisplay from "../components/TelemetryDataDisplay.vue"
 import { render, h } from 'vue'
 
 onMounted(() => initialize());
@@ -48,12 +49,10 @@ const moteuesDataChoice = [
     prettyName: "Input Voltage",
     identifier: "inputVoltage",
     dataValue: -1,
-    isSelected: ref(true)
+    isSelected: ref(false)
   },
 
 ]
-
-const canID = ref(null);
 
 function initialize() {
 
@@ -101,24 +100,15 @@ function getMoteusObject(itemName: String){
 
   </div>
 
-  <!--div class="dropdown" style="border: 2px solid RED;">
-    <button class="dropbtn">Dropdown</button>
-    <div class="dropdown-content" v-html="raw_html"></di>
-    <div class="dropdown-content">
-      <DropDownItem ref="canIDref" @callback="itemClicked('canID')" itemName="canID"></DropDownItem>
-      <DropDownItem @callback="itemClicked('position')" itemName="position"></DropDownItem>
-      <DropDownItem @callback="itemClicked('velocity')" itemName="velocity"></DropDownItem>
-      <DropDownItem @callback="itemClicked('torque')" itemName="torque"></DropDownItem>
-      <DropDownItem @callback="itemClicked('temperature')" itemName="temperature"></DropDownItem>
-      <DropDownItem @callback="itemClicked('power')" itemName="power"></DropDownItem>
-      <DropDownItem @callback="itemClicked('inputVoltage')" itemName="inputVoltage"></DropDownItem>
-    </div>
+  <div>
+    <TelemetryDataDisplay 
+      v-for="(item) in moteuesDataChoice"
+      v-bind:itemName="item.prettyName"
+      v-bind:isSelected="item.isSelected.value"
+      v-bind:value="item.dataValue">
+    </TelemetryDataDisplay>
   </div>
 
-  <div>
-      <b>canID: </b>
-      <b>{{canIDVal}}</b>
-  </div-->
 
 
 

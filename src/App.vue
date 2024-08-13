@@ -38,7 +38,11 @@ const exampleData = exampleSub(ros);
 
 <template>
   <Navbar />
-  <RouterView />
+  <router-view v-slot="{ Component }">
+    <KeepAlive>
+      <component :is="Component"></component>
+    </KeepAlive>
+  </router-view>
 </template>
 
 <style lang="scss">
