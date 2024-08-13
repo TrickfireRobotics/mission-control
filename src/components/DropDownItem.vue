@@ -3,7 +3,8 @@
 
     export default{
         props: {
-            itemName: String
+            itemName: String,
+            isSelected: Boolean
         }
     }
 
@@ -13,16 +14,22 @@
     
 </script>
 
-<script setup>
+<!--script setup>
     var isSelected = ref(false);
-</script>
+
+    defineExpose({
+        isSelected
+    })
+</script-->
 
 
 
 <template>
     <div class="dropdown-item mycontainer prevent-select" @click="$emit('callback')">
-        <div class="item-text" @click="isSelected = !isSelected"><span>{{ itemName }}</span></div>
-        <div class="item-checkmark" v-if="isSelected">✓</div>
+        <div class="item-text"><span>{{ itemName }}</span></div>
+        <div class="item-checkmark" >
+            <b v-if="isSelected">✓</b>
+        </div>
 
       </div>
 
@@ -40,8 +47,6 @@
 
 .item-text{
   font-weight: bolder;
-  
-  flex-grow: 1;
 }
 
 .item-checkmark{

@@ -1,37 +1,84 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import DropDownItem from "../components/DropDownItem.vue"
+import { render, h } from 'vue'
 
 onMounted(() => initialize());
 
 
-var raw_html = ref("");
 
-const possibleChoices = new Set([
-  "canID",
-  "position",
-  "velocity",
-  "torque",
-  "temperature",
-  "power",
-  "inputVoltage"
-]);
+const moteuesDataChoice = [
+  {
+    prettyName: "CAN ID",
+    identifier: "canID",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Position",
+    identifier: "position",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Velocity",
+    identifier: "velocity",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Torque",
+    identifier: "torque",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Temperature",
+    identifier: "temperature",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Power",
+    identifier: "power",
+    dataValue: -1,
+    isSelected: ref(false)
+  },
+  {
+    prettyName: "Input Voltage",
+    identifier: "inputVoltage",
+    dataValue: -1,
+    isSelected: ref(true)
+  },
 
+]
 
+const canID = ref(null);
 
 function initialize() {
 
 
-
-  //alert("setting up page")
 };
 
 
 function itemClicked(itemName: String) {
   //alert(itemName)
-
+  let mything = getMoteusObject(itemName);
+  if (mything != null) {
+    mything.isSelected.value = !mything.isSelected.value;
+  }
   
 
+}
+
+function getMoteusObject(itemName: String){
+  for (let index = 0; index < moteuesDataChoice.length; index++) {
+    if (moteuesDataChoice[index].identifier == itemName) {
+      return moteuesDataChoice[index];
+    }
+  }
+
+  return null;
 }
 
 </script>
@@ -39,14 +86,24 @@ function itemClicked(itemName: String) {
 
 
 <template>
-  <div style="border: 2px solid RED;">
-    Welcome to the moteusmotortelemetry
+  <div class="dropdown" style="border: 2px solid RED;">
+    <button class="dropbtn">Dropdown</button>
+    <div class="dropdown-content">
+      <DropDownItem
+        v-for="(item) in moteuesDataChoice"
+        @callback="itemClicked(item.identifier)"
+        v-bind:itemName="item.prettyName"
+        v-bind:isSelected="item.isSelected.value"
+      ></DropDownItem>
+
+    </div>
+
+
   </div>
 
-
-  <div class="dropdown">
+  <!--div class="dropdown" style="border: 2px solid RED;">
     <button class="dropbtn">Dropdown</button>
-    <!--div class="dropdown-content" v-html="raw_html"></div-->
+    <div class="dropdown-content" v-html="raw_html"></di>
     <div class="dropdown-content">
       <DropDownItem ref="canIDref" @callback="itemClicked('canID')" itemName="canID"></DropDownItem>
       <DropDownItem @callback="itemClicked('position')" itemName="position"></DropDownItem>
@@ -55,19 +112,13 @@ function itemClicked(itemName: String) {
       <DropDownItem @callback="itemClicked('temperature')" itemName="temperature"></DropDownItem>
       <DropDownItem @callback="itemClicked('power')" itemName="power"></DropDownItem>
       <DropDownItem @callback="itemClicked('inputVoltage')" itemName="inputVoltage"></DropDownItem>
-      
-
-      <!--div class="dropdown-item flex-container" @click="itemClicked('ahhh')">
-        <div class="item">ahhh</div>
-        <div class="item">✓</div-->
-
-      
-
-
-
-
     </div>
   </div>
+
+  <div>
+      <b>canID: </b>
+      <b>{{canIDVal}}</b>
+  </div-->
 
 
 
