@@ -11,7 +11,7 @@
 
 
 <template>
-    <div v-if="isSelected">
+    <div v-if="isSelected" class="mycontainer">
         <b>{{ itemName }}</b>
         <b>{{ value }}</b>
     </div>

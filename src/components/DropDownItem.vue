@@ -25,7 +25,7 @@
 
 
 <template>
-    <div class="dropdown-item mycontainer prevent-select" @click="$emit('callback')">
+    <div class="dropdown-item mycontainer prevent-select hover-highlight" @click="$emit('callback')">
         <div class="item-text"><span>{{ itemName }}</span></div>
         <div class="item-checkmark" >
             <b v-if="isSelected">✓</b>
@@ -40,7 +40,7 @@
 
 .mycontainer {
   display: flex;
-
+  margin: 2px;
   justify-content: space-between;
   
 }
@@ -65,4 +65,7 @@
   color: blue;
 }
 
-</style>
+.hover-highlight:hover {
+    background-color: rgb(161, 161, 161);
+    border-radius: 7px;
+}

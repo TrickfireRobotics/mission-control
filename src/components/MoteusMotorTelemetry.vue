@@ -6,7 +6,9 @@ import { render, h } from 'vue'
 
 onMounted(() => initialize());
 
+const props = defineProps(['moteusCANID', 'displayName', 'preset']);
 
+const possiblePresets = ["FULL", "IMPORTANT"];
 
 const moteuesDataChoice = [
   {
@@ -55,7 +57,29 @@ const moteuesDataChoice = [
 ]
 
 function initialize() {
+  console.log(props.moteusCANID)
 
+  // FULL
+  if (props.preset == possiblePresets[0]) {
+    moteuesDataChoice[0].isSelected.value = true;
+    moteuesDataChoice[1].isSelected.value = true;
+    moteuesDataChoice[2].isSelected.value = true;
+    moteuesDataChoice[3].isSelected.value = true;
+    moteuesDataChoice[4].isSelected.value = true;
+    moteuesDataChoice[5].isSelected.value = true;
+    moteuesDataChoice[6].isSelected.value = true;
+
+  }
+  // IMPORTANT
+  else if (props.preset == possiblePresets[1]){
+    moteuesDataChoice[0].isSelected.value = false;
+    moteuesDataChoice[1].isSelected.value = true;
+    moteuesDataChoice[2].isSelected.value = true;
+    moteuesDataChoice[3].isSelected.value = false;
+    moteuesDataChoice[4].isSelected.value = false;
+    moteuesDataChoice[5].isSelected.value = false;
+    moteuesDataChoice[6].isSelected.value = false;
+  }
 
 };
 
@@ -85,28 +109,36 @@ function getMoteusObject(itemName: String){
 
 
 <template>
-  <div class="dropdown" style="border: 2px solid RED;">
-    <button class="dropbtn">Dropdown</button>
-    <div class="dropdown-content">
-      <DropDownItem
-        v-for="(item) in moteuesDataChoice"
-        @callback="itemClicked(item.identifier)"
-        v-bind:itemName="item.prettyName"
-        v-bind:isSelected="item.isSelected.value"
-      ></DropDownItem>
+  <div class="module-bg">
+    
+      <div>
+        <b style="font-size:x-large;">{{ displayName }}</b>
+      </div>
+    
+      <div class="dropdown">
+        <button class="drop-button">Select</button>
+        <div class="dropdown-content">
+          <DropDownItem
+            v-for="(item) in moteuesDataChoice"
+            @callback="itemClicked(item.identifier)"
+            v-bind:itemName="item.prettyName"
+            v-bind:isSelected="item.isSelected.value"
+          ></DropDownItem>
+    
+        </div>
+    
+    
+      </div>
+    
+      <div>
+        <TelemetryDataDisplay 
+          v-for="(item) in moteuesDataChoice"
+          v-bind:itemName="item.prettyName"
+          v-bind:isSelected="item.isSelected.value"
+          v-bind:value="item.dataValue">
+        </TelemetryDataDisplay>
+      </div>
 
-    </div>
-
-
-  </div>
-
-  <div>
-    <TelemetryDataDisplay 
-      v-for="(item) in moteuesDataChoice"
-      v-bind:itemName="item.prettyName"
-      v-bind:isSelected="item.isSelected.value"
-      v-bind:value="item.dataValue">
-    </TelemetryDataDisplay>
   </div>
 
 
@@ -116,6 +148,15 @@ function getMoteusObject(itemName: String){
 
 
 <style>
+
+.module-bg{
+  background-color: rgb(109, 109, 109);
+  border-radius: 20px;
+  padding: 10px;
+  width: 15%;
+  height: fit-content;
+}
+
 .flex-container {
   display: flex;
   justify-content: space-between;
@@ -127,24 +168,27 @@ function getMoteusObject(itemName: String){
 
 
 .dropdown-item {
-  color: blue;
+  color: black;
 }
 
 
-.dropbtn {
-  background-color: #04AA6D;
+.drop-button {
+  background-color: rgb(48, 182, 48);
   color: white;
-  padding: 16px;
+  padding: 8px;
   font-size: 16px;
   border: none;
+  border-radius: 10px;
 }
 
 .dropdown {
   position: relative;
   display: inline-block;
+  
 }
 
 .dropdown-content {
+  border-radius: 7px;
   display: none;
   position: absolute;
   background-color: #f1f1f1;
@@ -153,22 +197,11 @@ function getMoteusObject(itemName: String){
   z-index: 1;
 }
 
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
+.dropdown:hover .drop-button {
+  background-color: rgb(22, 131, 28);
 }
 </style>
