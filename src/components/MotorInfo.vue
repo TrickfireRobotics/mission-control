@@ -22,6 +22,6 @@ ul {
   flex: 50%;
   // max-width: 50%;
   // border: 2px solid black;
-  background-color: white;
+  background-color: #cccccc;
 }
 </style>
