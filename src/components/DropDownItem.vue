@@ -69,3 +69,5 @@
     background-color: rgb(161, 161, 161);
     border-radius: 7px;
 }
+
+</style>

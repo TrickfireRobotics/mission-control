@@ -58,6 +58,8 @@ const moteuesDataChoice = [
 
 function initialize() {
   console.log(props.moteusCANID)
+  moteuesDataChoice[0].dataValue = props.moteusCANID;
+  
 
   // FULL
   if (props.preset == possiblePresets[0]) {
@@ -112,23 +114,29 @@ function getMoteusObject(itemName: String){
   <div class="module-bg">
     
       <div>
-        <b style="font-size:x-large;">{{ displayName }}</b>
+        <b style="font-size:large;">{{ displayName }}</b>
       </div>
-    
-      <div class="dropdown">
-        <button class="drop-button">Select</button>
-        <div class="dropdown-content">
-          <DropDownItem
-            v-for="(item) in moteuesDataChoice"
-            @callback="itemClicked(item.identifier)"
-            v-bind:itemName="item.prettyName"
-            v-bind:isSelected="item.isSelected.value"
-          ></DropDownItem>
-    
+      
+      <div class="flex-container">
+        <div class="dropdown">
+            <button class="drop-button">Select</button>
+          <div class="dropdown-content">
+            <DropDownItem
+              v-for="(item) in moteuesDataChoice"
+              @callback="itemClicked(item.identifier)"
+              v-bind:itemName="item.prettyName"
+              v-bind:isSelected="item.isSelected.value"
+            ></DropDownItem>
+      
+          </div>
+      
+      
         </div>
-    
-    
+  
+        <div class="moteus-reminder">Motor Controller: <b>Moteus</b></div>
+
       </div>
+
     
       <div>
         <TelemetryDataDisplay 
@@ -157,9 +165,13 @@ function getMoteusObject(itemName: String){
   height: fit-content;
 }
 
+.moteus-reminder{
+  margin: 4px;
+}
+
 .flex-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
 }
 
 .item{
