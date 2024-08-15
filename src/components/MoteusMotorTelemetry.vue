@@ -15,6 +15,8 @@ const possiblePresets = ["FULL", "IMPORTANT"];
 
 const UPDATE_DATA_MS = 100;//Update the data ever 100ms
 let isRecordingData = false;
+let csvDataObjects :object[] = []
+
 
 const moteuesDataChoice = [
   {
@@ -113,12 +115,6 @@ function setupSubscriber(){
 
 
 function readDataCallback(){
-  if (moteuesDataChoice != undefined) {
-   //console.log(moteuesDataChoice[0].shouldRecordData.value)
-
-  }
-
-
   if (sub.value == "" || sub.value == undefined) {
     return -1
   }
@@ -138,6 +134,28 @@ function readDataCallback(){
       moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).substring(0,6);
       moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
       moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
+
+      if (isRecordingData) {
+        let tempDataArray: any[] = [];
+        
+        for (let index = 0; index < 7; index++) {
+          let entry = moteuesDataChoice[index];
+
+          if (entry.shouldRecordData.value == true) {
+
+            tempDataArray.push(entry.dataValue.value)
+
+          }
+        }
+
+        csvDataObjects.push(tempDataArray)
+
+
+
+        
+
+      }
+
     }
 
 
@@ -161,13 +179,60 @@ let recordButtonText = ref("Start Recording")
 function recordButtonPressed(){
   if (!isRecordingData) {
     recordButtonText.value = "Stop Recording" 
+    csvDataObjects = []
 
     //Create file
-    
-    
   }
   else {
     recordButtonText.value = "Start Recording" 
+
+    //Create and save the file
+    let csvString = "";
+    csvString += createrHeaderString();
+
+    for (let fullEntryIndex = 0; fullEntryIndex < csvDataObjects.length; fullEntryIndex++) {
+      let entryArray = csvDataObjects[fullEntryIndex];
+      let entryString = ""
+
+      for (let dataIndex = 0; dataIndex < entryArray.length; dataIndex++) {
+        entryString += "" + entryArray[dataIndex] + ","
+      }
+
+      entryString = entryString.substring(0, entryString.length - 1) + "\n"
+
+      csvString += entryString
+
+    }
+
+    console.log(csvString)
+
+    // const download = (data) => {
+    // // Create a Blob with the CSV data and type
+    // const blob = new Blob([data], { type: 'text/csv' });
+    
+    // // Create a URL for the Blob
+    // const url = URL.createObjectURL(blob);
+    
+    // // Create an anchor tag for downloading
+    // const a = document.createElement('a');
+    
+    // // Set the URL and download attribute of the anchor tag
+    // a.href = url;
+    // a.download = 'download.csv';
+    
+    // // Trigger the download by clicking the anchor tag
+    // a.click();
+    // }
+
+    const blob = new Blob([csvString], {type: 'text.csv'})
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.download = "data.csv"
+    a.href = url;
+
+    a.click();
+
+
 
     // const data = JSON.stringify({'hello': 1})
     // const blob = new Blob([data], {type: 'text/plain'})
@@ -183,9 +248,23 @@ function recordButtonPressed(){
   }
 
   isRecordingData = !isRecordingData;
+}
 
 
 
+
+function createrHeaderString(){
+  let headerString = "";
+
+  for (let index = 0; index < 7; index++) {
+    let entry = moteuesDataChoice[index];
+
+    if (entry.shouldRecordData.value == true) {
+      headerString += entry.identifier + ","
+    }
+  }
+
+  return headerString.substring(0,headerString.length - 1) + "\n";// Get rid of the last comma
 
 }
 
@@ -245,7 +324,7 @@ function checkboxClicked(name: String){
       
         </div>
   
-        <div class="moteus-reminder">Motor Controller: <b>Moteus</b></div>
+        <!--div class="moteus-reminder">Motor Controller: <b>Moteus</b></div-->
 
       </div>
 
