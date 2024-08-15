@@ -13,55 +13,64 @@ const props = defineProps(['moteusCANID', 'displayName', 'preset']);
 
 const possiblePresets = ["FULL", "IMPORTANT"];
 
+const UPDATE_DATA_MS = 100;//Update the data ever 100ms
+let isRecordingData = false;
+
 const moteuesDataChoice = [
   {
     prettyName: "CAN ID",
     identifier: "canID",
-    dataValue: -1,
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Position",
     identifier: "position",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Velocity",
     identifier: "velocity",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Torque",
     identifier: "torque",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Temperature",
     identifier: "temperature",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Power",
     identifier: "power",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
   {
     prettyName: "Input Voltage",
     identifier: "inputVoltage",
-    dataValue: ref(-1),
-    isSelected: ref(false)
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
   },
 
 ]
 
 function initialize() {
-  console.log(props.moteusCANID)
-  moteuesDataChoice[0].dataValue = props.moteusCANID;
+  moteuesDataChoice[0].dataValue.value = props.moteusCANID;
   
 
   // FULL
@@ -87,7 +96,7 @@ function initialize() {
   }
 
   setupSubscriber()
-  setInterval(readDataCallback, 100);
+  setInterval(readDataCallback, UPDATE_DATA_MS);
 
 };
 
@@ -104,13 +113,17 @@ function setupSubscriber(){
 
 
 function readDataCallback(){
-  //let json : any = JSON.stringify(sub.value)
-  let json = JSON.parse(sub.value)
+  if (moteuesDataChoice != undefined) {
+   //console.log(moteuesDataChoice[0].shouldRecordData.value)
 
-  // console.log("AAAAAAAAAAAAAAAAAAA")
-  // console.log(json)
-  
-  //console.log(json[0] + json[1] + json[2] + json[3] + json[4])
+  }
+
+
+  if (sub.value == "" || sub.value == undefined) {
+    return -1
+  }
+
+  let json = JSON.parse(sub.value)
 
   // Moteus Entries
   for (let entry = 0; entry < json.moteusMotorLength; entry++){
@@ -119,14 +132,12 @@ function readDataCallback(){
     
     //check if this entry is ours via canid
     if (moteusMotorEntry.canID == props.moteusCANID) {
-      console.log("BBBBBBBBBBBB")
-      console.log(moteusMotorEntry)
-      moteuesDataChoice[1].dataValue.value = String(moteusMotorEntry.position).replace("\"","").substring(0,4);
-      moteuesDataChoice[2].dataValue.value = String(moteusMotorEntry.velocity).replace("\"","").substring(0,4);
-      moteuesDataChoice[3].dataValue.value = String(moteusMotorEntry.torque).replace("\"","").substring(0,4);
-      moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).replace("\"","").substring(0,4);
-      moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).replace("\"","").substring(0,4);
-      moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).replace("\"","").substring(0,4);
+      moteuesDataChoice[1].dataValue.value = String(moteusMotorEntry.position).substring(0,6);
+      moteuesDataChoice[2].dataValue.value = String(moteusMotorEntry.velocity).substring(0,6);
+      moteuesDataChoice[3].dataValue.value = String(moteusMotorEntry.torque).substring(0,6);
+      moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).substring(0,6);
+      moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
+      moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
     }
 
 
@@ -136,8 +147,7 @@ function readDataCallback(){
 
 
 function itemClicked(itemName: String) {
-  //alert(itemName)
-  let mything = getMoteusDataObjectFromName(itemName);
+  let mything = getMoteusDataObjectFromIdentifier(itemName);
   if (mything != null) {
     mything.isSelected.value = !mything.isSelected.value;
   }
@@ -145,9 +155,29 @@ function itemClicked(itemName: String) {
 
 }
 
+let recordButtonText = ref("Start Recording")
 
 
-function getMoteusDataObjectFromName(itemName: String){
+function recordButtonPressed(){
+  if (!isRecordingData) {
+    recordButtonText.value = "Stop Recording" 
+
+    
+  }
+  else {
+    recordButtonText.value = "Start Recording" 
+
+  }
+
+  isRecordingData = !isRecordingData;
+
+
+
+
+}
+
+
+function getMoteusDataObjectFromIdentifier(itemName: String){
   for (let index = 0; index < moteuesDataChoice.length; index++) {
     if (moteuesDataChoice[index].identifier == itemName) {
       return moteuesDataChoice[index];
@@ -155,6 +185,24 @@ function getMoteusDataObjectFromName(itemName: String){
   }
 
   return null;
+}
+
+function getMoteusDataObjectFromName(itemName: String){
+  for (let index = 0; index < moteuesDataChoice.length; index++) {
+    if (moteuesDataChoice[index].prettyName == itemName) {
+      return moteuesDataChoice[index];
+    }
+  }
+
+  return null;
+}
+
+function checkboxClicked(name: String){
+  let dataEntry = getMoteusDataObjectFromName(name)
+  if (dataEntry != null) {
+    dataEntry.shouldRecordData.value = !dataEntry.shouldRecordData.value
+    console.log(name + "" + dataEntry.shouldRecordData.value)
+  }
 }
 
 </script>
@@ -188,13 +236,19 @@ function getMoteusDataObjectFromName(itemName: String){
 
       </div>
 
+      <div>
+        <button id="record_button" v-bind:class="{'record-button-green': !isRecordingData, 'record-button-red': isRecordingData}" @click="recordButtonPressed">{{ recordButtonText }}</button>
+      </div>
+
     
       <div>
         <TelemetryDataDisplay 
           v-for="(item) in moteuesDataChoice"
           v-bind:itemName="item.prettyName"
           v-bind:isSelected="item.isSelected.value"
-          v-bind:value="item.dataValue">
+          v-bind:value="item.dataValue.value"
+          v-bind:shouldRecordData="item.shouldRecordData.value"
+          @checkboxClicked="checkboxClicked">
         </TelemetryDataDisplay>
       </div>
 
@@ -243,6 +297,29 @@ function getMoteusDataObjectFromName(itemName: String){
   border: none;
   border-radius: 10px;
 }
+
+.record-button-green {
+  background-color: rgb(48, 182, 48);
+  color: white;
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+.record-button-red{
+  background-color: rgb(255, 0, 0);
+  color: white;
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+
+
 
 .dropdown {
   position: relative;
