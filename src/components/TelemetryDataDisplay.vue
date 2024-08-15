@@ -1,6 +1,6 @@
 <script setup>
 
-    const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData']);
+    const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox']);
 
 </script>
 
@@ -8,7 +8,7 @@
 <template>
     <div v-if="isSelected" class="mycontainer">
         <div>
-            <input @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
+            <input v-if="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
             <b>{{ itemName }}</b>
         </div>
         <b>{{ value }}</b>

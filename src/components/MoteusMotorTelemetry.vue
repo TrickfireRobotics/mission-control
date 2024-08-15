@@ -15,12 +15,10 @@ const possiblePresets = ["FULL", "IMPORTANT"];
 
 const UPDATE_DATA_MS = 100;//Update the data ever 100ms
 let isRecordingData = false;
-let csvDataObjects :object[] = []
+let csvDataObjects :object[] = [];
+let showCheckbox = ref(true);
 
-
-let sub;
 let recordButtonText = ref("Start Recording")
-
 
 const moteuesDataChoice = [
   {
@@ -78,8 +76,6 @@ const moteuesDataChoice = [
 function initialize() {
   moteuesDataChoice[0].dataValue.value = props.moteusCANID;
 
-  //console.log(sub)
-  
 
   // FULL
   if (props.preset == possiblePresets[0]) {
@@ -127,11 +123,11 @@ function readDataCallback(){
       moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
       moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
 
-      
+      // Data recording stuff
       if (isRecordingData) {
         let tempDataArray: any[] = [];
         
-        for (let index = 0; index < 7; index++) {
+        for (let index = 0; index < moteuesDataChoice.length; index++) {
           let entry = moteuesDataChoice[index];
 
           if (entry.shouldRecordData.value == true) {
@@ -140,13 +136,7 @@ function readDataCallback(){
 
           }
         }
-
         csvDataObjects.push(tempDataArray)
-
-
-
-        
-
       }
 
     }
@@ -156,7 +146,7 @@ function readDataCallback(){
   
 }
 
-
+// Used for the dropdown menu
 function itemClicked(itemName: String) {
   let mything = getMoteusDataObjectFromIdentifier(itemName);
   if (mything != null) {
@@ -166,18 +156,18 @@ function itemClicked(itemName: String) {
 
 }
 
-
-
-
 function recordButtonPressed(){
   if (!isRecordingData) {
     recordButtonText.value = "Stop Recording" 
+    showCheckbox.value = false;
+
+    // reset the data
     csvDataObjects = []
 
-    //Create file
   }
   else {
     recordButtonText.value = "Start Recording" 
+    showCheckbox.value = true
 
     //Create and save the file
     let csvString = "";
@@ -199,57 +189,16 @@ function recordButtonPressed(){
 
     console.log(csvString)
 
-    // const download = (data) => {
-    // // Create a Blob with the CSV data and type
-    // const blob = new Blob([data], { type: 'text/csv' });
-    
-    // // Create a URL for the Blob
-    // const url = URL.createObjectURL(blob);
-    
-    // // Create an anchor tag for downloading
-    // const a = document.createElement('a');
-    
-    // // Set the URL and download attribute of the anchor tag
-    // a.href = url;
-    // a.download = 'download.csv';
-    
-    // // Trigger the download by clicking the anchor tag
-    // a.click();
-    // }
-
-    const blob = new Blob([csvString], {type: 'text.csv'})
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.download = "data.csv"
-    a.href = url;
-
-    a.click();
-
-
-
-    // const data = JSON.stringify({'hello': 1})
-    // const blob = new Blob([data], {type: 'text/plain'})
-    // const e = document.createEvent('MouseEvents'),
-    // a = document.createElement('a');
-    // a.download = "test.json";
-    // a.href = window.URL.createObjectURL(blob);
-    // a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-    // //idk I copy pasted this code
-    // e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    // a.dispatchEvent(e);
-
   }
 
   isRecordingData = !isRecordingData;
 }
 
 
-
-
 function createrHeaderString(){
   let headerString = "";
 
-  for (let index = 0; index < 7; index++) {
+  for (let index = 0; index < moteuesDataChoice.length; index++) {
     let entry = moteuesDataChoice[index];
 
     if (entry.shouldRecordData.value == true) {
@@ -333,7 +282,8 @@ function checkboxClicked(name: String){
           v-bind:isSelected="item.isSelected.value"
           v-bind:value="item.dataValue.value"
           v-bind:shouldRecordData="item.shouldRecordData.value"
-          @checkboxClicked="checkboxClicked">
+          @checkboxClicked="checkboxClicked"
+          v-bind:shouldShowCheckBox="showCheckbox">
         </TelemetryDataDisplay>
       </div>
 
