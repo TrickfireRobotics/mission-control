@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject} from 'vue'
 import DropDownItem from "../components/DropDownItem.vue"
 import TelemetryDataDisplay from "../components/TelemetryDataDisplay.vue"
 import { render, h } from 'vue'
@@ -9,13 +9,17 @@ import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
 
-const props = defineProps(['moteusCANID', 'displayName', 'preset']);
+const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub']);
 
 const possiblePresets = ["FULL", "IMPORTANT"];
 
 const UPDATE_DATA_MS = 100;//Update the data ever 100ms
 let isRecordingData = false;
 let csvDataObjects :object[] = []
+
+
+let sub;
+let recordButtonText = ref("Start Recording")
 
 
 const moteuesDataChoice = [
@@ -73,6 +77,8 @@ const moteuesDataChoice = [
 
 function initialize() {
   moteuesDataChoice[0].dataValue.value = props.moteusCANID;
+
+  //console.log(sub)
   
 
   // FULL
@@ -97,34 +103,20 @@ function initialize() {
     moteuesDataChoice[6].isSelected.value = false;
   }
 
-  setupSubscriber()
   setInterval(readDataCallback, UPDATE_DATA_MS);
 
 };
 
-//let ros : ROSLIB.Ros;
-const ros = inject<Ros>('ros')
-let sub;
-
-function setupSubscriber(){
-  if (ros != null){
-    sub = missionControlSub(ros)
-  }
-
-}
-
 
 function readDataCallback(){
-  if (sub.value == "" || sub.value == undefined) {
+  if (props.dataSub.value == "" || props.dataSub.value == undefined) {
     return -1
   }
-
-  let json = JSON.parse(sub.value)
+  let json = JSON.parse(props.dataSub.value)
 
   // Moteus Entries
   for (let entry = 0; entry < json.moteusMotorLength; entry++){
     let moteusMotorEntry = json.moteusMotors[entry]
-
     
     //check if this entry is ours via canid
     if (moteusMotorEntry.canID == props.moteusCANID) {
@@ -135,6 +127,7 @@ function readDataCallback(){
       moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
       moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
 
+      
       if (isRecordingData) {
         let tempDataArray: any[] = [];
         
@@ -173,7 +166,7 @@ function itemClicked(itemName: String) {
 
 }
 
-let recordButtonText = ref("Start Recording")
+
 
 
 function recordButtonPressed(){
