@@ -1,8 +1,11 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import DropDownItem from "../components/DropDownItem.vue"
 import TelemetryDataDisplay from "../components/TelemetryDataDisplay.vue"
 import { render, h } from 'vue'
+//import controllerPub from '../../roslib/controllerPub';
+import missionControlSub from '../roslib/missionControlSub'
+import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
 
@@ -20,37 +23,37 @@ const moteuesDataChoice = [
   {
     prettyName: "Position",
     identifier: "position",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
   {
     prettyName: "Velocity",
     identifier: "velocity",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
   {
     prettyName: "Torque",
     identifier: "torque",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
   {
     prettyName: "Temperature",
     identifier: "temperature",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
   {
     prettyName: "Power",
     identifier: "power",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
   {
     prettyName: "Input Voltage",
     identifier: "inputVoltage",
-    dataValue: -1,
+    dataValue: ref(-1),
     isSelected: ref(false)
   },
 
@@ -83,12 +86,58 @@ function initialize() {
     moteuesDataChoice[6].isSelected.value = false;
   }
 
+  setupSubscriber()
+  setInterval(readDataCallback, 100);
+
 };
+
+//let ros : ROSLIB.Ros;
+const ros = inject<Ros>('ros')
+let sub;
+
+function setupSubscriber(){
+  if (ros != null){
+    sub = missionControlSub(ros)
+  }
+
+}
+
+
+function readDataCallback(){
+  //let json : any = JSON.stringify(sub.value)
+  let json = JSON.parse(sub.value)
+
+  // console.log("AAAAAAAAAAAAAAAAAAA")
+  // console.log(json)
+  
+  //console.log(json[0] + json[1] + json[2] + json[3] + json[4])
+
+  // Moteus Entries
+  for (let entry = 0; entry < json.moteusMotorLength; entry++){
+    let moteusMotorEntry = json.moteusMotors[entry]
+
+    
+    //check if this entry is ours via canid
+    if (moteusMotorEntry.canID == props.moteusCANID) {
+      console.log("BBBBBBBBBBBB")
+      console.log(moteusMotorEntry)
+      moteuesDataChoice[1].dataValue.value = String(moteusMotorEntry.position).replace("\"","").substring(0,4);
+      moteuesDataChoice[2].dataValue.value = String(moteusMotorEntry.velocity).replace("\"","").substring(0,4);
+      moteuesDataChoice[3].dataValue.value = String(moteusMotorEntry.torque).replace("\"","").substring(0,4);
+      moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).replace("\"","").substring(0,4);
+      moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).replace("\"","").substring(0,4);
+      moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).replace("\"","").substring(0,4);
+    }
+
+
+  }
+  
+}
 
 
 function itemClicked(itemName: String) {
   //alert(itemName)
-  let mything = getMoteusObject(itemName);
+  let mything = getMoteusDataObjectFromName(itemName);
   if (mything != null) {
     mything.isSelected.value = !mything.isSelected.value;
   }
@@ -96,7 +145,9 @@ function itemClicked(itemName: String) {
 
 }
 
-function getMoteusObject(itemName: String){
+
+
+function getMoteusDataObjectFromName(itemName: String){
   for (let index = 0; index < moteuesDataChoice.length; index++) {
     if (moteuesDataChoice[index].identifier == itemName) {
       return moteuesDataChoice[index];
