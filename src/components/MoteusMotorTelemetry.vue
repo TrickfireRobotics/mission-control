@@ -9,7 +9,7 @@ import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
 
-const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub', 'update_ms']);
+const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub', 'update_ms','showAllFeatures']);
 
 const possiblePresets = ["FULL", "IMPORTANT"];
 
@@ -79,6 +79,7 @@ const moteuesDataChoice = [
 
 function initialize() {
   moteuesDataChoice[0].dataValue.value = props.moteusCANID;
+
 
 
   // FULL
@@ -294,7 +295,7 @@ function checkboxClicked(name: String){
       </div>
 
       <div>
-        <button id="record_button" v-bind:class="{'record-button-green': !isRecordingData, 'record-button-red': isRecordingData}" @click="recordButtonPressed">{{ recordButtonText }}</button>
+        <button v-if="showAllFeatures" id="record_button" v-bind:class="{'record-button-green': !isRecordingData, 'record-button-red': isRecordingData}" @click="recordButtonPressed">{{ recordButtonText }}</button>
       </div>
 
     
@@ -306,7 +307,8 @@ function checkboxClicked(name: String){
           v-bind:value="item.dataValue.value"
           v-bind:shouldRecordData="item.shouldRecordData.value"
           @checkboxClicked="checkboxClicked"
-          v-bind:shouldShowCheckBox="showCheckbox">
+          v-bind:shouldShowCheckBox="showCheckbox"
+          v-bind:showAllFeatures="showAllFeatures">
         </TelemetryDataDisplay>
       </div>
 

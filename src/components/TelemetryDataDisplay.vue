@@ -1,16 +1,15 @@
 <script setup>
 
-    const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox']);
+    const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox', "showAllFeatures"]);
 
 </script>
 
 
 <template>
     <div v-if="isSelected" class="mycontainer">
-        <div>
-            <KeepAlive>
-                <input v-show="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
-            </KeepAlive>
+        <div >
+            <input v-if="showAllFeatures" v-show="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
+            
             <b>{{ itemName }}</b>
         </div>
         <b>{{ value }}</b>
