@@ -13,17 +13,24 @@ const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub', 'u
 
 const possiblePresets = ["FULL", "IMPORTANT"];
 
-//const UPDATE_DATA_MS = 100;//Update the data ever 100ms
 let isRecordingData = false;
+
+// We use this to fill up csv data
+//Each element is another array that holds the actual data
 let csvDataObjects :object[] = [];
 let showCheckbox = ref(true);
 
 let recordButtonText = ref("Start Recording")
 
-//let pollingData = setInterval(readDataCallback, 100);//default 4ms per browser
-let pollingData;
+let pollingData; //Used to keep track of the object id when we do setInterval
 
-
+/**
+ * This is used to store what kind of data we will be displaying
+ * and handling through the whole thing.
+ * 
+ * It should be possible to simply add another entry to this, and everyting should
+ * show up, assuming that the data recieved from the the rover also has these values
+ */
 const moteuesDataChoice = [
   {
     prettyName: "CAN ID",
@@ -80,8 +87,6 @@ const moteuesDataChoice = [
 function initialize() {
   moteuesDataChoice[0].dataValue.value = props.moteusCANID;
 
-
-
   // FULL
   if (props.preset == possiblePresets[0]) {
     moteuesDataChoice[0].isSelected.value = true;
@@ -104,14 +109,17 @@ function initialize() {
     moteuesDataChoice[6].isSelected.value = false;
   }
 
+  // We enter this interval for at least once
   pollingData = setInterval(readDataCallback, 500);//default 100
 
 };
 
-
+/**
+ * This reads in the JSON string from the subscriber
+ * 
+ * From here, we will update the data to display from the JSON
+ */
 function readDataCallback(){
-  //setTimeout(props.update_ms)
-  
 
   if (props.dataSub.value == "" || props.dataSub.value == undefined) {
     return -1
@@ -131,13 +139,15 @@ function readDataCallback(){
       moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
       moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
 
-      // Data recording stuff
+      // Data recording; only do it if recording
       if (isRecordingData) {
         let tempDataArray: any[] = [];
         
+        // Go through each possible entry
         for (let index = 0; index < moteuesDataChoice.length; index++) {
           let entry = moteuesDataChoice[index];
 
+          //If we have selected that entry to be recorded
           if (entry.shouldRecordData.value == true) {
 
             tempDataArray.push(entry.dataValue.value)
@@ -149,22 +159,26 @@ function readDataCallback(){
 
     }
 
-    clearInterval(pollingData)
+    //This code section is used to change the polling rate
+    clearInterval(pollingData);//Stop the interval
     
-    if (props.update_ms < 4) {
-      pollingData = setInterval(readDataCallback, 100)
+    if (props.update_ms < 4) {//So we dont break the thing by going slower. It is 4 because browser limitations
+      pollingData = setInterval(readDataCallback, 100);
     }
     else{
-      pollingData = setInterval(readDataCallback, props.update_ms)
+      pollingData = setInterval(readDataCallback, props.update_ms);
     }
-
-
-
   }
   
 }
 
-// Used for the dropdown menu
+
+/**
+ * Used for the dropdown menu
+ * We use this to select if we should display
+ * the entry targeted via itemName
+ * 
+ */
 function itemClicked(itemName: String) {
   let mything = getMoteusDataObjectFromIdentifier(itemName);
   if (mything != null) {
@@ -174,6 +188,11 @@ function itemClicked(itemName: String) {
 
 }
 
+/**
+ * Handles the recording.
+ * 
+ * After stopping the recording, it will build the csv file
+ */
 function recordButtonPressed(){
   if (!isRecordingData) {
     recordButtonText.value = "Stop Recording" 
@@ -191,10 +210,13 @@ function recordButtonPressed(){
     let csvString = "";
     csvString += createrHeaderString();
 
+    // Fill in the values
     for (let fullEntryIndex = 0; fullEntryIndex < csvDataObjects.length; fullEntryIndex++) {
+      //Grabs the data array entry from the list of data (csvDataObjects)
       let entryArray = csvDataObjects[fullEntryIndex];
       let entryString = ""
 
+      //Builds the line
       for (let dataIndex = 0; dataIndex < entryArray.length; dataIndex++) {
         entryString += "" + entryArray[dataIndex] + ","
       }
@@ -205,11 +227,12 @@ function recordButtonPressed(){
 
     }
 
+    // This is used to download the file
     const blob = new Blob([csvString], {type: 'text.csv'})
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     let now = new Date()
-    a.download = props.displayName + " " + now.getHours() % 12 + "_" + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes()) + ".csv"
+    a.download = props.displayName + " " + now.getHours() % 12 + "_" + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes()) + "_" + now.getSeconds() + ".csv"
     a.href = url;
     a.click();
 
@@ -218,7 +241,10 @@ function recordButtonPressed(){
   isRecordingData = !isRecordingData;
 }
 
-
+/**
+ * Creates the csv header based on the 
+ * selected data to record
+ */
 function createrHeaderString(){
   let headerString = "";
 
@@ -255,6 +281,10 @@ function getMoteusDataObjectFromName(itemName: String){
   return null;
 }
 
+/**
+ * Used as a callback for the checkboxes
+ * All this does it hold the logical state
+ */
 function checkboxClicked(name: String){
   let dataEntry = getMoteusDataObjectFromName(name)
   if (dataEntry != null) {

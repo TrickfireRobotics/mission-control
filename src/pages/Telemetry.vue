@@ -5,6 +5,8 @@
   import {ref, onMounted, inject} from 'vue'
   import { Ros } from 'roslib';
 
+  // We will pass one single subscriber to all the children in order to prevent
+  // subscriber spam
   const ros = inject<Ros>('ros')
   let subscriberData : any = ref(null);
   let update_time_ms = ref(100)
@@ -15,12 +17,7 @@
     if (ros != null){
       subscriberData.value = missionControlSub(ros)
     }
-
-
   }
-
-
-
 
 
 </script>
@@ -31,6 +28,7 @@
       <input class="period-input" min="4" v-model="update_time_ms" type="number" title="Number of milliseconds between each time it polls for data. Affects recording as well"/>
     </div>
     <div class="page">
+      <!-- Idk why, but in order to NOT showAllFeatures, do showAllFeatures="" <- writing anything besides an empty string does not work to make it "false" -->
       <MoteusMotorTelemetry class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="25" displayName="Front Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="24" displayName="Mid Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="23" displayName="Back Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>

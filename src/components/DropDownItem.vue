@@ -1,27 +1,6 @@
-<script>
-    import { ref, onMounted } from 'vue'
-
-    export default{
-        props: {
-            itemName: String,
-            isSelected: Boolean
-        }
-    }
-
-    
-
-
-    
+<script setup>
+  const props = defineProps(['itemName', 'isSelected']);    
 </script>
-
-<!--script setup>
-    var isSelected = ref(false);
-
-    defineExpose({
-        isSelected
-    })
-</script-->
-
 
 
 <template>
