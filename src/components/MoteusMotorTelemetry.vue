@@ -187,7 +187,13 @@ function recordButtonPressed(){
 
     }
 
-    console.log(csvString)
+    const blob = new Blob([csvString], {type: 'text.csv'})
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    let now = new Date()
+    a.download = props.displayName + " " + now.getHours() % 12 + "_" + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes()) + ".csv"
+    a.href = url;
+    a.click();
 
   }
 
