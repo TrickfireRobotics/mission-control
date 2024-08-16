@@ -17,10 +17,10 @@ const test = ref<number>(10001);
 
 // Create ros object to communicate over your Rosbridge connection
 // local host development
-const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
+//const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
 
 // Connects to the router
-// const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
+ const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
 
 // Connects to rover
 // const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
@@ -38,7 +38,11 @@ const exampleData = exampleSub(ros);
 
 <template>
   <Navbar />
-  <RouterView />
+  <router-view v-slot="{ Component }">
+    <KeepAlive>
+      <component :is="Component"></component>
+    </KeepAlive>
+  </router-view>
 </template>
 
 <style lang="scss">
