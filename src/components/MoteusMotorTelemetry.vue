@@ -9,16 +9,20 @@ import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
 
-const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub']);
+const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub', 'update_ms']);
 
 const possiblePresets = ["FULL", "IMPORTANT"];
 
-const UPDATE_DATA_MS = 100;//Update the data ever 100ms
+//const UPDATE_DATA_MS = 100;//Update the data ever 100ms
 let isRecordingData = false;
 let csvDataObjects :object[] = [];
 let showCheckbox = ref(true);
 
 let recordButtonText = ref("Start Recording")
+
+//let pollingData = setInterval(readDataCallback, 100);//default 4ms per browser
+let pollingData;
+
 
 const moteuesDataChoice = [
   {
@@ -99,12 +103,15 @@ function initialize() {
     moteuesDataChoice[6].isSelected.value = false;
   }
 
-  setInterval(readDataCallback, UPDATE_DATA_MS);
+  pollingData = setInterval(readDataCallback, 500);//default 100
 
 };
 
 
 function readDataCallback(){
+  //setTimeout(props.update_ms)
+  
+
   if (props.dataSub.value == "" || props.dataSub.value == undefined) {
     return -1
   }
@@ -140,6 +147,16 @@ function readDataCallback(){
       }
 
     }
+
+    clearInterval(pollingData)
+    
+    if (props.update_ms < 4) {
+      pollingData = setInterval(readDataCallback, 100)
+    }
+    else{
+      pollingData = setInterval(readDataCallback, props.update_ms)
+    }
+
 
 
   }
