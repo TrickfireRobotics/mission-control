@@ -1,8 +1,12 @@
 <!-- 3D model of the arm, camera arms, Any information related to the arm should be here  -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import ArmModeSelection from '../components/ArmModeSelection.vue'
+</script>
 <template>
+
+
   <div class="page">
-    <h1>Not yet Implemented</h1>
+    <ArmModeSelection></ArmModeSelection>
   </div>
 </template>
 
