@@ -81,6 +81,20 @@ const moteuesDataChoice = [
     isSelected: ref(false),
     shouldRecordData: ref(false)
   },
+  {
+    prettyName: "Q Current",
+    identifier: "qCurrent",
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
+  },
+  {
+    prettyName: "D Current",
+    identifier: "dCurrent",
+    dataValue: ref("N/A"),
+    isSelected: ref(false),
+    shouldRecordData: ref(false)
+  }
 
 ]
 
@@ -96,6 +110,8 @@ function initialize() {
     moteuesDataChoice[4].isSelected.value = true;
     moteuesDataChoice[5].isSelected.value = true;
     moteuesDataChoice[6].isSelected.value = true;
+    moteuesDataChoice[7].isSelected.value = true;
+    moteuesDataChoice[8].isSelected.value = true;
 
   }
   // IMPORTANT
@@ -107,6 +123,8 @@ function initialize() {
     moteuesDataChoice[4].isSelected.value = false;
     moteuesDataChoice[5].isSelected.value = false;
     moteuesDataChoice[6].isSelected.value = false;
+    moteuesDataChoice[7].isSelected.value = false;
+    moteuesDataChoice[8].isSelected.value = false;
   }
 
   // We enter this interval for at least once
@@ -138,6 +156,8 @@ function readDataCallback(){
       moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).substring(0,6);
       moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0,6);
       moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0,6);
+      moteuesDataChoice[7].dataValue.value = String(moteusMotorEntry.qCurrent).substring(0,6);
+      moteuesDataChoice[8].dataValue.value = String(moteusMotorEntry.dCurrent).substring(0,6);
 
       // Data recording; only do it if recording
       if (isRecordingData) {
