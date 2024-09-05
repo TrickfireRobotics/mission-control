@@ -37,63 +37,63 @@ const moteuesDataChoice = [
     identifier: "canID",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Position",
     identifier: "position",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Velocity",
     identifier: "velocity",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Torque",
     identifier: "torque",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Temperature",
     identifier: "temperature",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Power",
     identifier: "power",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Input Voltage",
     identifier: "inputVoltage",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "Q Current",
     identifier: "qCurrent",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   },
   {
     prettyName: "D Current",
     identifier: "dCurrent",
     dataValue: ref("N/A"),
     isSelected: ref(false),
-    shouldRecordData: ref(false)
+    shouldRecordData: ref(true)
   }
 
 ]

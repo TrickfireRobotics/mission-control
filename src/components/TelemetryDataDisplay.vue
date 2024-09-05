@@ -8,7 +8,7 @@
 <template>
     <div v-if="isSelected" class="mycontainer">
         <div >
-            <input v-if="showAllFeatures" v-show="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
+            <input checked v-if="showAllFeatures" v-show="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
             <b>{{ itemName }}</b>
         </div>
         <b>{{ value }}</b>
