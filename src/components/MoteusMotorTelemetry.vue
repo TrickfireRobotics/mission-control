@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, inject} from 'vue'
+import { ref, onMounted, inject, defineExpose} from 'vue'
 import DropDownItem from "../components/DropDownItem.vue"
 import TelemetryDataDisplay from "../components/TelemetryDataDisplay.vue"
 import { render, h } from 'vue'
@@ -312,6 +312,8 @@ function checkboxClicked(name: String){
     console.log(name + "" + dataEntry.shouldRecordData.value)
   }
 }
+
+defineExpose({recordButtonPressed})
 
 </script>
 
