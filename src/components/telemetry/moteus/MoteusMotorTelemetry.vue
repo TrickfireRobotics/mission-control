@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { ref, onMounted, inject, defineExpose} from 'vue'
-import DropDownItem from "../components/DropDownItem.vue"
-import TelemetryDataDisplay from "../components/TelemetryDataDisplay.vue"
+import DropDownItem from "./DropDownItem.vue"
+import TelemetryDataDisplay from "./TelemetryDataDisplay.vue"
 import { render, h } from 'vue'
 //import controllerPub from '../../roslib/controllerPub';
-import missionControlSub from '../roslib/missionControlSub'
+import missionControlSub from '../../../roslib/missionControlSub'
+import {SaveCSVData} from '../../../script/saveCSVData'
 import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
@@ -14,6 +15,7 @@ const props = defineProps(['moteusCANID', 'displayName', 'preset', 'dataSub', 'u
 const possiblePresets = ["FULL", "IMPORTANT"];
 
 let isRecordingData = false;
+let csvData;
 
 // We use this to fill up csv data
 //Each element is another array that holds the actual data
@@ -100,6 +102,7 @@ const moteuesDataChoice = [
 
 function initialize() {
   moteuesDataChoice[0].dataValue.value = props.moteusCANID;
+  csvData = new SaveCSVData()
 
   // FULL
   if (props.preset == possiblePresets[0]) {
@@ -143,6 +146,7 @@ function readDataCallback(){
     return -1
   }
   let json = JSON.parse(props.dataSub.value)
+  
 
   // Moteus Entries
   for (let entry = 0; entry < json.moteusMotorLength; entry++){
@@ -174,7 +178,8 @@ function readDataCallback(){
 
           }
         }
-        csvDataObjects.push(tempDataArray)
+        csvData.addDataEntry(tempDataArray);
+        //csvDataObjects.push(tempDataArray)
       }
 
     }
@@ -218,43 +223,59 @@ function recordButtonPressed(){
     recordButtonText.value = "Stop Recording" 
     showCheckbox.value = false;
 
+    csvData = new SaveCSVData()
+
+    let header :string[] = [];
+
+    for (let index = 0; index < moteuesDataChoice.length; index++) {
+      let entry = moteuesDataChoice[index];
+
+      if (entry.shouldRecordData.value == true) {
+        header.push(entry.identifier)
+      }
+    }
+
+    csvData.setHeader(header)
+
     // reset the data
-    csvDataObjects = []
+    //csvDataObjects = []
 
   }
   else {
     recordButtonText.value = "Start Recording" 
     showCheckbox.value = true
 
+    csvData.saveToFile(props.displayName);
+
     //Create and save the file
-    let csvString = "";
-    csvString += createrHeaderString();
+    // let csvString = "";
+    // csvString += createrHeaderString();
 
-    // Fill in the values
-    for (let fullEntryIndex = 0; fullEntryIndex < csvDataObjects.length; fullEntryIndex++) {
-      //Grabs the data array entry from the list of data (csvDataObjects)
-      let entryArray = csvDataObjects[fullEntryIndex];
-      let entryString = ""
+    // // Fill in the values
+    // for (let fullEntryIndex = 0; fullEntryIndex < csvDataObjects.length; fullEntryIndex++) {
+    //   //Grabs the data array entry from the list of data (csvDataObjects)
+    //   let entryArray = csvDataObjects[fullEntryIndex];
+    //   let entryString = ""
 
-      //Builds the line
-      for (let dataIndex = 0; dataIndex < entryArray.length; dataIndex++) {
-        entryString += "" + entryArray[dataIndex] + ","
-      }
+    //   //Builds the line
+    //   for (let dataIndex = 0; dataIndex < entryArray.length; dataIndex++) {
+    //     entryString += "" + entryArray[dataIndex] + ","
+    //   }
 
-      entryString = entryString.substring(0, entryString.length - 1) + "\n"
+    //   entryString = entryString.substring(0, entryString.length - 1) + "\n"
 
-      csvString += entryString
+    //   csvString += entryString
 
-    }
+    //}
 
-    // This is used to download the file
-    const blob = new Blob([csvString], {type: 'text.csv'})
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    let now = new Date()
-    a.download = props.displayName + " " + now.getHours() % 12 + "_" + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes()) + "_" + now.getSeconds() + ".csv"
-    a.href = url;
-    a.click();
+    // // This is used to download the file
+    // const blob = new Blob([csvString], {type: 'text.csv'})
+    // const url = URL.createObjectURL(blob);
+    // const a = document.createElement('a');
+    // let now = new Date()
+    // a.download = props.displayName + " " + now.getHours() % 12 + "_" + ((now.getMinutes() < 10 ? '0' : '') + now.getMinutes()) + "_" + now.getSeconds() + ".csv"
+    // a.href = url;
+    // a.click();
 
   }
 
