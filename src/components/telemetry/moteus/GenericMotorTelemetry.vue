@@ -54,8 +54,7 @@ function initialize() {
 
 
 function updateUIWithNewData(jsonString) {
-  let result = props.dataSourceMethod(props.dataSourceParamater)
-  console.log(result)
+  let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback)
 
   // let json = JSON.parse(jsonString)
   // // Moteus Entries
@@ -79,6 +78,10 @@ function updateUIWithNewData(jsonString) {
   // }
   
 
+}
+
+function dataCallback(result){
+  console.log(result)
 }
 
 function constructRecordingEntry(){
