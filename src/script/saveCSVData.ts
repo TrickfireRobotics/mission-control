@@ -20,7 +20,7 @@ class SaveCSVData{
 
     saveToFile(displayName:string){
         let csvString = "";
-        csvString += this.header.toString()
+        csvString += this.header.toString() + "\n"
 
         // Fill in the values
         for (let fullEntryIndex = 0; fullEntryIndex < this.csvDataObjects.length; fullEntryIndex++) {

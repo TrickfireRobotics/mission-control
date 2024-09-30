@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import ROSLIB, { Ros } from 'roslib';
 import { ref, onMounted, inject } from 'vue'
- import genericPub from '../roslib/genericPub'
+import genericPub from '../roslib/genericPub'
 
 const myRos = inject<Ros>('ros')
 
 
 onMounted(() => initialize());
 
-let armModeService : ROSLIB.Service;
+let armModeService: ROSLIB.Service;
 
 
 /**
@@ -39,7 +39,7 @@ function getCurrentArmMode() {
         input: 1
     }
 
-    armModeService.callService(request, function(result) {
+    armModeService.callService(request, function (result) {
         console.log("Result from service " + result.current_mode)
         current_arm_mode.value = result.current_mode
         //isLoaded.value = true
@@ -49,11 +49,11 @@ function getCurrentArmMode() {
 }
 
 
-function changeArmMode(targetMode : Number){
+function changeArmMode(targetMode: Number) {
     console.log("Target mode wanted" + targetMode)
 
     if (myRos != null) {
-        genericPub(myRos,targetMode, "update_arm_mode","std_msgs/Int32")
+        genericPub(myRos, targetMode, "update_arm_mode", "std_msgs/Int32")
         getCurrentArmMode()
     }
 }
@@ -69,10 +69,17 @@ function changeArmMode(targetMode : Number){
             </div>
             <div>
                 <!--button class="button-mode" @click="sendRequest">TEST</button-->
-                <button @click="changeArmMode(0)" v-bind:class="{'button-mode-unselected': current_arm_mode != 0, 'button-mode-selected': current_arm_mode == 0,}">Disabled</button>
-                <button @click="changeArmMode(1)" v-bind:class="{'button-mode-unselected': current_arm_mode != 1, 'button-mode-selected': current_arm_mode == 1,}">Individual Motor Control (Velocity)</button>
-                <button @click="changeArmMode(2)" v-bind:class="{'button-mode-unselected': current_arm_mode != 2, 'button-mode-selected': current_arm_mode == 2,}">Individual Motor Control (Position)</button>
-                <button @click="changeArmMode(3)" v-bind:class="{'button-mode-unselected': current_arm_mode != 3, 'button-mode-selected': current_arm_mode == 3,}">Inverse Kinematics</button>
+                <button @click="changeArmMode(0)"
+                    v-bind:class="{ 'button-mode-unselected': current_arm_mode != 0, 'button-mode-selected': current_arm_mode == 0, }">Disabled</button>
+                <button @click="changeArmMode(1)"
+                    v-bind:class="{ 'button-mode-unselected': current_arm_mode != 1, 'button-mode-selected': current_arm_mode == 1, }">Individual
+                    Motor Control (Velocity)</button>
+                <button @click="changeArmMode(2)"
+                    v-bind:class="{ 'button-mode-unselected': current_arm_mode != 2, 'button-mode-selected': current_arm_mode == 2, }">Individual
+                    Motor Control (Position)</button>
+                <button @click="changeArmMode(3)"
+                    v-bind:class="{ 'button-mode-unselected': current_arm_mode != 3, 'button-mode-selected': current_arm_mode == 3, }">Inverse
+                    Kinematics</button>
             </div>
         </div>
     </div>
@@ -106,7 +113,7 @@ function changeArmMode(targetMode : Number){
     border-radius: 10px;
 }
 
-.button-mode-selected{
+.button-mode-selected {
     margin: 5px;
     background-color: rgb(48, 182, 48);
     color: white;
@@ -123,5 +130,4 @@ function changeArmMode(targetMode : Number){
 .button-mode-selected:hover {
     background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
 }
-
 </style>
