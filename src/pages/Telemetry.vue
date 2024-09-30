@@ -4,6 +4,7 @@
   import missionControlSub from '../roslib/missionControlSub'
   import {ref, onMounted, inject, defineExpose} from 'vue'
   import { Ros } from 'roslib';
+  import { RobotInfo } from '../script/interface/robotInfo'
 
   let moteusMotors = [
     {
@@ -66,22 +67,36 @@
   let update_time_ms = ref(100)
 
   let recordingAll = ref(false)
+  let isFinishedLoading = ref(false)
 
   const myChild = ref(null)
 
+  let robotInfo;
+
   onMounted(() => initialize());
 
-  function initialize(){
+  let myRos = inject<Ros>('ros')
 
+  function initialize(){
+    if (myRos != null) {
+      robotInfo = new RobotInfo(myRos);
+    }
+
+    isFinishedLoading.value = true;
   }
 
   function recordAllPressed(){
+    if (myChild.value == null) {
+      return;
+    }
+
     for (let index = 0; index < myChild.value.length; index++) {
       myChild.value[index].recordButtonPressed()
     }
 
     recordingAll.value = !recordingAll.value;
   }
+
 
 
 </script>
@@ -108,6 +123,9 @@
         v-bind:update_ms="update_time_ms"
         v-bind:motorType="item.controller"
         ref="myChild"
+        v-bind:dataSourceMethod="robotInfo.getMoteusMotorState"
+        v-bind:dataSourceParamater="item.canfdID"
+        v-if="isFinishedLoading"
         >
       </GenericMotorTelemetry>
       
