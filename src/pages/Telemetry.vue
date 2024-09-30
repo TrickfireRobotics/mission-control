@@ -1,40 +1,85 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
-  import MoteusMotorTelemetry from '../components/telemetry/moteus/MoteusMotorTelemetry.vue'
+  import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue'
   import missionControlSub from '../roslib/missionControlSub'
   import {ref, onMounted, inject, defineExpose} from 'vue'
   import { Ros } from 'roslib';
 
-  // We will pass one single subscriber to all the children in order to prevent
-  // subscriber spam
-  const ros = inject<Ros>('ros')
-  let subscriberData : any = ref(null);
+  let moteusMotors = [
+    {
+      displayName: "Front Left Drive Motor",
+      canfdID : 25,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Mid Left Drive Motor",
+      canfdID : 24,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Back Left Drive Motor",
+      canfdID : 23,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Front Right Drive Motor",
+      canfdID : 22,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Mid Right Drive Motor",
+      canfdID : 21,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Back Right Drive Motor",
+      canfdID : 20,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Arm Shoulder",
+      canfdID : 1,
+      controller: "Moteus n1"
+    },
+    {
+      displayName: "Arm Elbow",
+      canfdID : 2,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Arm Left Wrist",
+      canfdID : 3,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Arm Right Wrist",
+      canfdID : 4,
+      controller: "Moteus r4.11"
+    },
+    {
+      displayName: "Arm Turntable",
+      canfdID : 5,
+      controller: "Moteus r4.11"
+    }
+  ]
+
   let update_time_ms = ref(100)
 
   let recordingAll = ref(false)
 
-  const child1 = ref(null)
-  const child2 = ref(null)
-  const child3 = ref(null)
-  const child4 = ref(null)
-  const child5 = ref(null)
-  const child6 = ref(null)
-  const child7 = ref(null)
-  const child8 = ref(null)
-  const child9 = ref(null)
-  const child10 = ref(null)
-  const child11 = ref(null)
-  
+  const myChild = ref(null)
 
   onMounted(() => initialize());
 
   function initialize(){
-    if (ros != null){
-      subscriberData.value = missionControlSub(ros)
-    }
+
   }
 
   function recordAllPressed(){
+    for (let index = 0; index < myChild.value.length; index++) {
+      myChild.value[index].recordButtonPressed()
+    }
+
     recordingAll.value = !recordingAll.value;
   }
 
@@ -43,29 +88,32 @@
 <template>
   <div>
     <div class="period-input-container">
-      <!--button @click="myChild.recordButtonPressed(), recordAllPressed()" v-bind:class="{'record-button-green': !recordingAll, 'record-button-red': recordingAll}">Record all</button-->
-      <button @click="
-        child1.recordButtonPressed(), 
-        child2.recordButtonPressed(),
-        child3.recordButtonPressed(),
-        child4.recordButtonPressed(),
-        child5.recordButtonPressed(),
-        child6.recordButtonPressed(),
-        child7.recordButtonPressed(),
-        child8.recordButtonPressed(),
-        child9.recordButtonPressed(),
-        child10.recordButtonPressed(),
-        child11.recordButtonPressed(),
-        recordAllPressed()" 
+        <button @click="
+        recordAllPressed()
+        " 
         v-bind:class="{'record-button-green': !recordingAll, 'record-button-red': recordingAll}">Record all</button>
+
     </div>
     <div class="period-input-container">
       <b class="period-text">Update Delay in ms</b>
       <input class="period-input" min="4" v-model="update_time_ms" type="number" title="Number of milliseconds between each time it polls for data. Affects recording as well"/>
     </div>
     <div class="page">
+
+      <GenericMotorTelemetry
+        class="telemetry-motor"
+        v-for="(item) in moteusMotors"
+        v-bind:displayName="item.displayName"
+        v-bind:showAllFeatures="true"
+        v-bind:update_ms="update_time_ms"
+        v-bind:motorType="item.controller"
+        ref="myChild"
+        >
+      </GenericMotorTelemetry>
+      
+
       <!-- Idk why, but in order to NOT showAllFeatures, do showAllFeatures="" <- writing anything besides an empty string does not work to make it "false" -->
-      <MoteusMotorTelemetry ref="child1" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="25" displayName="Front Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
+      <!--MoteusMotorTelemetry ref="child1" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" moteusCANID="25" displayName="Front Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry ref="child2" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="24" displayName="Mid Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry ref="child3" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="23" displayName="Back Left Drive Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry ref="child4" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="22" displayName="Front Right Drive Motor" preset="FULL"></MoteusMotorTelemetry>
@@ -75,7 +123,7 @@
       <MoteusMotorTelemetry ref="child8" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="2" displayName="Elbow Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry ref="child9" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="3" displayName="Left Wrist Motor" preset="FULL"></MoteusMotorTelemetry>
       <MoteusMotorTelemetry ref="child10" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="4" displayName="Right Wrist Motor" preset="FULL"></MoteusMotorTelemetry>
-      <MoteusMotorTelemetry ref="child11" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="5" displayName="Turntable Motor" preset="FULL"></MoteusMotorTelemetry>
+      <MoteusMotorTelemetry ref="child11" class="moteus-motor" showAllFeatures="true" v-bind:update_ms="update_time_ms" v-bind:dataSub="subscriberData" moteusCANID="5" displayName="Turntable Motor" preset="FULL"></MoteusMotorTelemetry-->
 
     </div>
     
@@ -130,7 +178,7 @@
   margin-right: 5px;
 }
 
-.moteus-motor{
+.telemetry-motor{
   margin: 5px  
 }
 </style>
