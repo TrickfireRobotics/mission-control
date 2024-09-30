@@ -10,7 +10,14 @@ import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
 
-const props = defineProps(['displayName', 'dataSourceMethod', 'update_ms', 'showAllFeatures', 'motorType']);
+const props = defineProps({
+  displayName: String,
+  dataSourceMethod: Function,
+  dataSourceParamater: String,
+  update_ms: String,
+  showAllFeatures: Boolean,
+  motorType: String,
+});
 
 
 let isRecordingData = false;
@@ -42,31 +49,34 @@ const moteuesDataChoice = ref([])
 function initialize() {
   csvData = new SaveCSVData()
 
-
+  setInterval(updateUIWithNewData,500);
 };
 
 
 function updateUIWithNewData(jsonString) {
-  let json = JSON.parse(jsonString)
-  // Moteus Entries
+  let result = props.dataSourceMethod(props.dataSourceParamater)
+  console.log(result)
 
-  function updateEntry(target, dataRaw){
-    if (dataRaw == null) {
-      target = String("N/A")
-      return
-    }
+  // let json = JSON.parse(jsonString)
+  // // Moteus Entries
 
-    target = String(parseInt((dataRaw).toFixed(5)))
-  }
+  // function updateEntry(target, dataRaw){
+  //   if (dataRaw == null) {
+  //     target = String("N/A")
+  //     return
+  //   }
+
+  //   target = String(parseInt((dataRaw).toFixed(5)))
+  // }
 
 
-  //check if this entry is ours via canid
-  if (true) {
-    // Data recording; only do it if recording
-    if (isRecordingData) {
-      constructRecordingEntry()
-    }
-  }
+  // //check if this entry is ours via canid
+  // if (true) {
+  //   // Data recording; only do it if recording
+  //   if (isRecordingData) {
+  //     constructRecordingEntry()
+  //   }
+  // }
   
 
 }
@@ -277,7 +287,7 @@ defineExpose({ recordButtonPressed })
 
     <div class="flex-container flex-vertical">
       <div class="moteus-reminder">Type: <b>{{ motorType }}</b></div>
-      
+
       <TelemetryDataDisplay v-for="(item) in moteuesDataChoice" v-bind:itemName="item.prettyName"
         v-bind:isSelected="item.isSelected" v-bind:value="item.dataValue"
         v-bind:shouldRecordData="item.shouldRecordData" @checkboxClicked="checkboxClicked"
