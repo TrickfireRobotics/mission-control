@@ -3,10 +3,11 @@ import ROSLIB from 'roslib';
 class RobotInfo{
 
     myROS = null;
-    getMoteusMotorStateService;
+    getMoteusMotorStateService = null;
 
     constructor(givenROS){
         this.myROS = givenROS;
+        
         
         if (this.myROS != null) {
             this.getMoteusMotorStateService = new ROSLIB.Service({
@@ -15,19 +16,20 @@ class RobotInfo{
                 serviceType: "MoteusState"
             })
         }   
+
+        
     }
 
-    getMoteusMotorState(canfdID : Number){
+    getMoteusMotorState(canfdID : Number, callback){
         //console.log("I AM REQUSTING MOTEUS STUFF")
         var request = {
             target_can_id: canfdID
         }
 
-        console.log(this.getMoteusMotorStateService)
+
+
         
-        this.getMoteusMotorStateService.callService(request, function (result) {
-            return result.json_payload;
-        })
+        this.getMoteusMotorStateService.callService(request, callback)
     }
 
     getRMDx8MotorState(can2ID : Number){

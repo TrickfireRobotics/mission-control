@@ -97,6 +97,10 @@
     recordingAll.value = !recordingAll.value;
   }
 
+  function getMoteusStateProxy(param,dataCallback){
+    return robotInfo.getMoteusMotorState(param,dataCallback)
+  }
+
 
 
 </script>
@@ -123,7 +127,7 @@
         v-bind:update_ms="update_time_ms"
         v-bind:motorType="item.controller"
         ref="myChild"
-        v-bind:dataSourceMethod="robotInfo.getMoteusMotorState"
+        v-bind:dataSourceMethod="getMoteusStateProxy"
         v-bind:dataSourceParamater="item.canfdID"
         v-if="isFinishedLoading"
         >
