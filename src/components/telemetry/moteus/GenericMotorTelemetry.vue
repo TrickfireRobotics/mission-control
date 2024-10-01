@@ -43,13 +43,23 @@ const myRos = inject<Ros>('ros')
  */
 
 
-const moteuesDataChoice = ref([])
+const moteuesDataChoice = ref([
+    {
+      prettyName: "yes",
+      identifier: "yes",
+      dataValue: "69420",
+      isSelected: true,
+      shouldRecordData: true
+    }
+])
+let hasBuiltMoteusDataChoice = false;
 
 
 function initialize() {
   csvData = new SaveCSVData()
 
-  setInterval(updateUIWithNewData,500);
+  //setInterval(updateUIWithNewData, props.update_ms);
+  setInterval(updateUIWithNewData, 10);
 };
 
 
@@ -81,8 +91,61 @@ function updateUIWithNewData(jsonString) {
 }
 
 function dataCallback(result){
-  console.log(result)
+  if (!hasBuiltMoteusDataChoice) {
+    hasBuiltMoteusDataChoice = true;
+    buildMoteusDataChoice(result)
+  }
+
+  //update the data
+  let json = JSON.parse(result.json_payload)
+
+  for (const key in json) {
+    if (json.hasOwnProperty(key)) {
+      let object = getMoteusDataObjectFromIdentifier(key)
+      if (object != null){
+        object.dataValue = json[key].toString().substring(0,6)
+
+      }
+    }
+  }
+
+  
 }
+
+
+function buildMoteusDataChoice(result){
+  //console.log(result.json_payload)
+  let json = JSON.parse(result.json_payload)
+  
+  for(const key in json){
+
+    let entry = {
+      prettyName: "prettyName",
+      identifier: "identifier",
+      dataValue: "dataValue",
+      isSelected: true,
+      shouldRecordData: true
+    };
+
+    if(json.hasOwnProperty(key)){
+      entry.prettyName = key;
+      entry.identifier = key;
+      entry.dataValue = json[key];
+
+      //Object.assign({}, entry, {key: json[key]})
+
+
+      moteuesDataChoice.value.push(entry);
+
+      //console.log(entry)
+
+      //console.log("" + key + ": " + json[key])
+    }
+  }
+
+}
+
+
 
 function constructRecordingEntry(){
   let tempDataArray: any[] = [];
@@ -224,8 +287,8 @@ function recordButtonPressed() {
 
 function getMoteusDataObjectFromIdentifier(itemName: String) {
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    if (moteuesDataChoice[index].identifier == itemName) {
-      return moteuesDataChoice[index];
+    if (moteuesDataChoice.value[index].identifier == itemName) {
+      return moteuesDataChoice.value[index];
     }
   }
 
