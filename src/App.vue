@@ -34,7 +34,7 @@ provide('isGamepadConnected', isGamepadConnected);
 provide('cameras', cameras);
 examplePub(ros, test.value);
 
-heartbeatPub(ros, true, 500); // 0.5s
+heartbeatPub(ros, true, 1000); // 1s
 
 const exampleData = exampleSub(ros);
 </script>
