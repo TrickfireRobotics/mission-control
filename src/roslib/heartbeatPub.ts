@@ -16,12 +16,6 @@ export default function heartbeatPub(ros: ROSLIB.Ros, input: boolean, interval: 
   });
 
   setInterval(() => {
-    heartbeat_topic.publish(heartbeatData), interval;
-    console.log("Heartbeat message published"); // uncomment if publisher debugging is needed
-  });
-
-
-  setInterval(() => {
     heartbeat_topic.publish(heartbeatData);
     console.log("Heartbeat message published"); // Uncomment if publisher debugging is needed
   }, interval);
