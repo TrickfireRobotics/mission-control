@@ -17,10 +17,10 @@ const test = ref<number>(10001);
 
 // Create ros object to communicate over your Rosbridge connection
 // local host development
-//const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
+// const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
 
 // Connects to the router
- const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
+const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
 
 // Connects to rover
 // const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
@@ -33,6 +33,9 @@ provide('ros', ros);
 provide('isGamepadConnected', isGamepadConnected);
 provide('cameras', cameras);
 examplePub(ros, test.value);
+
+heartbeatPub(ros, true, 1000); // 1s
+
 const exampleData = exampleSub(ros);
 </script>
 
