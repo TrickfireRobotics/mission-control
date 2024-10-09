@@ -1,12 +1,6 @@
 <script setup>
     import { ref, onMounted, inject, defineExpose } from 'vue'
 
-    onMounted(() => initialize());
-
-    function initialize(){
-        console.log("CREATING DATA DISPLAY")
-    }
-
     const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox', "showAllFeatures"]);
 
 </script>
