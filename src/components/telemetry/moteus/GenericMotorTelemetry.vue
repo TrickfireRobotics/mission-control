@@ -43,50 +43,36 @@ const myRos = inject<Ros>('ros')
  */
 
 
-const moteuesDataChoice = ref([
-    {
-      prettyName: "yes",
-      identifier: "yes",
-      dataValue: "69420",
-      isSelected: true,
-      shouldRecordData: true
-    }
-])
+const moteuesDataChoice = ref([])
 let hasBuiltMoteusDataChoice = false;
 
 
 function initialize() {
   csvData = new SaveCSVData()
-
-  //setInterval(updateUIWithNewData, props.update_ms);
-  setInterval(updateUIWithNewData, 10);
+  pollingData = setInterval(updateUIWithNewData, props.update_ms);
 };
 
 
 function updateUIWithNewData(jsonString) {
-  let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback)
+  if (props.dataSourceMethod != undefined) {
+    let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback)
+  }
 
-  // let json = JSON.parse(jsonString)
-  // // Moteus Entries
-
-  // function updateEntry(target, dataRaw){
-  //   if (dataRaw == null) {
-  //     target = String("N/A")
-  //     return
-  //   }
-
-  //   target = String(parseInt((dataRaw).toFixed(5)))
-  // }
+  if (isRecordingData) {
+    constructRecordingEntry();
+  }
 
 
-  // //check if this entry is ours via canid
-  // if (true) {
-  //   // Data recording; only do it if recording
-  //   if (isRecordingData) {
-  //     constructRecordingEntry()
-  //   }
-  // }
-  
+
+  //This code section is used to change the polling rate
+  clearInterval(pollingData);//Stop the interval
+    
+  if (props.update_ms < 4) {//So we dont break the thing by going slower. It is 4 because browser limitations
+    pollingData = setInterval(updateUIWithNewData, 4);
+  }
+  else{
+    pollingData = setInterval(updateUIWithNewData, props.update_ms);
+  }
 
 }
 
@@ -102,9 +88,22 @@ function dataCallback(result){
   for (const key in json) {
     if (json.hasOwnProperty(key)) {
       let object = getMoteusDataObjectFromIdentifier(key)
-      if (object != null){
-        object.dataValue = json[key].toString().substring(0,6)
 
+      if (object != null) {
+        let dataEntry = parseFloat(json[key])
+        if (!Number.isNaN(dataEntry)) {
+          if (Number.isInteger(dataEntry)) {//if int
+            object.dataValue = dataEntry
+          }
+          else {
+            object.dataValue = dataEntry.toFixed(5)
+          }
+
+          
+        }
+        else {
+          object.dataValue = "N/A"
+        }
       }
     }
   }
@@ -114,7 +113,6 @@ function dataCallback(result){
 
 
 function buildMoteusDataChoice(result){
-  //console.log(result.json_payload)
   let json = JSON.parse(result.json_payload)
   
   for(const key in json){
@@ -132,14 +130,7 @@ function buildMoteusDataChoice(result){
       entry.identifier = key;
       entry.dataValue = json[key];
 
-      //Object.assign({}, entry, {key: json[key]})
-
-
       moteuesDataChoice.value.push(entry);
-
-      //console.log(entry)
-
-      //console.log("" + key + ": " + json[key])
     }
   }
 
@@ -152,12 +143,12 @@ function constructRecordingEntry(){
 
       // Go through each possible entry
       for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-        let entry = moteuesDataChoice[index];
+        let entry = moteuesDataChoice.value[index];
 
         //If we have selected that entry to be recorded
-        if (entry.shouldRecordData.value == true) {
-          if (entry.dataValue.value != "N/A") {
-            tempDataArray.push(entry.dataValue.value)
+        if (entry.shouldRecordData == true) {
+          if (entry.dataValue != "N/A") {
+            tempDataArray.push(entry.dataValue)
           }
           else {
             tempDataArray.push(" ")
@@ -167,72 +158,7 @@ function constructRecordingEntry(){
         }
       }
 
-      console.log(tempDataArray.toString())
       csvData.addDataEntry(tempDataArray);
-}
-
-/**
- * This reads in the JSON string from the subscriber
- * 
- * From here, we will update the data to display from the JSON
- */
-function readDataCallback() {
-
-  if (props.dataSub.value == "" || props.dataSub.value == undefined) {
-    return -1
-  }
-  let json = JSON.parse(props.dataSub.value)
-
-
-  // Moteus Entries
-  for (let entry = 0; entry < json.moteusMotorLength; entry++) {
-    let moteusMotorEntry = json.moteusMotors[entry]
-
-    //check if this entry is ours via canid
-    if (moteusMotorEntry.canID == props.moteusCANID) {
-      moteuesDataChoice[1].dataValue.value = String(moteusMotorEntry.position).substring(0, 6);
-      moteuesDataChoice[2].dataValue.value = String(moteusMotorEntry.velocity).substring(0, 6);
-      moteuesDataChoice[3].dataValue.value = String(moteusMotorEntry.torque).substring(0, 6);
-      moteuesDataChoice[4].dataValue.value = String(moteusMotorEntry.temperature).substring(0, 6);
-      moteuesDataChoice[5].dataValue.value = String(moteusMotorEntry.power).substring(0, 6);
-      moteuesDataChoice[6].dataValue.value = String(moteusMotorEntry.inputVoltage).substring(0, 6);
-      moteuesDataChoice[7].dataValue.value = String(moteusMotorEntry.qCurrent).substring(0, 6);
-      moteuesDataChoice[8].dataValue.value = String(moteusMotorEntry.dCurrent).substring(0, 6);
-
-      // Data recording; only do it if recording
-      if (isRecordingData) {
-        let tempDataArray: any[] = [];
-
-        // Go through each possible entry
-        for (let index = 0; index < moteuesDataChoice.length; index++) {
-          let entry = moteuesDataChoice[index];
-
-          //If we have selected that entry to be recorded
-          if (entry.shouldRecordData.value == true) {
-
-            tempDataArray.push(entry.dataValue.value)
-
-          }
-        }
-        csvData.addDataEntry(tempDataArray);
-        //csvDataObjects.push(tempDataArray)
-      }
-
-    }
-
-
-  }
-
-  //This code section is used to change the polling rate
-  clearInterval(pollingData);//Stop the interval
-
-  if (props.update_ms < 4) {//So we dont break the thing by going slower. It is 4 because browser limitations
-    pollingData = setInterval(readDataCallback, 100);
-  }
-  else {
-    pollingData = setInterval(readDataCallback, props.update_ms);
-  }
-
 }
 
 
@@ -266,9 +192,9 @@ function recordButtonPressed() {
     let header: string[] = [];
 
     for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-      let entry = moteuesDataChoice[index];
+      let entry = moteuesDataChoice.value[index];
 
-      if (entry.shouldRecordData.value == true) {
+      if (entry.shouldRecordData == true) {
         header.push(entry.identifier)
       }
     }
@@ -286,19 +212,11 @@ function recordButtonPressed() {
 }
 
 function getMoteusDataObjectFromIdentifier(itemName: String) {
+  
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
+
     if (moteuesDataChoice.value[index].identifier == itemName) {
       return moteuesDataChoice.value[index];
-    }
-  }
-
-  return null;
-}
-
-function getMoteusDataObjectFromName(itemName: String) {
-  for (let index = 0; index < moteuesDataChoice.length; index++) {
-    if (moteuesDataChoice[index].prettyName == itemName) {
-      return moteuesDataChoice[index];
     }
   }
 
@@ -310,10 +228,9 @@ function getMoteusDataObjectFromName(itemName: String) {
  * All this does it hold the logical state
  */
 function checkboxClicked(name: String) {
-  let dataEntry = getMoteusDataObjectFromName(name)
+  let dataEntry = getMoteusDataObjectFromIdentifier(name)
   if (dataEntry != null) {
-    dataEntry.shouldRecordData.value = !dataEntry.shouldRecordData.value
-    console.log(name + "" + dataEntry.shouldRecordData.value)
+    dataEntry.shouldRecordData = !dataEntry.shouldRecordData
   }
 }
 
@@ -354,7 +271,7 @@ defineExpose({ recordButtonPressed })
     <div class="flex-container flex-vertical">
       <div class="moteus-reminder">Type: <b>{{ motorType }}</b></div>
 
-      <TelemetryDataDisplay v-for="(item) in moteuesDataChoice" v-bind:itemName="item.prettyName"
+      <TelemetryDataDisplay v-for="(item) in moteuesDataChoice" v-bind:itemName="item.identifier"
         v-bind:isSelected="item.isSelected" v-bind:value="item.dataValue"
         v-bind:shouldRecordData="item.shouldRecordData" @checkboxClicked="checkboxClicked"
         v-bind:shouldShowCheckBox="showCheckbox" v-bind:showAllFeatures="showAllFeatures">

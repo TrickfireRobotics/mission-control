@@ -14,7 +14,7 @@ class SaveCSVData{
     }
 
     addDataEntry(dataEntry: object[]){
-        console.log(dataEntry.toString())
+        //console.log(dataEntry.toString())
         this.csvDataObjects.push(dataEntry)
     }
 
