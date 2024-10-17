@@ -1,4 +1,5 @@
 <script setup>
+    import { ref, onMounted, inject, defineExpose } from 'vue'
 
     const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox', "showAllFeatures"]);
 
@@ -17,7 +18,7 @@
 </template>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .mycontainer {
   display: flex;

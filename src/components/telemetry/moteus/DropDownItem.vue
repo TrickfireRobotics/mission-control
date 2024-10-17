@@ -15,7 +15,7 @@
 </template>
 
 
-<style>
+<style lang="scss" scoped>
 
 .mycontainer {
   display: flex;
