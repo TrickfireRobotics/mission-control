@@ -147,7 +147,7 @@ function constructRecordingEntry(){
 
         //If we have selected that entry to be recorded
         if (entry.shouldRecordData == true) {
-          if (entry.dataValue != "N/A") {
+          if (entry.dataValue !== "N/A") {
             tempDataArray.push(entry.dataValue)
           }
           else {
@@ -194,7 +194,7 @@ function recordButtonPressed() {
     for (let index = 0; index < moteuesDataChoice.value.length; index++) {
       let entry = moteuesDataChoice.value[index];
 
-      if (entry.shouldRecordData == true) {
+      if (entry.shouldRecordData === true) {
         header.push(entry.identifier)
       }
     }
@@ -286,7 +286,7 @@ defineExpose({ recordButtonPressed })
 </template>
 
 
-<style>
+<style lang="scss" scoped>
 .module-bg {
   background-color: rgb(109, 109, 109);
   border-radius: 20px;
