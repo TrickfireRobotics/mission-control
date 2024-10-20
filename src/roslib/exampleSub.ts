@@ -11,6 +11,7 @@ export default function exampleSub(ros: ROSLIB.Ros): typeof exampleData {
     name: '/exampleData',
     //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
     messageType: 'std_msgs/Int32',
+    compression: "cbor",
   });
   //subscribe to topic and sets ref data
   exampleTopic.subscribe<number>((message) => {
