@@ -20,7 +20,7 @@ const test = ref<number>(10001);
 //const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
 
 // Connects to the router
- const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
+const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
 
 // Connects to rover
 // const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
@@ -33,6 +33,8 @@ provide('ros', ros);
 provide('isGamepadConnected', isGamepadConnected);
 provide('cameras', cameras);
 examplePub(ros, test.value);
+// examplePub2(ros, '0');
+
 const exampleData = exampleSub(ros);
 </script>
 
@@ -48,3 +50,4 @@ const exampleData = exampleSub(ros);
 <style lang="scss">
 @import './assets/global';
 </style>
+./roslib/cameraOnOffPub

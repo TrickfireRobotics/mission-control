@@ -17,7 +17,7 @@ export default function cameraSub(
       //https://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CompressedImage.html
       messageType: 'sensor_msgs/msg/CompressedImage',
     });
-    console.log(cameraTopic);
+    // console.log(cameraTopic);
     cameraTopic.subscribe<CompressedImage>((message) => {
       compressedImage[i] = 'data:image/jpg;base64,' + message.data;
     });

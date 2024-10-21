@@ -7,7 +7,7 @@ export type MotorData = {
 
 export type CompressedImage = {
   Header: {
-    //header is not confirmed on types
+    //header is not confirmed to be there
     frame_id: string;
     stamp: { sec: number; nanosec: number };
   };
