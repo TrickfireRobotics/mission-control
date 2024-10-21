@@ -1,11 +1,11 @@
-import ROSLIB, { Ros } from 'roslib';
+import ROSLIB from 'roslib';
 import { ref } from 'vue';
-import type { Ref } from 'vue';
+
 //in order to have reactive behavior, store the ros data in a ref
-let exampleData = ref<number>();
+const exampleData = ref<number>();
 //Since we are going to return exampleData anyway, use typeof
 export default function exampleSub(ros: ROSLIB.Ros): typeof exampleData {
-  let exampleTopic = new ROSLIB.Topic({
+  const exampleTopic = new ROSLIB.Topic({
     ros,
     //topic name
     name: '/exampleData',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 // import type { Ref } from 'vue'
 import type { MotorData } from '../types';
 import MotorInfo from './MotorInfo.vue';
@@ -20,8 +20,8 @@ onMounted(() => {
     <ul>
       <MotorInfo
         v-for="(motorData, index) in motorDataList"
-        :motorData="motorData"
         key="data.id"
+        :motor-data="motorData"
       ></MotorInfo>
     </ul>
   </div>

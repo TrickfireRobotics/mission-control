@@ -14,7 +14,7 @@ const switchCameraFeedTo = (cameraId: number) => {
   <div id="camera-container">
     <h2>Camera</h2>
     <div class="container">
-      <CameraFeed :currentFeed="currentFeed" />
+      <CameraFeed :current-feed="currentFeed" />
       <CameraFeedPreview @switch-camera-feed-to="switchCameraFeedTo" />
     </div>
   </div>
