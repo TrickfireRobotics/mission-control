@@ -1,10 +1,8 @@
 import ROSLIB from 'roslib';
-import type { Ref } from 'vue';
-
 
 export default function controllerPub(ros: ROSLIB.Ros, pubName: string, input: number) {
-  if (pubName != "/" && pubName != ""){
-    let controllerTopic = new ROSLIB.Topic({
+  if (pubName != '/' && pubName != '') {
+    const controllerTopic = new ROSLIB.Topic({
       ros,
       //topic name
       name: pubName,
@@ -12,12 +10,10 @@ export default function controllerPub(ros: ROSLIB.Ros, pubName: string, input: n
       messageType: 'std_msgs/Float32',
     });
     // Function to publish a heartbeat message
-    let data = new ROSLIB.Message({
+    const data = new ROSLIB.Message({
       data: input,
     });
     //publishes data under topic
     controllerTopic.publish(data);
   }
-
-
 }

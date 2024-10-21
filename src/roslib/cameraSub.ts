@@ -1,16 +1,15 @@
 import type { CompressedImage } from '@/types';
-import ROSLIB, { Ros } from 'roslib';
+import ROSLIB from 'roslib';
 import { reactive } from 'vue';
-import type { Ref } from 'vue';
 
-let compressedImage = reactive(['', '']);
+const compressedImage = reactive(['', '']);
 export default function cameraSub(
   ros: ROSLIB.Ros,
   startI: number,
   endI: number,
 ): typeof compressedImage {
   for (let i = startI; i <= endI; i++) {
-    let cameraTopic = new ROSLIB.Topic({
+    const cameraTopic = new ROSLIB.Topic({
       ros,
       //topic name
       name: `/video_frames${i}`,

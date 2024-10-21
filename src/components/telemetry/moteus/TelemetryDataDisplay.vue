@@ -1,36 +1,42 @@
 <script setup>
-    import { ref, onMounted, inject, defineExpose } from 'vue'
-
-    const props = defineProps(['itemName', 'isSelected', 'value', 'shouldRecordData', 'shouldShowCheckBox', "showAllFeatures"]);
-
+const props = defineProps([
+  'itemName',
+  'isSelected',
+  'value',
+  'shouldRecordData',
+  'shouldShowCheckBox',
+  'showAllFeatures',
+]);
 </script>
 
-
 <template>
-    <div v-if="isSelected" class="mycontainer">
-        <div >
-            <input checked v-if="showAllFeatures" v-show="shouldShowCheckBox" @click="$emit('checkboxClicked', itemName)" class="checkbox-style" type="checkbox" title="Select to include this value when recording data into a .csv file">
-            <b>{{ itemName }}</b>
-        </div>
-        <b>{{ value }}</b>
+  <div v-if="isSelected" class="mycontainer">
+    <div>
+      <input
+        v-if="showAllFeatures"
+        v-show="shouldShowCheckBox"
+        checked
+        class="checkbox-style"
+        type="checkbox"
+        title="Select to include this value when recording data into a .csv file"
+        @click="$emit('checkboxClicked', itemName)"
+      />
+      <b>{{ itemName }}</b>
     </div>
-
+    <b>{{ value }}</b>
+  </div>
 </template>
 
-
 <style lang="scss" scoped>
-
 .mycontainer {
   display: flex;
-  
 }
 
-.checkbox-style{
-    margin-right: 2px;
+.checkbox-style {
+  margin-right: 2px;
 }
 
-input[type="checkbox"] {
-  accent-color: rgb(48, 182, 48);;
+input[type='checkbox'] {
+  accent-color: rgb(48, 182, 48);
 }
-
 </style>
