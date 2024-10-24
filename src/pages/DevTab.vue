@@ -4,7 +4,7 @@ import CameraModule from '../components/CameraModule.vue';
 </script>
 <template>
   <div id="page4">
-    <CameraModule v-for="(e, index) in 6" :index="index" key="index"></CameraModule>
+    <CameraModule v-for="(e, index) in 6" key="index" :index="index"></CameraModule>
   </div>
 </template>
 

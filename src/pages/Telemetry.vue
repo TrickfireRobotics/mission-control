@@ -109,8 +109,8 @@ function getMoteusStateProxy(param, dataCallback) {
   <div>
     <div class="period-input-container">
       <button
+        :class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
         @click="recordAllPressed()"
-        v-bind:class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
       >
         Record all
       </button>
@@ -118,25 +118,25 @@ function getMoteusStateProxy(param, dataCallback) {
     <div class="period-input-container">
       <b class="period-text">Update Delay in ms</b>
       <input
+        v-model="update_time_ms"
         class="period-input"
         min="4"
-        v-model="update_time_ms"
         type="number"
         title="Number of milliseconds between each time it polls for data. Affects recording as well"
       />
     </div>
     <div class="page">
       <GenericMotorTelemetry
-        class="telemetry-motor"
         v-for="item in moteusMotors"
-        v-bind:displayName="item.displayName"
-        v-bind:showAllFeatures="true"
-        v-bind:update_ms="update_time_ms"
-        v-bind:motorType="item.controller"
-        ref="myChild"
-        v-bind:dataSourceMethod="getMoteusStateProxy"
-        v-bind:dataSourceParamater="item.canfdID"
         v-if="isFinishedLoading"
+        ref="myChild"
+        class="telemetry-motor"
+        :display-name="item.displayName"
+        :show-all-features="true"
+        :update_ms="update_time_ms"
+        :motor-type="item.controller"
+        :data-source-method="getMoteusStateProxy"
+        :data-source-paramater="item.canfdID"
       >
       </GenericMotorTelemetry>
     </div>

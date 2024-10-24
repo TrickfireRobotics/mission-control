@@ -2,7 +2,7 @@ import ROSLIB from 'roslib';
 import type { Ref } from 'vue';
 
 export default function cameraControl(ros: ROSLIB.Ros, cameraNumber: string, cameraState: boolean) {
-  let cameraControl = new ROSLIB.Topic({
+  const cameraControl = new ROSLIB.Topic({
     ros,
     //topic name
     name: '/camera_control',
@@ -10,7 +10,7 @@ export default function cameraControl(ros: ROSLIB.Ros, cameraNumber: string, cam
     messageType: 'std_msgs/Json',
   });
   // Function to publish a heartbeat message
-  let data = new ROSLIB.Message({
+  const data = new ROSLIB.Message({
     cameraNumber: cameraNumber,
     cameraState: cameraState,
   });
