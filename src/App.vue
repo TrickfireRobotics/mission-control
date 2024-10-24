@@ -33,7 +33,8 @@ provide('ros', ros);
 provide('isGamepadConnected', isGamepadConnected);
 provide('cameras', cameras);
 examplePub(ros, test.value);
-// examplePub2(ros, '0');
+
+heartbeatPub(ros, true, 1000); // 1s
 
 const exampleData = exampleSub(ros);
 </script>
@@ -50,4 +51,3 @@ const exampleData = exampleSub(ros);
 <style lang="scss">
 @import './assets/global';
 </style>
-./roslib/cameraOnOffPub

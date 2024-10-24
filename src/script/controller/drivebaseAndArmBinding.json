@@ -1,0 +1,125 @@
+{
+  "length": 20,
+  "bindings": [
+    {
+      "name": "aButton",
+      "type": "button",
+      "index": 0,
+      "publisherTopic": "gripRotOpen"
+    },
+    {
+      "name": "bButton",
+      "type": "button",
+      "index": 1,
+      "publisherTopic": "gripRotClose"
+    },
+    {
+      "name": "xButton",
+      "type": "button",
+      "index": 2,
+      "publisherTopic": "gripLinearOpen"
+    },
+    {
+      "name": "yButton",
+      "type": "button",
+      "index": 3,
+      "publisherTopic": "gripLinearClose"
+    },
+    {
+      "name": "leftBumperButton",
+      "type": "button",
+      "index": 4,
+      "publisherTopic": "left_wrist_ccw"
+    },
+    {
+      "name": "rightBumperButton",
+      "type": "button",
+      "index": 5,
+      "publisherTopic": "right_wrist_ccw"
+    },
+    {
+      "name": "leftTriggerButton",
+      "type": "button",
+      "index": 6,
+      "publisherTopic": "left_wrist_cw"
+    },
+    {
+      "name": "rightTriggerButton",
+      "type": "button",
+      "index": 7,
+      "publisherTopic": "right_wrist_cw"
+    },
+    {
+      "name": "backButton",
+      "type": "button",
+      "index": 8,
+      "publisherTopic": "turntable_ccw"
+    },
+    {
+      "name": "startButton",
+      "type": "button",
+      "index": 9,
+      "publisherTopic": "turntable_cw"
+    },
+    {
+      "name": "leftJoyStickButton",
+      "type": "button",
+      "index": 10,
+      "publisherTopic": ""
+    },
+    {
+      "name": "rightJoystickButton",
+      "type": "button",
+      "index": 11,
+      "publisherTopic": ""
+    },
+    {
+      "name": "dpadUPButton",
+      "type": "button",
+      "index": 12,
+      "publisherTopic": "elbow_up"
+    },
+    {
+      "name": "dpadDOWNButton",
+      "type": "button",
+      "index": 13,
+      "publisherTopic": "elbow_down"
+    },
+    {
+      "name": "dpadLEFTButton",
+      "type": "button",
+      "index": 14,
+      "publisherTopic": "shoulder_down"
+    },
+    {
+      "name": "dpadRIGHTButton",
+      "type": "button",
+      "index": 15,
+      "publisherTopic": "shoulder_up"
+    },
+    {
+      "name": "leftJoyXAxis",
+      "type": "joystick",
+      "index": 0,
+      "publisherTopic": ""
+    },
+    {
+      "name": "leftJoyYAxis",
+      "type": "joystick",
+      "index": 1,
+      "publisherTopic": "move_left_drivebase_side_message"
+    },
+    {
+      "name": "rightJoyXAxis",
+      "type": "joystick",
+      "index": 2,
+      "publisherTopic": ""
+    },
+    {
+      "name": "rightJoyYAxis",
+      "type": "joystick",
+      "index": 3,
+      "publisherTopic": "move_right_drivebase_side_message"
+    }
+  ]
+}
