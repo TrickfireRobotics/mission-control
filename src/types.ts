@@ -1,5 +1,3 @@
-import ROSLIB from 'roslib';
-
 export type MotorData = {
   velocity: number;
   id: string;

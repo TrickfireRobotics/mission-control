@@ -91,7 +91,7 @@ const pageIconArr: PageIcon = [
       @click="setCurrentTab(index)"
     >
       <h4>{{ pageIcon.label }}</h4>
-      <component class="page-icon" :is="pageIcon.icon" size="2rem" :title="pageIcon.helperText" />
+      <component :is="pageIcon.icon" class="page-icon" size="2rem" :title="pageIcon.helperText" />
     </RouterLink>
     <div class="container">
       <h4 id="status">WebSocket</h4>
