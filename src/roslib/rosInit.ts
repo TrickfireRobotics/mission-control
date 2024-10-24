@@ -5,7 +5,7 @@ const heartbeatDisconnectSeconds = 2;
 const reconnectionGraceSeconds = 2;
 const secondsToTimestamp = 1000;
 
-let isWebSocketConnected = ref<boolean>(false);
+const isWebSocketConnected = ref<boolean>(false);
 //Since we are going to return exampleData, it is fine to use typeOf
 export default function rosInit(serverHost: string): {
   ros: ROSLIB.Ros;

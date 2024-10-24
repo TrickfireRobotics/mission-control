@@ -20,8 +20,8 @@ onMounted(() => {
     <ul>
       <MotorInfo
         v-for="(motorData, index) in motorDataList"
-        :motorData="motorData"
         key="data.id"
+        :motor-data="motorData"
       ></MotorInfo>
     </ul>
   </div>

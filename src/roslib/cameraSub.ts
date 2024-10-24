@@ -3,24 +3,29 @@ import ROSLIB, { Ros } from 'roslib';
 import { reactive } from 'vue';
 import type { Ref } from 'vue';
 
-let compressedImage = reactive(['', '']);
+const compressedImage = reactive(['', '']);
 export default function cameraSub(
   ros: ROSLIB.Ros,
   startI: number,
   endI: number,
 ): typeof compressedImage {
   for (let i = startI; i <= endI; i++) {
-    let cameraTopic = new ROSLIB.Topic({
+    const cameraTopic = new ROSLIB.Topic({
       ros,
       //topic name
       name: `/video_frames${i}`,
       //https://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CompressedImage.html
       messageType: 'sensor_msgs/msg/CompressedImage',
-      compression: "cbor",
+      compression: 'cbor',
     });
     console.log(cameraTopic);
     cameraTopic.subscribe<CompressedImage>((message) => {
-      const base64 = btoa(Array(message.data.length).fill("").map((_, i) => String.fromCharCode(message.data[i])).join(""));
+      const base64 = btoa(
+        Array(message.data.length)
+          .fill('')
+          .map((_, i) => String.fromCharCode(message.data[i]))
+          .join(''),
+      );
       compressedImage[i] = 'data:image/jpg;base64,' + base64;
     });
   }
