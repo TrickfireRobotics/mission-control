@@ -15,10 +15,17 @@ export default function cameraSub(
       name: `/video_frames${i}`,
       //https://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CompressedImage.html
       messageType: 'sensor_msgs/msg/CompressedImage',
+      compression: 'cbor',
     });
     console.log(cameraTopic);
     cameraTopic.subscribe<CompressedImage>((message) => {
-      compressedImage[i] = 'data:image/jpg;base64,' + message.data;
+      const base64 = btoa(
+        Array(message.data.length)
+          .fill('')
+          .map((_, i) => String.fromCharCode(message.data[i]))
+          .join(''),
+      );
+      compressedImage[i] = 'data:image/jpg;base64,' + base64;
     });
   }
   return compressedImage;

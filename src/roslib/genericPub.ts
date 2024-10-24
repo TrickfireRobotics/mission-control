@@ -12,6 +12,7 @@ export default function examplePub(
     ros,
     name: passedName,
     messageType: messageType,
+    compression: 'cbor',
   });
   // Function to publish a heartbeat message
   const data = new ROSLIB.Message({

@@ -9,6 +9,7 @@ export default function examplePub(ros: ROSLIB.Ros, exampleInput: number) {
     name: '/exampleData',
     //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
     messageType: 'std_msgs/Int32',
+    compression: 'cbor',
   });
   // Function to publish a heartbeat message
   const data = new ROSLIB.Message({

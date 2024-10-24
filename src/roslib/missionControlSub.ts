@@ -11,6 +11,7 @@ export default function missionControlSub(ros: ROSLIB.Ros): typeof missionContro
     name: '/mission_control_updater',
     //more message types at https://docs.ros.org/en/melodic/api/std_msgs/html/index-msg.html
     messageType: 'std_msgs/String',
+    compression: 'cbor',
   });
 
   //subscribe to topic and sets ref data
