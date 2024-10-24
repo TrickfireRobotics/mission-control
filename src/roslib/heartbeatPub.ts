@@ -8,7 +8,8 @@ export default function heartbeatPub(ros: ROSLIB.Ros, input: boolean, interval: 
   let heartbeat_topic = new ROSLIB.Topic({
     ros,
     name: '/heartbeat',
-    messageType: 'std_msgs/Bool'
+    messageType: 'std_msgs/Bool',
+    compression: "cbor",
   });
 
   let heartbeatData = new ROSLIB.Message({
