@@ -33,20 +33,23 @@ provide('cameras', cameras);
 examplePub(ros, test.value);
 
 heartbeatPub(ros, true, 1000); // 1s
-
-// TODO: Remove?
-const exampleData = exampleSub(ros);
 </script>
 
 <template>
-  <Navbar />
-  <router-view v-slot="{ Component }">
-    <KeepAlive>
-      <component :is="Component"></component>
-    </KeepAlive>
-  </router-view>
+  <div id="app">
+    <Navbar />
+    <router-view v-slot="{ Component }">
+      <KeepAlive>
+        <component :is="Component"></component>
+      </KeepAlive>
+    </router-view>
+  </div>
 </template>
 
 <style lang="scss">
 @import './assets/global';
+#app {
+  width: 100vw;
+  height: 100vh;
+}
 </style>

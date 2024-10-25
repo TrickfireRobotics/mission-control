@@ -1,6 +1,7 @@
 import type { CompressedImage } from '@/types';
-import ROSLIB from 'roslib';
+import ROSLIB, { Ros } from 'roslib';
 import { reactive } from 'vue';
+import type { Ref } from 'vue';
 
 const compressedImage = reactive(['', '']);
 export default function cameraSub(
@@ -9,23 +10,16 @@ export default function cameraSub(
   endI: number,
 ): typeof compressedImage {
   for (let i = startI; i <= endI; i++) {
-    const cameraTopic = new ROSLIB.Topic({
+    const cameraTopic = new ROSLIB.Topic<CompressedImage>({
       ros,
       //topic name
       name: `/video_frames${i}`,
       //https://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/CompressedImage.html
       messageType: 'sensor_msgs/msg/CompressedImage',
-      compression: 'cbor',
     });
     console.log(cameraTopic);
-    cameraTopic.subscribe<CompressedImage>((message) => {
-      const base64 = btoa(
-        Array(message.data.length)
-          .fill('')
-          .map((_, i) => String.fromCharCode(message.data[i]))
-          .join(''),
-      );
-      compressedImage[i] = 'data:image/jpg;base64,' + base64;
+    cameraTopic.subscribe((message) => {
+      compressedImage[i] = 'data:image/jpg;base64,' + message.data;
     });
   }
   return compressedImage;

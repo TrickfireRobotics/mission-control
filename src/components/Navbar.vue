@@ -1,10 +1,7 @@
 <script lang="ts" setup>
-import ROSLIB, { Ros } from 'roslib';
 import { inject, onMounted, ref } from 'vue';
-import HomeVariantOutlineIcon from 'vue-material-design-icons/HomeVariantOutline.vue';
-// Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matchingname
+// Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
-import ExploreIcon from 'vue-material-design-icons/Compass.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
 import RobotIndustrialIcon from 'vue-material-design-icons/RobotIndustrial.vue';
 import HelpCircleIcon from 'vue-material-design-icons/HelpCircle.vue';
@@ -16,7 +13,7 @@ import BugIcon from 'vue-material-design-icons/Bug.vue';
 
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
 const controllerConnectedStatus = inject<boolean>('isGamepadConnected', false);
-//TODO FIX CODE
+//TODO implement latency
 const latency = ref(-1);
 const currentTab = ref(0);
 const setCurrentTab = (e) => {

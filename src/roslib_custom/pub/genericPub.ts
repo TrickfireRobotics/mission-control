@@ -1,16 +1,14 @@
 import ROSLIB from 'roslib';
 
-//from my best understanding, the data passed in doesn't need to be in a ref as it is just going to publish it right away
-//Aka does not need reactivity since it doesn't interact with the UI
-export default function examplePub(
+export default function genericPub<T>(
   ros: ROSLIB.Ros,
-  input,
-  passedName: string,
-  messageType: string,
+  input : T,
+  topicName: string,
+  messageType: messageType,
 ) {
   const exampleTopic = new ROSLIB.Topic({
     ros,
-    name: passedName,
+    name: topicName,
     messageType: messageType,
     compression: 'cbor',
   });

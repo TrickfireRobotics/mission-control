@@ -11,7 +11,6 @@ const POLLING_RATE_IN_HERTZ = 20;
 // of the joystick/trigger
 // The higher the value, the faster we must be moving the joystick/trigger
 // in order to send the value.
-//
 // 0 = always send data
 // 1 = never send data (unless you are really fast with the joystick/trigger)
 const DELTA_SENSITIVTY = 0.01;

@@ -1,4 +1,4 @@
-import controllerPub from '../../roslib/controllerPub';
+import controllerPub from '../../roslib/Pub/controllerPub';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
