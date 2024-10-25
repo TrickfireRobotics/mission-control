@@ -36,7 +36,7 @@ export default function rosInit(serverHost: string): {
 
   const heartbeatRes = new ROSLIB.Topic({
     ros,
-    name: '/heartbeatres',
+    name: '/hbr',
     messageType: 'std_msgs/Bool',
     compression: 'cbor',
   });
