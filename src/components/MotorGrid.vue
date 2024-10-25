@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 // import type { Ref } from 'vue'
 import type { MotorData } from '../types';
 import MotorInfo from './MotorInfo.vue';

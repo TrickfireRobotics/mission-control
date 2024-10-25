@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, render, h } from 'vue';
+import { ref, onMounted, inject, defineExpose, render, h } from 'vue';
 import TelemetryDataDisplay from '../telemetry/Test.vue';
 
 const props = defineProps(['']);

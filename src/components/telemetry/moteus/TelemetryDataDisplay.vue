@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted, inject, defineExpose } from 'vue';
+
 const props = defineProps([
   'itemName',
   'isSelected',

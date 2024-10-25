@@ -1,9 +1,10 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
 import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
+import missionControlSub from '../roslib/missionControlSub';
 import { ref, onMounted, inject, watch } from 'vue';
 import { Ros } from 'roslib';
-import { RobotInfo } from '@/script/interface/robotInfo';
+import { RobotInfo } from '../script/interface/robotInfo';
 
 let moteusMotors = [
   {

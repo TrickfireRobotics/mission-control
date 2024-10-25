@@ -1,6 +1,6 @@
-import ROSLIB from 'roslib';
+import ROSLIB, { Ros } from 'roslib';
 import { ref } from 'vue';
-
+import type { Ref } from 'vue';
 //in order to have reactive behavior, store the ros data in a ref
 const missionControlData = ref<string>();
 //Since we are going to return exampleData anyway, use typeof

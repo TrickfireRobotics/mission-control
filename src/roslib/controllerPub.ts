@@ -1,4 +1,5 @@
 import ROSLIB from 'roslib';
+import type { Ref } from 'vue';
 
 export default function controllerPub(ros: ROSLIB.Ros, pubName: string, input: number) {
   if (pubName != '/' && pubName != '') {

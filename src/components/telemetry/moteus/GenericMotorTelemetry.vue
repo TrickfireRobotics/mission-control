@@ -2,6 +2,9 @@
 import { ref, onMounted, inject, defineExpose } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
+import { render, h } from 'vue';
+//import controllerPub from '../../roslib/controllerPub';
+import missionControlSub from '../../../roslib/missionControlSub';
 import { SaveCSVData } from '../../../script/saveCSVData';
 import ROSLIB, { Ros } from 'roslib';
 
@@ -76,7 +79,7 @@ function dataCallback(result) {
   let json = JSON.parse(result.json_payload);
 
   for (const key in json) {
-    if (key in json) {
+    if (json.hasOwnProperty(key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
       if (object != null) {
@@ -108,7 +111,7 @@ function buildMoteusDataChoice(result) {
       shouldRecordData: true,
     };
 
-    if (key in json) {
+    if (json.hasOwnProperty(key)) {
       entry.prettyName = key;
       entry.identifier = key;
       entry.dataValue = json[key];
@@ -119,7 +122,7 @@ function buildMoteusDataChoice(result) {
 }
 
 function constructRecordingEntry() {
-  let tempDataArray: string[] = [];
+  let tempDataArray: any[] = [];
 
   // Go through each possible entry
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
@@ -231,7 +234,10 @@ defineExpose({ recordButtonPressed });
         <button
           v-if="showAllFeatures"
           id="record_button"
-          :class="{ 'record-button-green': !isRecordingData, 'record-button-red': isRecordingData }"
+          :class="{
+            'record-button-green': !isRecordingData,
+            'record-button-red': isRecordingData,
+          }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}

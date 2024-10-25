@@ -1,6 +1,7 @@
 import type { CompressedImage } from '@/types';
-import ROSLIB from 'roslib';
+import ROSLIB, { Ros } from 'roslib';
 import { reactive } from 'vue';
+import type { Ref } from 'vue';
 
 const compressedImage = reactive(['', '']);
 export default function cameraSub(
