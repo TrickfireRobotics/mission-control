@@ -56,7 +56,9 @@ export default function rosInit(serverHost: string): {
       // No need to error if the websocket is already closed.
       try {
         ros.close();
-      } catch (_) {}
+      } catch (_) {
+        /* empty */
+      }
 
       return;
     }
@@ -67,9 +69,12 @@ export default function rosInit(serverHost: string): {
       // No need to error if the websocket is already closed.
       try {
         ros.close();
-      } catch (_) {}
+      } catch (_) {
+        /* empty */
+      }
 
       // Forcefully reconnect.
+      // @ts-expect-error socket is private but needs to be set to null to force roslib to reconnect in case of hangs.
       ros.socket = null;
       // Give the reconnection extra time so that it doesn't
       // immediately get killed.
@@ -78,5 +83,5 @@ export default function rosInit(serverHost: string): {
     }
   }, 100);
 
-  return { ros, isWebSocketConnected };
+  return { ros, isWebSocketConnected, stop };
 }
