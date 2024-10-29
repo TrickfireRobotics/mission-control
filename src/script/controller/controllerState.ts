@@ -1,4 +1,4 @@
-import controllerPub from '../../roslib/Pub/controllerPub';
+import controllerPub from '../../roslib_custom/pub/controllerPub';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -76,15 +76,15 @@ class ControllerState {
       const type = controlSchemeEntry.type;
       const topicName = '/' + controlSchemeEntry.publisherTopic;
 
-      if (type == 'button') {
-        if (topicName != '/') {
+      if (type === 'button') {
+        if (topicName !== '/') {
           this.buttonIndexToPublisherName.set(index, topicName);
           console.log('Mapped button with index ' + index + ' to topic ' + topicName);
         } else {
           this.buttonIndexToPublisherName.set(index, '');
         }
-      } else if (type == 'joystick') {
-        if (topicName != '/') {
+      } else if (type === 'joystick') {
+        if (topicName !== '/') {
           this.joystickIndexToPublisherName.set(index, topicName);
           console.log('Mapped axis with index ' + index + ' to topic ' + topicName);
         } else {
@@ -164,7 +164,7 @@ class ControllerState {
 
     // Send button data. Skip index 6 and 7 as that are the triggers
     for (let index = 0; index < 16; index++) {
-      if (index != 6 && index != 7 && Math.abs(this.deltaStateButtons[index]) == 1) {
+      if (index !== 6 && index !== 7 && Math.abs(this.deltaStateButtons[index]) === 1) {
         controllerPub(
           ros,
           this.buttonIndexToPublisherName.get(index),

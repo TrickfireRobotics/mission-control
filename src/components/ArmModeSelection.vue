@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ROSLIB, { Ros } from 'roslib';
 import { ref, onMounted, inject } from 'vue';
-import genericPub from '../roslib/genericPub';
+import genericPub from '../roslib_custom/pub/genericPub';
 
 const myRos = inject<Ros>('ros');
 
@@ -19,7 +19,7 @@ let current_arm_mode = ref(-1); // Default is disabled
 //let isLoaded = ref(false);
 
 function initialize() {
-  if (myRos != null) {
+  if (myRos !== null) {
     armModeService = new ROSLIB.Service({
       ros: myRos,
       name: '/get_arm_mode',
@@ -46,7 +46,7 @@ function getCurrentArmMode() {
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
 
-  if (myRos != null) {
+  if (myRos !== null) {
     genericPub(myRos, targetMode, 'update_arm_mode', 'std_msgs/Int32');
     getCurrentArmMode();
   }
@@ -63,8 +63,8 @@ function changeArmMode(targetMode: number) {
         <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 0,
-            'button-mode-selected': current_arm_mode == 0,
+            'button-mode-unselected': current_arm_mode !== 0,
+            'button-mode-selected': current_arm_mode === 0,
           }"
           @click="changeArmMode(0)"
         >
@@ -72,8 +72,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 1,
-            'button-mode-selected': current_arm_mode == 1,
+            'button-mode-unselected': current_arm_mode !== 1,
+            'button-mode-selected': current_arm_mode === 1,
           }"
           @click="changeArmMode(1)"
         >
@@ -81,8 +81,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 2,
-            'button-mode-selected': current_arm_mode == 2,
+            'button-mode-unselected': current_arm_mode !== 2,
+            'button-mode-selected': current_arm_mode === 2,
           }"
           @click="changeArmMode(2)"
         >
@@ -90,8 +90,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 3,
-            'button-mode-selected': current_arm_mode == 3,
+            'button-mode-unselected': current_arm_mode !== 3,
+            'button-mode-selected': current_arm_mode === 3,
           }"
           @click="changeArmMode(3)"
         >
@@ -102,7 +102,7 @@ function changeArmMode(targetMode: number) {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .mode-button-container {
   display: flex;
   justify-content: center;

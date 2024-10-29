@@ -1,7 +1,7 @@
 import ROSLIB from 'roslib';
 
 export default function controllerPub(ros: ROSLIB.Ros, pubName: string, input: number) {
-  if (pubName != '/' && pubName != '') {
+  if (pubName !== '/' && pubName !== '') {
     const controllerTopic = new ROSLIB.Topic({
       ros,
       //topic name

@@ -1,21 +1,24 @@
 import ROSLIB from 'roslib';
+import { inject } from 'vue';
 
 export default function genericPub<T>(
   ros: ROSLIB.Ros,
-  input : T,
   topicName: string,
   messageType: messageType,
+  input: T,
 ) {
-  const exampleTopic = new ROSLIB.Topic({
+  // const ros = inject<ROSLIB.Ros>('ros') as ROSLIB.Ros;
+  const topic = new ROSLIB.Topic({
     ros,
     name: topicName,
     messageType: messageType,
-    compression: 'cbor',
   });
+  console.log(topicName, messageType);
   // Function to publish a heartbeat message
   const data = new ROSLIB.Message({
     data: input,
   });
   //publishes data under topic
-  exampleTopic.publish(data);
+  console.log('publishing data', data);
+  topic.publish(data);
 }

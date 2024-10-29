@@ -9,7 +9,7 @@ export default function rosInit(serverHost: string): {
 } {
   const ros = new ROSLIB.Ros({ url: serverHost });
 
-  console.count();
+  console.count('Reinitialized RosInit');
   ros.on('connection', () => {
     isWebSocketConnected.value = true;
     ros.on('error', (error) => {

@@ -1,7 +1,8 @@
+<!-- LEGACY CODE NOT USED ANYMORE -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 // import type { Ref } from 'vue'
-import type { MotorData } from '../types';
+import type { MotorData } from '../../types';
 import MotorInfo from './MotorInfo.vue';
 
 const motorDataList = ref<MotorData[]>();
@@ -19,8 +20,8 @@ onMounted(() => {
     <h2>Motors</h2>
     <ul>
       <MotorInfo
-        v-for="(motorData, index) in motorDataList"
-        key="data.id"
+        v-for="motorData in motorDataList"
+        :key="motorData.id"
         :motor-data="motorData"
       ></MotorInfo>
     </ul>

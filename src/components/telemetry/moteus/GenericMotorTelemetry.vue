@@ -1,3 +1,4 @@
+<!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
 import { ref, onMounted, inject, defineExpose } from 'vue';
 import DropDownItem from './DropDownItem.vue';
@@ -47,7 +48,7 @@ function initialize() {
 }
 
 function updateUIWithNewData(jsonString) {
-  if (props.dataSourceMethod != undefined) {
+  if (props.dataSourceMethod !== undefined) {
     let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback);
   }
 
@@ -79,7 +80,7 @@ function dataCallback(result) {
     if (key in json) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
-      if (object != null) {
+      if (object !== null) {
         let dataEntry = parseFloat(json[key]);
         if (!Number.isNaN(dataEntry)) {
           if (Number.isInteger(dataEntry)) {
@@ -126,7 +127,7 @@ function constructRecordingEntry() {
     let entry = moteuesDataChoice.value[index];
 
     //If we have selected that entry to be recorded
-    if (entry.shouldRecordData == true) {
+    if (entry.shouldRecordData === true) {
       if (entry.dataValue !== 'N/A') {
         tempDataArray.push(entry.dataValue);
       } else {
@@ -146,7 +147,7 @@ function constructRecordingEntry() {
  */
 function itemClicked(itemName: string) {
   let mything = getMoteusDataObjectFromIdentifier(itemName);
-  if (mything != null) {
+  if (mything !== null) {
     mything.isSelected.value = !mything.isSelected.value;
   }
 }
@@ -186,7 +187,7 @@ function recordButtonPressed() {
 
 function getMoteusDataObjectFromIdentifier(itemName: string) {
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    if (moteuesDataChoice.value[index].identifier == itemName) {
+    if (moteuesDataChoice.value[index].identifier === itemName) {
       return moteuesDataChoice.value[index];
     }
   }
@@ -200,7 +201,7 @@ function getMoteusDataObjectFromIdentifier(itemName: string) {
  */
 function checkboxClicked(name: string) {
   let dataEntry = getMoteusDataObjectFromIdentifier(name);
-  if (dataEntry != null) {
+  if (dataEntry !== null) {
     dataEntry.shouldRecordData = !dataEntry.shouldRecordData;
   }
 }
@@ -211,9 +212,8 @@ defineExpose({ recordButtonPressed });
 <template>
   <div class="module-bg">
     <div>
-      <b style="font-size: large">{{ displayName }}</b>
+      <h3>{{ displayName }}</h3>
     </div>
-
     <div class="flex-container">
       <div class="dropdown">
         <button class="drop-button">Select</button>
@@ -222,6 +222,7 @@ defineExpose({ recordButtonPressed });
             v-for="item in moteuesDataChoice"
             :item-name="item.prettyName"
             :is-selected="item.isSelected"
+            :key="item.prettyName"
             @callback="itemClicked(item.identifier)"
           ></DropDownItem>
         </div>
@@ -253,6 +254,7 @@ defineExpose({ recordButtonPressed });
         :should-show-check-box="showCheckbox"
         :show-all-features="showAllFeatures"
         @checkbox-clicked="checkboxClicked"
+        :key="item.identifier"
       >
       </TelemetryDataDisplay>
     </div>
@@ -264,7 +266,7 @@ defineExpose({ recordButtonPressed });
   background-color: rgb(109, 109, 109);
   border-radius: 20px;
   padding: 10px;
-  width: 15%;
+  width: 100%;
   height: fit-content;
 }
 

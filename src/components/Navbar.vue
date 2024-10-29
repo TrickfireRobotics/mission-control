@@ -10,18 +10,16 @@ import HomeIcon from 'vue-material-design-icons/Home.vue';
 import CameraIcon from 'vue-material-design-icons/Camera.vue';
 import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
-
 const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
 const controllerConnectedStatus = inject<boolean>('isGamepadConnected', false);
 //TODO implement latency
 const latency = ref(-1);
 const currentTab = ref(0);
 const setCurrentTab = (e) => {
-  console.log(e);
   currentTab.value = e;
 };
 
-type PageIcon = { icon: any; label: string; helperText: string }[];
+type PageIcon = { icon: string; label: string; helperText: string }[];
 
 const pageIconArr: PageIcon = [
   {
@@ -88,7 +86,7 @@ const pageIconArr: PageIcon = [
       @click="setCurrentTab(index)"
     >
       <h4>{{ pageIcon.label }}</h4>
-      <component :is="pageIcon.icon" class="page-icon" size="2rem" :title="pageIcon.helperText" />
+      <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
     </RouterLink>
     <div class="container">
       <h4 id="status">WebSocket</h4>
@@ -120,6 +118,7 @@ nav {
   display: flex;
   gap: 5px;
   align-items: center;
+  height: var(--nav-bar-size);
   background-color: var(--black);
   // height: 10rem; // height: var(--nav-bar-height);
   h1,
@@ -128,6 +127,11 @@ nav {
   h4,
   p {
     color: var(--white);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .page-icon {
+    transform: scale(1.25);
   }
   .current-page {
     background-color: var(--light-grey);
@@ -136,9 +140,6 @@ nav {
     margin: 0;
     padding: 0 0.3rem;
     min-width: 4rem;
-  }
-  .page-icon {
-    // transform: scale(1.2);
   }
   #logo {
     max-width: 100%;
@@ -157,7 +158,6 @@ nav {
   .circle {
     border-radius: 50%;
     background-color: inherit;
-    // border-radius: 50%;
     height: 22px;
     width: 22px;
     border: 2px black solid;

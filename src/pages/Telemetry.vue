@@ -77,7 +77,7 @@ onMounted(() => initialize());
 let myRos = inject<Ros>('ros');
 
 function initialize() {
-  if (myRos != null) {
+  if (myRos !== null) {
     robotInfo = new RobotInfo(myRos);
   }
 
@@ -89,7 +89,7 @@ watch(update_time_ms, (newValue) => {
 });
 
 function recordAllPressed() {
-  if (myChild.value == null) {
+  if (myChild.value === null) {
     return;
   }
 
@@ -105,40 +105,49 @@ function getMoteusStateProxy(param, dataCallback) {
 }
 </script>
 <template>
-  <div>
-    <div class="period-input-container">
-      <button
-        :class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
-        @click="recordAllPressed()"
-      >
-        Record all
-      </button>
+  <div class="two-by-three-grid-page">
+    <div>
+      <div class="period-input-container">
+        <button
+          :class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
+          @click="recordAllPressed()"
+        >
+          Record all
+        </button>
+      </div>
+      <div class="period-input-container">
+        <b class="period-text">Update Delay in ms</b>
+        <input
+          v-model="update_time_ms"
+          class="period-input"
+          min="4"
+          type="number"
+          title="Number of milliseconds between each time it polls for data. Affects recording as well"
+        />
+      </div>
     </div>
-    <div class="period-input-container">
-      <b class="period-text">Update Delay in ms</b>
-      <input
-        v-model="update_time_ms"
-        class="period-input"
-        min="4"
-        type="number"
-        title="Number of milliseconds between each time it polls for data. Affects recording as well"
-      />
-    </div>
+
     <div class="page">
-      <GenericMotorTelemetry
-        v-for="item in moteusMotors"
-        v-if="isFinishedLoading"
-        ref="myChild"
-        class="telemetry-motor"
-        :display-name="item.displayName"
-        :show-all-features="true"
-        :update_ms="update_time_ms"
-        :motor-type="item.controller"
-        :data-source-method="getMoteusStateProxy"
-        :data-source-paramater="item.canfdID"
-      >
-      </GenericMotorTelemetry>
+      <div v-if="isFinishedLoading">
+        <GenericMotorTelemetry
+          v-for="item in moteusMotors"
+          :key="item.displayName"
+          ref="myChild"
+          class="telemetry-motor"
+          :display-name="item.displayName"
+          :show-all-features="true"
+          :update_ms="update_time_ms"
+          :motor-type="item.controller"
+          :data-source-method="getMoteusStateProxy"
+          :data-source-paramater="item.canfdID"
+        >
+        </GenericMotorTelemetry>
+      </div>
     </div>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
@@ -146,9 +155,9 @@ function getMoteusStateProxy(param, dataCallback) {
 .page {
   display: flex;
   flex-wrap: wrap;
-  padding: 5px;
-  margin: 5px;
-  justify-content: center;
+  // padding: 5px;
+  // margin: 5px;
+  // justify-content: center;
 }
 
 .period-input-container {

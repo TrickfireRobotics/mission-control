@@ -1,5 +1,6 @@
+<!-- LEGACY CODE NOT USED ANYMORE -->
 <script setup lang="ts">
-import type { MotorData } from '.././types';
+import type { MotorData } from '../../types';
 
 interface Props {
   motorData: MotorData;
@@ -19,8 +20,6 @@ ul {
   height: 100px;
   flex-direction: column;
   flex: 50%;
-  // max-width: 50%;
-  // border: 2px solid black;
   background-color: #cccccc;
 }
 </style>

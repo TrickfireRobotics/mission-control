@@ -29,6 +29,7 @@
 a {
   color: inherit;
 }
+html,
 body {
   min-height: 100vh;
   color: var(--white);
@@ -41,8 +42,19 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
 }
-
+.two-by-three-grid-page {
+  display: grid;
+  width: 100vw;
+  height: calc(100vh - var(--nav-bar-size));
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  // ensures grid itesm are the same size
+  // > * {
+  //   overflow: hidden;
+  // }
+}
 // /* color palette from <https://github.com/vuejs/theme> */
 // :root {
 //   --vt-c-white: #ffffff;
