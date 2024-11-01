@@ -7,7 +7,7 @@ import vue from '@vitejs/plugin-vue';
 export default defineConfig({
   plugins: [vue()],
   server: {
-    // automatically opens
+    // automatically opens in browser
     open: true,
     port: 8000,
   },
