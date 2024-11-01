@@ -1,54 +1,30 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue';
-import { provide } from 'vue';
-import rosInit from './roslib_custom/rosInit';
-import heartbeatPub from './roslib_custom/pub/heartbeatPub';
-import genericPub from './roslib_custom/pub/genericPub';
-import exampleSub from './roslib_custom/sub/exampleSub';
-import genericSub from './roslib_custom/sub/genericSub';
-import getControllerStatus from './script/controller/controllerEvents';
-import cameraSub from './roslib_custom/sub/cameraSub';
-import { ref } from 'vue';
+import Gamepad from './components/controller/Gamepad.vue';
+import { useRoslibStore } from './store/useRoslib';
+import { onMounted } from 'vue';
+const rosjs = useRoslibStore();
+// Put all subs & pubs that have to be run at the start here
+onMounted(() => {
+  // TODO: use environment variables to launch the different ports
+  // Create ros object to communicate over your Rosbridge connection
+  // local host development
+  rosjs.init('ws://localhost:9090');
+  // gamepadInit();
 
-// Starts Controller
-//import startControllerCode from './script/controller/controllerEvents';
+  // Connects to the router
+  // rosjs.init('ws://192.168.0.145:9090');
 
-// Create ros object to communicate over your Rosbridge connection
-// local host development
-const { ros, isWebSocketConnected } = rosInit('ws://localhost:9090');
-
-// Connects to the router
-//const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
-
-// Connects to rover
-// const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
-
-const isGamepadConnected = getControllerStatus(ros);
-const cameras = cameraSub(ros, 0, 1);
-provide('isWebSocketConnected', isWebSocketConnected);
-provide('ros', ros);
-provide('isGamepadConnected', isGamepadConnected);
-provide('cameras', cameras);
-
-// ros: ROSLIB.Ros,
-// input: T,
-// topicName: string,
-// messageType: messageType,
-
-genericPub(ros, '/exampleData', 'std_msgs/String', 'test');
-const test = ref<string>();
-genericSub<string>(ros, '/exampleData', 'std_msgs/String', test);
-const test2 = exampleSub(ros);
-console.log(test);
-console.log('Hello');
-console.log(test2);
-provide('test2', test2);
-
-// heartbeatPub(ros, true, 1000); // 1s
+  // Connects to rover
+  // rosjs.init('ws://10.0.0.10:9090');
+  rosjs.heartbeatPub(true, 1000);
+});
 </script>
 
 <template>
   <div id="app">
+    <!-- All event listeners that use the DOM like gamepad, keyboard inputs should be a Logical component to use lifecycle methods -->
+    <Gamepad />
     <Navbar />
     <div id="main-content">
       <router-view v-slot="{ Component }">
@@ -61,7 +37,7 @@ provide('test2', test2);
 </template>
 
 <style lang="scss">
-@import './assets/global';
+@forward './assets/global';
 #app {
   display: flex;
   flex-direction: column;

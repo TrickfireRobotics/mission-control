@@ -1,3 +1,4 @@
+<!-- LEGACY CODE NOT USED ANYMORE -->
 <script setup lang="ts">
 const emit = defineEmits<{ (e: 'switchCameraFeedTo', id: number): void }>();
 function clickHandler(id: number) {

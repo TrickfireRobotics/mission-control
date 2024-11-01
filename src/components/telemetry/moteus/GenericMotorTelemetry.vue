@@ -1,9 +1,9 @@
 <!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted, inject, defineExpose } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import { SaveCSVData } from '../../../script/saveCSVData';
+import { SaveCSVData } from '../../../lib/saveCSVData';
 import ROSLIB, { Ros } from 'roslib';
 
 onMounted(() => initialize());
@@ -216,13 +216,13 @@ defineExpose({ recordButtonPressed });
     </div>
     <div class="flex-container">
       <div class="dropdown">
-        <button class="drop-button">Select</button>
+        <button class="button-on">Select</button>
         <div class="dropdown-content">
           <DropDownItem
             v-for="item in moteuesDataChoice"
+            :key="item.prettyName"
             :item-name="item.prettyName"
             :is-selected="item.isSelected"
-            :key="item.prettyName"
             @callback="itemClicked(item.identifier)"
           ></DropDownItem>
         </div>
@@ -232,7 +232,7 @@ defineExpose({ recordButtonPressed });
         <button
           v-if="showAllFeatures"
           id="record_button"
-          :class="{ 'record-button-green': !isRecordingData, 'record-button-red': isRecordingData }"
+          :class="{ 'button-on': !isRecordingData, 'button-off': isRecordingData }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}
@@ -247,6 +247,7 @@ defineExpose({ recordButtonPressed });
 
       <TelemetryDataDisplay
         v-for="item in moteuesDataChoice"
+        :key="item.identifier"
         :item-name="item.identifier"
         :is-selected="item.isSelected"
         :value="item.dataValue"
@@ -254,7 +255,6 @@ defineExpose({ recordButtonPressed });
         :should-show-check-box="showCheckbox"
         :show-all-features="showAllFeatures"
         @checkbox-clicked="checkboxClicked"
-        :key="item.identifier"
       >
       </TelemetryDataDisplay>
     </div>
@@ -291,35 +291,6 @@ defineExpose({ recordButtonPressed });
   flex-direction: column;
 }
 
-.drop-button {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.record-button-green {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-left: 5px;
-}
-
-.record-button-red {
-  background-color: rgb(255, 0, 0);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-left: 5px;
-}
-
 .dropdown {
   position: relative;
   display: inline-block;
@@ -339,7 +310,8 @@ defineExpose({ recordButtonPressed });
   display: block;
 }
 
-.dropdown:hover .drop-button {
+.dropdown:hover .button-on {
   background-color: rgb(22, 131, 28);
 }
 </style>
+../../../lib/saveCSVData

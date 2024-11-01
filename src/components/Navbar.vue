@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, onMounted, ref } from 'vue';
+import { ref } from 'vue';
 // Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
@@ -10,10 +10,13 @@ import HomeIcon from 'vue-material-design-icons/Home.vue';
 import CameraIcon from 'vue-material-design-icons/Camera.vue';
 import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
-const webSocketStatus = inject<boolean>('isWebSocketConnected', false);
-const controllerConnectedStatus = inject<boolean>('isGamepadConnected', false);
+import { useRoslibStore } from '../store/useRoslib';
+import { useControllerStore } from '../store/useController';
+
 //TODO implement latency
-const latency = ref(-1);
+
+const roslib = useRoslibStore();
+const controller = useControllerStore();
 const currentTab = ref(0);
 const setCurrentTab = (e) => {
   currentTab.value = e;
@@ -90,20 +93,26 @@ const pageIconArr: PageIcon = [
     </RouterLink>
     <div class="container">
       <h4 id="status">WebSocket</h4>
-      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+      <div
+        class="circle"
+        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+      ></div>
     </div>
     <div class="container">
       <h4 id="status">Camera Feed</h4>
-      <div class="circle" :class="{ green: webSocketStatus, red: !webSocketStatus }"></div>
+      <div
+        class="circle"
+        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+      ></div>
     </div>
     <div class="container">
       <h4 id="status">Controller Connected</h4>
       <div
         class="circle"
-        :class="{ green: controllerConnectedStatus, red: !controllerConnectedStatus }"
+        :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
       ></div>
     </div>
-    <!-- TODO FIX LATER -->
+    <!-- TODO Implement Latency -->
     <!-- <div class="container">
       <h4>Ping</h4>
       <p>{{ `${latency}ms` }}</p>
@@ -120,7 +129,6 @@ nav {
   align-items: center;
   height: var(--nav-bar-size);
   background-color: var(--black);
-  // height: 10rem; // height: var(--nav-bar-height);
   h1,
   h2,
   h3,

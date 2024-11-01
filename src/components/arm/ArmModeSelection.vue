@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import ROSLIB, { Ros } from 'roslib';
-import { ref, onMounted, inject } from 'vue';
-import genericPub from '../roslib_custom/pub/genericPub';
+import ROSLIB from 'roslib';
+import { ref, onMounted } from 'vue';
 
-const myRos = inject<Ros>('ros');
+import { useRoslibStore } from '@/store/useRoslib';
+
+// let myRos: ROSLIB.Ros;
 
 onMounted(() => initialize());
+
+const roslib = useRoslibStore();
 
 let armModeService: ROSLIB.Service;
 
@@ -19,15 +22,13 @@ let current_arm_mode = ref(-1); // Default is disabled
 //let isLoaded = ref(false);
 
 function initialize() {
-  if (myRos !== null) {
-    armModeService = new ROSLIB.Service({
-      ros: myRos,
-      name: '/get_arm_mode',
-      serviceType: 'ArmMode',
-    });
+  armModeService = new ROSLIB.Service({
+    ros: roslib.ros,
+    name: '/get_arm_mode',
+    serviceType: 'ArmMode',
+  });
 
-    getCurrentArmMode();
-  }
+  getCurrentArmMode();
 }
 
 function getCurrentArmMode() {
@@ -45,11 +46,8 @@ function getCurrentArmMode() {
 
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
-
-  if (myRos !== null) {
-    genericPub(myRos, targetMode, 'update_arm_mode', 'std_msgs/Int32');
-    getCurrentArmMode();
-  }
+  roslib.publish('update_arm_mode', 'std_msgs/Int32', targetMode);
+  getCurrentArmMode();
 }
 </script>
 
@@ -146,4 +144,3 @@ function changeArmMode(targetMode: number) {
   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
 }
 </style>
-../roslib/Pub/genericPub

@@ -1,8 +1,3 @@
-export type MotorData = {
-  velocity: number;
-  id: string;
-};
-
 export type CompressedImage = {
   Header: {
     //header is not confirmed on types

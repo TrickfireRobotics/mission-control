@@ -6,6 +6,7 @@
     "isolatedModules": false,
     "noImplicitAny": false,
     "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"]
     }

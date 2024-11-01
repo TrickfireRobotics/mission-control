@@ -5,7 +5,7 @@
   --grey: #303030;
   --light-grey: #424242;
   --error: #e50000;
-  --correct: #05e500;
+  --correct: #30b630;
   --white: #fafafa;
 }
 *,
@@ -44,16 +44,34 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
 }
+.button-on {
+  background-color: var(--correct);
+  color: var(--white);
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+}
+.button-off {
+  background-color: var(--error);
+  color: var(--white);
+  padding: 8px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  margin-left: 5px;
+}
 .two-by-three-grid-page {
   display: grid;
   width: 100vw;
   height: calc(100vh - var(--nav-bar-size));
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  // ensures grid itesm are the same size
-  // > * {
-  //   overflow: hidden;
-  // }
+  // ensures grid item are the same size
+  // Can toggle off for debugging
+  > * {
+    overflow: hidden;
+  }
 }
 // /* color palette from <https://github.com/vuejs/theme> */
 // :root {

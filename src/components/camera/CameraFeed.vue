@@ -1,3 +1,4 @@
+<!-- LEGACY CODE NOT USED ANYMORE -->
 <script setup lang="ts">
 interface Props {
   currentFeed: number;

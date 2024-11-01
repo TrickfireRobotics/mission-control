@@ -3,7 +3,7 @@
 import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
 import { ref, onMounted, inject, watch } from 'vue';
 import { Ros } from 'roslib';
-import { RobotInfo } from '@/script/interface/robotInfo';
+import { RobotInfo } from '@/lib/interface/robotInfo';
 
 let moteusMotors = [
   {
@@ -109,7 +109,7 @@ function getMoteusStateProxy(param, dataCallback) {
     <div>
       <div class="period-input-container">
         <button
-          :class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
+          :class="{ 'button-on': !recordingAll, 'button-off': recordingAll }"
           @click="recordAllPressed()"
         >
           Record all
@@ -136,10 +136,10 @@ function getMoteusStateProxy(param, dataCallback) {
           class="telemetry-motor"
           :display-name="item.displayName"
           :show-all-features="true"
-          :update_ms="update_time_ms"
+          :update_ms="update_time_ms.toString()"
           :motor-type="item.controller"
           :data-source-method="getMoteusStateProxy"
-          :data-source-paramater="item.canfdID"
+          :data-source-paramater="item.canfdID.toString()"
         >
         </GenericMotorTelemetry>
       </div>
@@ -166,26 +166,6 @@ function getMoteusStateProxy(param, dataCallback) {
   margin: 10px;
 }
 
-.record-button-green {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 5px;
-}
-
-.record-button-red {
-  background-color: rgb(255, 0, 0);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 5px;
-}
-
 .period-input {
   border-radius: 5px;
 }
@@ -198,3 +178,4 @@ function getMoteusStateProxy(param, dataCallback) {
   margin: 5px;
 }
 </style>
+@/lib/interface/robotInfo
