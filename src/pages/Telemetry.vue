@@ -4,6 +4,7 @@ import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTe
 import { ref, onMounted, inject, watch } from 'vue';
 import { Ros } from 'roslib';
 import { RobotInfo } from '@/lib/interface/robotInfo';
+import { useRoslibStore } from '@/store/useRoslib';
 
 let moteusMotors = [
   {
@@ -74,11 +75,11 @@ let robotInfo;
 
 onMounted(() => initialize());
 
-let myRos = inject<Ros>('ros');
+const roslib = useRoslibStore();
 
 function initialize() {
-  if (myRos !== null) {
-    robotInfo = new RobotInfo(myRos);
+  if (roslib.ros !== null) {
+    robotInfo = new RobotInfo(roslib.ros);
   }
 
   isFinishedLoading.value = true;
@@ -178,4 +179,3 @@ function getMoteusStateProxy(param, dataCallback) {
   margin: 5px;
 }
 </style>
-@/lib/interface/robotInfo

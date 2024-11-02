@@ -4,7 +4,8 @@ import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import { SaveCSVData } from '../../../lib/saveCSVData';
-import ROSLIB, { Ros } from 'roslib';
+import ROSLIB from 'roslib';
+import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
 
@@ -29,7 +30,7 @@ let recordButtonText = ref('Start Recording');
 let pollingData; //Used to keep track of the object id when we do setInterval
 
 let getMoteusMotorStateService: ROSLIB.Service;
-const myRos = inject<Ros>('ros');
+const roslib = useRoslibStore();
 
 /**
  * This is used to store what kind of data we will be displaying
@@ -44,7 +45,8 @@ let hasBuiltMoteusDataChoice = false;
 
 function initialize() {
   csvData = new SaveCSVData();
-  pollingData = setInterval(updateUIWithNewData, props.update_ms);
+  // TODO: FIX SERVICE
+  // pollingData = setInterval(updateUIWithNewData, props.update_ms);
 }
 
 function updateUIWithNewData(jsonString) {
@@ -314,4 +316,3 @@ defineExpose({ recordButtonPressed });
   background-color: rgb(22, 131, 28);
 }
 </style>
-../../../lib/saveCSVData

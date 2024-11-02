@@ -20,7 +20,7 @@ class SaveCSVData {
     // Fill in the values
     for (let fullEntryIndex = 0; fullEntryIndex < this.csvDataObjects.length; fullEntryIndex++) {
       //Grabs the data array entry from the list of data (csvDataObjects)
-      const entryArray: string[] = this.csvDataObjects[fullEntryIndex];
+      const entryArray: any = this.csvDataObjects[fullEntryIndex];
       let entryString = '';
 
       //Builds the line
@@ -51,7 +51,7 @@ class SaveCSVData {
   }
 
   _createrHeaderString() {
-    // TODO: Remove?
+    const outputstr = '';
   }
 }
 

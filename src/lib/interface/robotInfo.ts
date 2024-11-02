@@ -24,9 +24,7 @@ class RobotInfo {
     this.getMoteusMotorStateService.callService(request, callback);
   }
 
-  getRMDx8MotorState(can2ID: number) {
-    // TODO: Remove?
-  }
+  getRMDx8MotorState(can2ID: number) {}
 }
 
 export { RobotInfo };

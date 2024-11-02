@@ -57,7 +57,7 @@ class ControllerState {
 
   readJSONFile(jsonInput: JSON) {
     // These two lines convert the JSON to be read
-    let json = JSON.stringify(jsonInput);
+    let json: any = JSON.stringify(jsonInput);
     json = JSON.parse(json);
 
     // Since the JSON file is an array of length 20,
