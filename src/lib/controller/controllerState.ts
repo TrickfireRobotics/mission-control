@@ -57,6 +57,8 @@ export default class ControllerState {
 
   readJSONFile(jsonInput: JSON) {
     // These two lines convert the JSON to be read
+    // TODO: Refactor so do not use "any"
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     let json: any = JSON.stringify(jsonInput);
     json = JSON.parse(json);
 

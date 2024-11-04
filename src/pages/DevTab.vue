@@ -8,7 +8,7 @@ const example = useExampleStore();
   <div class="two-by-three-grid-page">
     <p>Example Data ={{ example.data }}</p>
     <button @click="example.publishExampleData">Add !</button>
-    <button @click="example.unsubscribe">Unsubscribe</button>
+    <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>

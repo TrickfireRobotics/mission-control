@@ -1,9 +1,9 @@
 <!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import SaveCSVData from '../../../lib/saveCSVData';
+import { SaveCSVData } from '../../../lib/saveCSVData';
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '@/store/useRoslib';
 
@@ -13,7 +13,7 @@ const props = defineProps({
   displayName: String,
   dataSourceMethod: Function,
   dataSourceParamater: String,
-  updateMs: String,
+  update_ms: String,
   showAllFeatures: Boolean,
   motorType: String,
 });
@@ -61,11 +61,11 @@ function updateUIWithNewData(jsonString) {
   //This code section is used to change the polling rate
   clearInterval(pollingData); //Stop the interval
 
-  if (props.updateMs < 4) {
+  if (props.update_ms < 4) {
     //So we dont break the thing by going slower. It is 4 because browser limitations
     pollingData = setInterval(updateUIWithNewData, 4);
   } else {
-    pollingData = setInterval(updateUIWithNewData, props.updateMs);
+    pollingData = setInterval(updateUIWithNewData, props.update_ms);
   }
 }
 
@@ -79,7 +79,7 @@ function dataCallback(result) {
   let json = JSON.parse(result.json_payload);
 
   for (const key in json) {
-    if (json.hasOwnProperty(key)) {
+    if (Object.hasOwn(json, key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
       if (object !== null) {
@@ -110,8 +110,7 @@ function buildMoteusDataChoice(result) {
       isSelected: true,
       shouldRecordData: true,
     };
-
-    if (key in json) {
+    if (Object.hasOwn(json, key)) {
       entry.prettyName = key;
       entry.identifier = key;
       entry.dataValue = json[key];
@@ -218,7 +217,7 @@ defineExpose({ recordButtonPressed });
     </div>
     <div class="flex-container">
       <div class="dropdown">
-        <button class="button--on">Select</button>
+        <button class="button-on">Select</button>
         <div class="dropdown-content">
           <DropDownItem
             v-for="item in moteuesDataChoice"
@@ -233,8 +232,8 @@ defineExpose({ recordButtonPressed });
       <div>
         <button
           v-if="showAllFeatures"
-          id="record-button"
-          :class="{ 'button--on': !isRecordingData, 'button--off': isRecordingData }"
+          id="record_button"
+          :class="{ 'button-on': !isRecordingData, 'button-off': isRecordingData }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}
@@ -310,5 +309,9 @@ defineExpose({ recordButtonPressed });
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.dropdown:hover .button-on {
+  background-color: rgb(22, 131, 28);
 }
 </style>
