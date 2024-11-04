@@ -1,6 +1,6 @@
 <!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted, inject } from 'vue';
+import { ref, onMounted } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import { SaveCSVData } from '../../../lib/saveCSVData';
@@ -13,7 +13,7 @@ const props = defineProps({
   displayName: String,
   dataSourceMethod: Function,
   dataSourceParamater: String,
-  update_ms: String,
+  updateMs: String,
   showAllFeatures: Boolean,
   motorType: String,
 });
@@ -61,11 +61,11 @@ function updateUIWithNewData(jsonString) {
   //This code section is used to change the polling rate
   clearInterval(pollingData); //Stop the interval
 
-  if (props.update_ms < 4) {
+  if (props.updateMs < 4) {
     //So we dont break the thing by going slower. It is 4 because browser limitations
     pollingData = setInterval(updateUIWithNewData, 4);
   } else {
-    pollingData = setInterval(updateUIWithNewData, props.update_ms);
+    pollingData = setInterval(updateUIWithNewData, props.updateMs);
   }
 }
 
@@ -79,7 +79,7 @@ function dataCallback(result) {
   let json = JSON.parse(result.json_payload);
 
   for (const key in json) {
-    if (key in json) {
+    if (json.hasOwnProperty(key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
       if (object !== null) {
@@ -233,7 +233,7 @@ defineExpose({ recordButtonPressed });
       <div>
         <button
           v-if="showAllFeatures"
-          id="record_button"
+          id="record-button"
           :class="{ 'button-on': !isRecordingData, 'button-off': isRecordingData }"
           @click="recordButtonPressed"
         >

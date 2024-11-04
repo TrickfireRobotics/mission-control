@@ -10,6 +10,8 @@
     "paths": {
       "@/*": ["./src/*"]
     }
+    // // Added to make Vue TypeScript Checker use Object.hasOwn() automatically
+    // "lib": ["ES2022"]
   },
 
   "references": [

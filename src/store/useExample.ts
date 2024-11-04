@@ -4,7 +4,7 @@ import { useRoslibStore } from './useRoslib';
 
 // 0th Define any constants above
 const TOPIC_NAME = '/exampleData';
-const TOPIC_TYPE: messageType = 'std_msgs/String';
+const TOPIC_TYPE: MessageType = 'std_msgs/String';
 
 export const useExampleStore = defineStore('example', () => {
   // 1st define any dependency stores

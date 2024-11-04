@@ -1,8 +1,7 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
 import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
-import { ref, onMounted, inject, watch } from 'vue';
-import { Ros } from 'roslib';
+import { ref, onMounted, watch } from 'vue';
 import { RobotInfo } from '@/lib/interface/robotInfo';
 import { useRoslibStore } from '@/store/useRoslib';
 
@@ -64,7 +63,7 @@ let moteusMotors = [
   },
 ];
 
-let update_time_ms = ref(100);
+let updateTimeMs = ref(100);
 
 let recordingAll = ref(false);
 let isFinishedLoading = ref(false);
@@ -85,8 +84,8 @@ function initialize() {
   isFinishedLoading.value = true;
 }
 
-watch(update_time_ms, (newValue) => {
-  update_time_ms.value = newValue < 4 ? 4 : newValue;
+watch(updateTimeMs, (newValue) => {
+  updateTimeMs.value = newValue < 4 ? 4 : newValue;
 });
 
 function recordAllPressed() {
@@ -119,7 +118,7 @@ function getMoteusStateProxy(param, dataCallback) {
       <div class="period-input-container">
         <b class="period-text">Update Delay in ms</b>
         <input
-          v-model="update_time_ms"
+          v-model="updateTimeMs"
           class="period-input"
           min="4"
           type="number"
@@ -137,7 +136,7 @@ function getMoteusStateProxy(param, dataCallback) {
           class="telemetry-motor"
           :display-name="item.displayName"
           :show-all-features="true"
-          :update_ms="update_time_ms.toString()"
+          :update-ms="updateTimeMs.toString()"
           :motor-type="item.controller"
           :data-source-method="getMoteusStateProxy"
           :data-source-paramater="item.canfdID.toString()"
@@ -156,11 +155,7 @@ function getMoteusStateProxy(param, dataCallback) {
 .page {
   display: flex;
   flex-wrap: wrap;
-  // padding: 5px;
-  // margin: 5px;
-  // justify-content: center;
 }
-
 .period-input-container {
   display: flex;
   justify-content: center;

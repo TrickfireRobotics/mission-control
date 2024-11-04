@@ -8,7 +8,7 @@ import { useRoslibStore } from '@/store/useRoslib';
  * and determine if it is fast enough to send data.
  */
 
-class ControllerState {
+export default class ControllerState {
   // Joysticks
   leftJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
   rightJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
@@ -213,5 +213,3 @@ class ControllerState {
     }
   }
 }
-
-export { ControllerState };

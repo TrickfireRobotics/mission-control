@@ -81,13 +81,13 @@ export const useRoslibStore = defineStore('roslib', () => {
   /**
    * Generic Subscriber to interact with Ros
    * @param topicName should start with '/' along with topic name
-   * @param messageType Ros Message Type
+   * @param MessageType Ros Message Type
    * @param defaultValue? optional starting value
    * @returns Vue Ref that can be undefined if not provided default value. Can use "as Ref<T>" if default Value is provided
    */
   function subscribe<T>(
     topicName: string,
-    messageType: messageType,
+    messageType: MessageType,
     defaultValue?: T,
   ): Ref<T | undefined> {
     const topic = new ROSLIB.Topic({
@@ -113,7 +113,7 @@ export const useRoslibStore = defineStore('roslib', () => {
    * @param messageType Ros Message Type
    * @param input published Value
    */
-  function publish<T>(topicName: string, messageType: messageType, input: T) {
+  function publish<T>(topicName: string, messageType: MessageType, input: T) {
     const topic = new ROSLIB.Topic({
       ros,
       name: topicName,
@@ -128,7 +128,7 @@ export const useRoslibStore = defineStore('roslib', () => {
     topic.publish(data);
   }
   //TODO: Figure out how to implement unsubscribe
-  function unsubscribe(topicName: string, messageType: messageType) {}
+  function unsubscribe(topicName: string, messageType: MessageType) {}
   function heartbeatPub(input: boolean, interval: number) {
     // Function to publish a heartbeat message
     const heartbeat_topic = new ROSLIB.Topic({

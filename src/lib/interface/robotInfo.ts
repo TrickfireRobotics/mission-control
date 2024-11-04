@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 
-class RobotInfo {
+export default class RobotInfo {
   myROS = null;
   getMoteusMotorStateService = null;
 

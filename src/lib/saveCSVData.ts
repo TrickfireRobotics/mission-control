@@ -1,4 +1,4 @@
-class SaveCSVData {
+export default class SaveCSVData {
   header: string[] = [];
   csvDataObjects: object[] = [];
 
@@ -54,5 +54,3 @@ class SaveCSVData {
     const outputstr = '';
   }
 }
-
-export { SaveCSVData };
