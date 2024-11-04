@@ -1,7 +1,7 @@
 <!-- Logical Component so can take advantage of vue lifecycle functions like onMount -->
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-import { ControllerState } from '../../lib/controller/controllerState';
+import ControllerState from '../../lib/controller/controllerState';
 import { useControllerStore } from '@/store/useController';
 
 const DELTA_SENSITIVITY = 0.01;

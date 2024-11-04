@@ -26,5 +26,3 @@ export default class RobotInfo {
 
   getRMDx8MotorState(can2ID: number) {}
 }
-
-export { RobotInfo };
