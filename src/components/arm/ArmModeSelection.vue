@@ -61,8 +61,8 @@ function changeArmMode(targetMode: number) {
         <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode !== 0,
-            'button-mode-selected': current_arm_mode === 0,
+            'button--off': current_arm_mode !== 0,
+            'button--on': current_arm_mode === 0,
           }"
           @click="changeArmMode(0)"
         >
@@ -70,8 +70,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode !== 1,
-            'button-mode-selected': current_arm_mode === 1,
+            'button--off': current_arm_mode !== 1,
+            'button--on': current_arm_mode === 1,
           }"
           @click="changeArmMode(1)"
         >
@@ -79,8 +79,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode !== 2,
-            'button-mode-selected': current_arm_mode === 2,
+            'button--off': current_arm_mode !== 2,
+            'button--on': current_arm_mode === 2,
           }"
           @click="changeArmMode(2)"
         >
@@ -88,8 +88,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode !== 3,
-            'button-mode-selected': current_arm_mode === 3,
+            'button--off': current_arm_mode !== 3,
+            'button--on': current_arm_mode === 3,
           }"
           @click="changeArmMode(3)"
         >
@@ -115,32 +115,11 @@ function changeArmMode(targetMode: number) {
   display: flex;
   flex-direction: column;
 }
+// .button--off:hover {
+//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+// }
 
-.button-mode-unselected {
-  margin: 5px;
-  background-color: rgb(201, 56, 56);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.button-mode-selected {
-  margin: 5px;
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.button-mode-unselected:hover {
-  background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-}
-
-.button-mode-selected:hover {
-  background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-}
+// .button--on:hover {
+//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+// }
 </style>
