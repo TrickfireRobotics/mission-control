@@ -1,4 +1,4 @@
-type messageType =
+type MessageType =
   | 'std_msgs/Int32'
   | 'std_msgs/Bool'
   | 'std_msgs/String'
