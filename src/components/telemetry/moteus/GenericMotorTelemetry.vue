@@ -3,7 +3,7 @@
 import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import { SaveCSVData } from '../../../lib/saveCSVData';
+import SaveCSVData from '../../../lib/saveCSVData';
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '@/store/useRoslib';
 
