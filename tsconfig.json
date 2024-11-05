@@ -11,7 +11,7 @@
       "@/*": ["./src/*"]
     },
     // Added to allow Object.hasOwn(). We are targeting the latest versions of javascript.
-    "target": "ES2023",
+    "target": "ES2022",
     "lib": ["ES2022"]
   },
 
