@@ -58,6 +58,8 @@ export default class ControllerState {
   readJSONFile(jsonInput: JSON) {
     // These two lines convert the JSON to be read
     // TODO: Refactor so do not use "any"
+    // Use glob import or static import in https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1827239874
+    // Look at comment on how to cast it https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1834908954
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     let json: any = JSON.stringify(jsonInput);
     json = JSON.parse(json);

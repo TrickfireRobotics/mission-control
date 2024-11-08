@@ -12,6 +12,10 @@ export const useRoslibStore = defineStore('roslib', () => {
   const ros = new ROSLIB.Ros({ url: undefined });
   const isWebSocketConnected = ref<boolean>(false);
   const stop = ref<boolean>(false);
+  /**
+   * Initializes Ros, websocket with Rover and runs heartbeat subscribes. Should only be used in App.vue
+   * @param serverHost IP address of websocket
+   */
   function init(serverHost: string) {
     ros.connect(serverHost);
     console.count('Reinitialized RosInit');
@@ -30,6 +34,7 @@ export const useRoslibStore = defineStore('roslib', () => {
     ros.on('close', () => {
       isWebSocketConnected.value = false;
     });
+    // Runs Heartbeat Subscriber so that if there is a long delay, it tells motor to turn off
     // TODO: refactor to retrieve time instead of boolean
     const [isReceivingHeartBeatData, heartbeatSub] = createSubscriber({
       topicName: 'hbr',
@@ -74,12 +79,19 @@ export const useRoslibStore = defineStore('roslib', () => {
       }
     }, 100);
   }
-  function createTopic<T>(
+  /**
+   * Creates Topic that return type from subscribing is T. Only use if not StdMsg or isn't a simple {data : T}.
+   * @param topicName should start with '/' along with topic name
+   * @param topicType Ros Message Type
+   * @param compression? optional type of compression to use, like 'png', 'cbor', or 'cbor-raw'
+   * @returns ROSLIB.TOPIC that expects T result
+   */
+  function createNonStandardTopic<T>(
     topicName: string,
     topicType: TopicType,
     compression: RosCompressionType = 'cbor',
   ) {
-    return new ROSLIB.Topic<StdMsg<T>>({
+    return new ROSLIB.Topic<T>({
       ros,
       name: topicName,
       messageType: topicType,
@@ -92,7 +104,7 @@ export const useRoslibStore = defineStore('roslib', () => {
    * @param options.topicType Ros Message Type
    * @param options.startingDefaultValue? optional starting value
    * @param options.isDebugging? optional prints to console for debugging
-   * @returns data, subscribe callback, unsubscribe callback, isOn
+   * @returns data, subscribe callback, unsubscribe callback, isOn = isCurrentlyBeingSubscribed
    */
   function createSubscriber<T extends TopicType>(options: {
     topicName: string;
@@ -211,7 +223,7 @@ export const useRoslibStore = defineStore('roslib', () => {
     isWebSocketConnected,
     stop,
     init,
-    createTopic,
+    createNonStandardTopic,
     createSubscriber,
     createPublisher,
     heartbeatPub,
