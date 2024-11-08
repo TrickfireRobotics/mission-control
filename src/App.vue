@@ -24,13 +24,13 @@ onMounted(() => {
 <template>
   <div id="app">
     <Navbar />
-    <div id="main-content">
+    <main id="main-content">
       <router-view v-slot="{ Component }">
         <KeepAlive>
           <component :is="Component"></component>
         </KeepAlive>
       </router-view>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -40,7 +40,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
 }
-#main-content {
+#main {
   flex: 1;
 }
 </style>
