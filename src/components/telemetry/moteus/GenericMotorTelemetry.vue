@@ -77,7 +77,8 @@ function dataCallback(result) {
 
   //update the data
   let json = JSON.parse(result.json_payload);
-
+  // TODO: Refactor so doesn't use in and Object.hasOwn
+  // Conversation about it: https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1828811375
   for (const key in json) {
     if (Object.hasOwn(json, key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
