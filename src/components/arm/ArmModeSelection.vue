@@ -4,8 +4,6 @@ import { ref, onMounted } from 'vue';
 
 import { useRoslibStore } from '@/store/useRoslib';
 
-// let myRos: ROSLIB.Ros;
-
 onMounted(() => initialize());
 
 const roslib = useRoslibStore();
@@ -46,7 +44,11 @@ function getCurrentArmMode() {
 
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
-  roslib.publish('update_arm_mode', 'std_msgs/Int32', targetMode);
+  const armModePublish = roslib.createPublisher({
+    topicName: 'update_arm_mode',
+    topicType: 'std_msgs/Int32',
+  });
+  armModePublish(targetMode);
   getCurrentArmMode();
 }
 </script>
@@ -115,11 +117,4 @@ function changeArmMode(targetMode: number) {
   display: flex;
   flex-direction: column;
 }
-// .button--off:hover {
-//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-// }
-
-// .button--on:hover {
-//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-// }
 </style>
