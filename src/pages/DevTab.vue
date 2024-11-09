@@ -1,7 +1,9 @@
 <!-- Experimental page to test modules -->
+<!-- Eventually will be a debugger like listing all of the topicName, topicTypes -->
 <script setup lang="ts">
 import { useExampleStore } from '../store/useExample';
 import { onActivated, onDeactivated } from 'vue';
+import ExampleComponent from '@/components/ExampleComponent.vue';
 const example = useExampleStore();
 
 onActivated(() => {
@@ -21,17 +23,11 @@ const onAndOffHandler = () => {
 </script>
 <template>
   <div class="two-by-three-grid-page">
-    <h1>Example Data: {{ example.exampleData }}</h1>
-    <button @click="example.examplePublish(example.exampleData + '!')">Add !</button>
-    <button @click="example.unsubscribeExample">Unsub</button>
-    <button @click="example.subscribeExample">sub</button>
-    <button
-      :class="{ 'button--off': !example.isSubOnExample, 'button--on': example.isSubOnExample }"
-      @click="onAndOffHandler"
-    >
-      Example Subscriber Status:
-      {{ example.isSubOnExample ? 'On' : 'Off' }}
-    </button>
+    <ExampleComponent />
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
   </div>
 </template>

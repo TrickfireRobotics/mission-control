@@ -42,35 +42,35 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
 }
-.button {
-  color: var(--white);
+button {
+  background-color: var(--white);
   padding: 8px;
   font-size: 16px;
   border: none;
   border-radius: 10px;
-  // double -- because it is a modifier
-
+  color: var(--black);
   &:hover {
     background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
     cursor: pointer;
   }
-  &--on {
-    @extend .button;
-    background-color: var(--correct);
+  &:active {
+    color: var(--white);
+    background-color: var(--black);
+    cursor: default;
   }
-  &--off {
-    @extend .button;
-    background-color: var(--error);
+}
+.button {
+  &-toggle {
+    // double -- because it is a modifier
+    &--on {
+      background-color: var(--correct);
+    }
+    &--off {
+      background-color: var(--error);
+    }
   }
 }
 
-// .button-mode-unselected:hover {
-//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-// }
-
-// .button-mode-selected:hover {
-//   background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-// }
 .two-by-three-grid-page {
   display: grid;
   width: 100vw;

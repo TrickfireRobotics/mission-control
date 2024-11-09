@@ -63,8 +63,8 @@ function changeArmMode(targetMode: number) {
         <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
-            'button--off': current_arm_mode !== 0,
-            'button--on': current_arm_mode === 0,
+            'button-toggle--off': current_arm_mode !== 0,
+            'button-toggle--on': current_arm_mode === 0,
           }"
           @click="changeArmMode(0)"
         >
@@ -72,8 +72,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button--off': current_arm_mode !== 1,
-            'button--on': current_arm_mode === 1,
+            'button-toggle--off': current_arm_mode !== 1,
+            'button-toggle--on': current_arm_mode === 1,
           }"
           @click="changeArmMode(1)"
         >
@@ -81,8 +81,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button--off': current_arm_mode !== 2,
-            'button--on': current_arm_mode === 2,
+            'button-toggle--off': current_arm_mode !== 2,
+            'button-toggle--on': current_arm_mode === 2,
           }"
           @click="changeArmMode(2)"
         >
@@ -90,8 +90,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button--off': current_arm_mode !== 3,
-            'button--on': current_arm_mode === 3,
+            'button-toggle--off': current_arm_mode !== 3,
+            'button-toggle--on': current_arm_mode === 3,
           }"
           @click="changeArmMode(3)"
         >

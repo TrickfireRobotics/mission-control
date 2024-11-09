@@ -218,7 +218,11 @@ defineExpose({ recordButtonPressed });
     </div>
     <div class="flex-container">
       <div class="dropdown">
-        <button class="button-on">Select</button>
+        <button
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
+        >
+          Select
+        </button>
         <div class="dropdown-content">
           <DropDownItem
             v-for="item in moteuesDataChoice"
@@ -234,7 +238,7 @@ defineExpose({ recordButtonPressed });
         <button
           v-if="showAllFeatures"
           id="record_button"
-          :class="{ 'button-on': !isRecordingData, 'button-off': isRecordingData }"
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}
@@ -310,9 +314,5 @@ defineExpose({ recordButtonPressed });
 
 .dropdown:hover .dropdown-content {
   display: block;
-}
-
-.dropdown:hover .button-on {
-  background-color: rgb(22, 131, 28);
 }
 </style>

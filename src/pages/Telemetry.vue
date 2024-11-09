@@ -109,7 +109,7 @@ function getMoteusStateProxy(param, dataCallback) {
     <div>
       <div class="period-input-container">
         <button
-          :class="{ 'button--on': !recordingAll, 'button--off': recordingAll }"
+          :class="{ 'button-toggle--on': !recordingAll, 'button-toggle--off': recordingAll }"
           @click="recordAllPressed()"
         >
           Record all
