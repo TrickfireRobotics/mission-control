@@ -3,9 +3,11 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
+import vueDevTools from 'vite-plugin-vue-devtools';
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(), vueDevTools()],
   server: {
     // automatically opens in browser
     open: true,
@@ -16,7 +18,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  // Fixes The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0 when updating packages
+  // Fixes The legacy JS API is deprecated error when updated Sass package as "will be removed in Dart Sass 2.0.0"
   css: {
     preprocessorOptions: {
       scss: {
