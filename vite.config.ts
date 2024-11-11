@@ -28,4 +28,5 @@ export default defineConfig({
       },
     },
   },
+  base: process.env.GH_PAGES === 'true' ? '/mission-control/' : '/',
 });
