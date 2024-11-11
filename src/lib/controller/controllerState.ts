@@ -8,7 +8,7 @@ import { useRoslibStore } from '@/store/useRoslib';
  * and determine if it is fast enough to send data.
  */
 
-class ControllerState {
+export default class ControllerState {
   // Joysticks
   leftJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
   rightJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
@@ -57,6 +57,10 @@ class ControllerState {
 
   readJSONFile(jsonInput: JSON) {
     // These two lines convert the JSON to be read
+    // TODO: Refactor so do not use "any"
+    // Use glob import or static import in https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1827239874
+    // Look at comment on how to cast it https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1834908954
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     let json: any = JSON.stringify(jsonInput);
     json = JSON.parse(json);
 
@@ -130,46 +134,45 @@ class ControllerState {
 
     if (Math.abs(this.leftJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
       //console.log("send LEFT joystick X");
-      console.log(this.joystickIndexToPublisherName);
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(0),
-        'std_msgs/Float32',
-        this.leftJoyStickArray[0],
-      );
-      // controllerPub(ros, this.joystickIndexToPublisherName.get(0), this.leftJoyStickArray[0]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(0),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.leftJoyStickArray[0]);
     }
 
     //Left joystick Y axis
     if (Math.abs(this.leftJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
       //console.log("send LEFT joystick Y");
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(1),
-        'std_msgs/Float32',
-        this.leftJoyStickArray[1],
-      );
-      // controllerPub(ros, this.joystickIndexToPublisherName.get(1), this.leftJoyStickArray[1]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(1),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.leftJoyStickArray[1]);
     }
 
     //Right joystick X axis
     if (Math.abs(this.rightJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
       //console.log("send RIGHT joystick X");
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(2),
-        'std_msgs/Float32',
-        this.rightJoyStickArray[0],
-      );
-      // controllerPub(ros, this.joystickIndexToPublisherName.get(2), this.rightJoyStickArray[0]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(2),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.rightJoyStickArray[0]);
     }
 
     //Left joystick Y axis
     if (Math.abs(this.rightJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
       //console.log("send RIGHT joystick Y");
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(3),
-        'std_msgs/Float32',
-        this.rightJoyStickArray[1],
-      );
-      // controllerPub(ros, this.joystickIndexToPublisherName.get(3), this.rightJoyStickArray[1]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(3),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.rightJoyStickArray[1]);
     }
 
     /*
@@ -178,40 +181,34 @@ class ControllerState {
 
     // Left Trigger
     if (Math.abs(this.deltaStateButtons[6]) > this.deltaSensitivity) {
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(6),
-        'std_msgs/Float32',
-        this.currentStateButtons[6],
-      );
-      // controllerPub(ros, this.buttonIndexToPublisherName.get(6), this.currentStateButtons[6]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(6),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.currentStateButtons[6]);
     }
 
     // Right Trigger
     if (Math.abs(this.deltaStateButtons[7]) > this.deltaSensitivity) {
-      rosjs.publish(
-        this.joystickIndexToPublisherName.get(7),
-        'std_msgs/Float32',
-        this.currentStateButtons[7],
-      );
-      // controllerPub(ros, this.buttonIndexToPublisherName.get(7), this.currentStateButtons[7]);
+      const controllerPub = rosjs.createPublisher({
+        topicName: this.joystickIndexToPublisherName.get(7),
+        topicType: 'std_msgs/Float32',
+        isDebugging: true,
+      });
+      controllerPub(this.currentStateButtons[7]);
     }
 
     // Send button data. Skip index 6 and 7 as that are the triggers
     for (let index = 0; index < 16; index++) {
       if (index !== 6 && index !== 7 && Math.abs(this.deltaStateButtons[index]) === 1) {
-        // controllerPub(
-        //   ros,
-        //   this.buttonIndexToPublisherName.get(index),
-        //   this.currentStateButtons[index],
-        // );
-        rosjs.publish(
-          this.buttonIndexToPublisherName.get(index),
-          'std_msgs/Float32',
-          this.currentStateButtons[index],
-        );
+        const controllerPub = rosjs.createPublisher({
+          topicName: this.buttonIndexToPublisherName.get(index),
+          topicType: 'std_msgs/Float32',
+          isDebugging: true,
+        });
+        controllerPub(this.currentStateButtons[index]);
       }
     }
   }
 }
-
-export { ControllerState };

@@ -31,13 +31,6 @@ const router = createRouter({
 });
 
 const app = createApp(App);
-app.config.warnHandler = (msg, vm, trace) => {
-  // We are using logical components, so ignoring this warning
-  if (msg.includes('Component is missing template or render function')) {
-    return; // Suppress this specific warning
-  }
-  console.warn(`[Vue warn]: ${msg}${trace}`);
-};
 //Set up Pinia
 const pinia = createPinia();
 app.use(pinia);

@@ -3,7 +3,7 @@
 import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import { SaveCSVData } from '../../../lib/saveCSVData';
+import SaveCSVData from '../../../lib/saveCSVData';
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '@/store/useRoslib';
 
@@ -77,9 +77,10 @@ function dataCallback(result) {
 
   //update the data
   let json = JSON.parse(result.json_payload);
-
+  // TODO: Refactor so doesn't use in and Object.hasOwn
+  // Conversation about it: https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1828811375
   for (const key in json) {
-    if (key in json) {
+    if (Object.hasOwn(json, key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
       if (object !== null) {
@@ -110,8 +111,7 @@ function buildMoteusDataChoice(result) {
       isSelected: true,
       shouldRecordData: true,
     };
-
-    if (key in json) {
+    if (Object.hasOwn(json, key)) {
       entry.prettyName = key;
       entry.identifier = key;
       entry.dataValue = json[key];
@@ -218,7 +218,11 @@ defineExpose({ recordButtonPressed });
     </div>
     <div class="flex-container">
       <div class="dropdown">
-        <button class="button-on">Select</button>
+        <button
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
+        >
+          Select
+        </button>
         <div class="dropdown-content">
           <DropDownItem
             v-for="item in moteuesDataChoice"
@@ -234,7 +238,7 @@ defineExpose({ recordButtonPressed });
         <button
           v-if="showAllFeatures"
           id="record_button"
-          :class="{ 'button-on': !isRecordingData, 'button-off': isRecordingData }"
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}
@@ -310,9 +314,5 @@ defineExpose({ recordButtonPressed });
 
 .dropdown:hover .dropdown-content {
   display: block;
-}
-
-.dropdown:hover .button-on {
-  background-color: rgb(22, 131, 28);
 }
 </style>

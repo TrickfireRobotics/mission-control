@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 
-class RobotInfo {
+export default class RobotInfo {
   myROS = null;
   getMoteusMotorStateService = null;
 
@@ -26,5 +26,3 @@ class RobotInfo {
 
   getRMDx8MotorState(can2ID: number) {}
 }
-
-export { RobotInfo };
