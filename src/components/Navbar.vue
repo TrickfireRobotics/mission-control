@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Component, ref } from 'vue';
+import { ref } from 'vue';
 // Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
@@ -22,7 +22,7 @@ const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
 };
 
-type PageIcon = { icon: Component; label: string; helperText: string }[];
+type PageIcon = { icon: object; label: string; helperText: string }[];
 
 const pageIconArr: PageIcon = [
   {
