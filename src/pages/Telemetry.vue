@@ -1,7 +1,7 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
 import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, useTemplateRef } from 'vue';
 import RobotInfo from '@/lib/interface/robotInfo';
 import { useRoslibStore } from '@/store/useRoslib';
 
@@ -68,7 +68,7 @@ let updateTimeMs = ref(100);
 let recordingAll = ref(false);
 let isFinishedLoading = ref(false);
 
-const myChild = ref(null);
+const myChild = useTemplateRef<(typeof GenericMotorTelemetry)[]>('myChild');
 
 let robotInfo;
 

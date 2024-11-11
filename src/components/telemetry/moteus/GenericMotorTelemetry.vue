@@ -13,7 +13,7 @@ const props = defineProps({
   displayName: String,
   dataSourceMethod: Function,
   dataSourceParamater: String,
-  update_ms: String,
+  update_ms: Number,
   showAllFeatures: Boolean,
   motorType: String,
 });
@@ -40,7 +40,15 @@ const roslib = useRoslibStore();
  * show up, assuming that the data recieved from the the rover also has these values
  */
 
-const moteuesDataChoice = ref([]);
+interface MoteuesDataChoice {
+  prettyName: string;
+  identifier: string;
+  dataValue: string;
+  isSelected: boolean;
+  shouldRecordData: boolean;
+}
+
+const moteuesDataChoice = ref<MoteuesDataChoice[]>([]);
 let hasBuiltMoteusDataChoice = false;
 
 function initialize() {
@@ -61,7 +69,7 @@ function updateUIWithNewData(jsonString) {
   //This code section is used to change the polling rate
   clearInterval(pollingData); //Stop the interval
 
-  if (props.update_ms < 4) {
+  if (props.update_ms === undefined || props.update_ms < 4) {
     //So we dont break the thing by going slower. It is 4 because browser limitations
     pollingData = setInterval(updateUIWithNewData, 4);
   } else {
@@ -88,7 +96,7 @@ function dataCallback(result) {
         if (!Number.isNaN(dataEntry)) {
           if (Number.isInteger(dataEntry)) {
             //if int
-            object.dataValue = dataEntry;
+            object.dataValue = dataEntry.toString();
           } else {
             object.dataValue = dataEntry.toFixed(5);
           }
@@ -150,7 +158,7 @@ function constructRecordingEntry() {
 function itemClicked(itemName: string) {
   let mything = getMoteusDataObjectFromIdentifier(itemName);
   if (mything !== null) {
-    mything.isSelected.value = !mything.isSelected.value;
+    mything.isSelected = !mything.isSelected;
   }
 }
 
@@ -187,7 +195,7 @@ function recordButtonPressed() {
   isRecordingData = !isRecordingData;
 }
 
-function getMoteusDataObjectFromIdentifier(itemName: string) {
+function getMoteusDataObjectFromIdentifier(itemName: string): MoteuesDataChoice | null {
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
     if (moteuesDataChoice.value[index].identifier === itemName) {
       return moteuesDataChoice.value[index];
