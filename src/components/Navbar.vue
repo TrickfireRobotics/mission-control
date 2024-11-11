@@ -18,11 +18,11 @@ import { useControllerStore } from '../store/useController';
 const roslib = useRoslibStore();
 const controller = useControllerStore();
 const currentTab = ref(0);
-const setCurrentTab = (e) => {
-  currentTab.value = e;
+const setCurrentTab = (newValue: number) => {
+  currentTab.value = newValue;
 };
 
-type PageIcon = { icon: string; label: string; helperText: string }[];
+type PageIcon = { icon: object; label: string; helperText: string }[];
 
 const pageIconArr: PageIcon = [
   {
