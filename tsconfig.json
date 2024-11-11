@@ -4,10 +4,9 @@
   "compilerOptions": {
     "importsNotUsedAsValues": "remove",
     "isolatedModules": false,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
+    "strict": true,
     "baseUrl": ".",
-    "types": ["node"],
-
     "paths": {
       "@/*": ["./src/*"]
     },
