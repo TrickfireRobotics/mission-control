@@ -20,7 +20,7 @@ import type { Ref } from 'vue';
 
 export default class Subscriber<T extends TopicType> {
   // private static roslib :typeof useRoslibStore = useRoslibStore();
-  private static ros;
+  private static ros: ROSLIB.Ros;
   isOn = false;
   // Made Topic private, so nobody can access its methods
   private topic: ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>;

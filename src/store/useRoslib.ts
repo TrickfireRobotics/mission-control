@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import ROSLIB from 'roslib';
 import { ref } from 'vue';
-import type { Ref } from 'vue';
 import type {
   TopicType,
   StdMsg,
