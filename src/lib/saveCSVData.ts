@@ -1,4 +1,4 @@
-class SaveCSVData {
+export default class SaveCSVData {
   header: string[] = [];
   csvDataObjects: object[] = [];
 
@@ -20,6 +20,9 @@ class SaveCSVData {
     // Fill in the values
     for (let fullEntryIndex = 0; fullEntryIndex < this.csvDataObjects.length; fullEntryIndex++) {
       //Grabs the data array entry from the list of data (csvDataObjects)
+      // TODO: Refactor so do not use "any"
+      // Make type probably
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
       const entryArray: any = this.csvDataObjects[fullEntryIndex];
       let entryString = '';
 
@@ -54,5 +57,3 @@ class SaveCSVData {
     const outputstr = '';
   }
 }
-
-export { SaveCSVData };

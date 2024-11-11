@@ -1,12 +1,11 @@
+<!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted, inject, defineExpose } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import { render, h } from 'vue';
-//import controllerPub from '../../roslib/controllerPub';
-import missionControlSub from '../../../roslib/missionControlSub';
-import { SaveCSVData } from '../../../script/saveCSVData';
-import ROSLIB, { Ros } from 'roslib';
+import SaveCSVData from '../../../lib/saveCSVData';
+import ROSLIB from 'roslib';
+import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
 
@@ -31,7 +30,7 @@ let recordButtonText = ref('Start Recording');
 let pollingData; //Used to keep track of the object id when we do setInterval
 
 let getMoteusMotorStateService: ROSLIB.Service;
-const myRos = inject<Ros>('ros');
+const roslib = useRoslibStore();
 
 /**
  * This is used to store what kind of data we will be displaying
@@ -46,11 +45,12 @@ let hasBuiltMoteusDataChoice = false;
 
 function initialize() {
   csvData = new SaveCSVData();
-  pollingData = setInterval(updateUIWithNewData, props.update_ms);
+  // TODO: FIX SERVICE
+  // pollingData = setInterval(updateUIWithNewData, props.update_ms);
 }
 
 function updateUIWithNewData(jsonString) {
-  if (props.dataSourceMethod != undefined) {
+  if (props.dataSourceMethod !== undefined) {
     let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback);
   }
 
@@ -77,12 +77,13 @@ function dataCallback(result) {
 
   //update the data
   let json = JSON.parse(result.json_payload);
-
+  // TODO: Refactor so doesn't use in and Object.hasOwn
+  // Conversation about it: https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1828811375
   for (const key in json) {
-    if (json.hasOwnProperty(key)) {
+    if (Object.hasOwn(json, key)) {
       let object = getMoteusDataObjectFromIdentifier(key);
 
-      if (object != null) {
+      if (object !== null) {
         let dataEntry = parseFloat(json[key]);
         if (!Number.isNaN(dataEntry)) {
           if (Number.isInteger(dataEntry)) {
@@ -110,8 +111,7 @@ function buildMoteusDataChoice(result) {
       isSelected: true,
       shouldRecordData: true,
     };
-
-    if (json.hasOwnProperty(key)) {
+    if (Object.hasOwn(json, key)) {
       entry.prettyName = key;
       entry.identifier = key;
       entry.dataValue = json[key];
@@ -122,14 +122,14 @@ function buildMoteusDataChoice(result) {
 }
 
 function constructRecordingEntry() {
-  let tempDataArray: any[] = [];
+  let tempDataArray: string[] = [];
 
   // Go through each possible entry
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
     let entry = moteuesDataChoice.value[index];
 
     //If we have selected that entry to be recorded
-    if (entry.shouldRecordData == true) {
+    if (entry.shouldRecordData === true) {
       if (entry.dataValue !== 'N/A') {
         tempDataArray.push(entry.dataValue);
       } else {
@@ -149,7 +149,7 @@ function constructRecordingEntry() {
  */
 function itemClicked(itemName: string) {
   let mything = getMoteusDataObjectFromIdentifier(itemName);
-  if (mything != null) {
+  if (mything !== null) {
     mything.isSelected.value = !mything.isSelected.value;
   }
 }
@@ -189,7 +189,7 @@ function recordButtonPressed() {
 
 function getMoteusDataObjectFromIdentifier(itemName: string) {
   for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    if (moteuesDataChoice.value[index].identifier == itemName) {
+    if (moteuesDataChoice.value[index].identifier === itemName) {
       return moteuesDataChoice.value[index];
     }
   }
@@ -203,7 +203,7 @@ function getMoteusDataObjectFromIdentifier(itemName: string) {
  */
 function checkboxClicked(name: string) {
   let dataEntry = getMoteusDataObjectFromIdentifier(name);
-  if (dataEntry != null) {
+  if (dataEntry !== null) {
     dataEntry.shouldRecordData = !dataEntry.shouldRecordData;
   }
 }
@@ -214,15 +214,19 @@ defineExpose({ recordButtonPressed });
 <template>
   <div class="module-bg">
     <div>
-      <b style="font-size: large">{{ displayName }}</b>
+      <h3>{{ displayName }}</h3>
     </div>
-
     <div class="flex-container">
       <div class="dropdown">
-        <button class="drop-button">Select</button>
+        <button
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
+        >
+          Select
+        </button>
         <div class="dropdown-content">
           <DropDownItem
             v-for="item in moteuesDataChoice"
+            :key="item.prettyName"
             :item-name="item.prettyName"
             :is-selected="item.isSelected"
             @callback="itemClicked(item.identifier)"
@@ -234,10 +238,7 @@ defineExpose({ recordButtonPressed });
         <button
           v-if="showAllFeatures"
           id="record_button"
-          :class="{
-            'record-button-green': !isRecordingData,
-            'record-button-red': isRecordingData,
-          }"
+          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
           @click="recordButtonPressed"
         >
           {{ recordButtonText }}
@@ -252,6 +253,7 @@ defineExpose({ recordButtonPressed });
 
       <TelemetryDataDisplay
         v-for="item in moteuesDataChoice"
+        :key="item.identifier"
         :item-name="item.identifier"
         :is-selected="item.isSelected"
         :value="item.dataValue"
@@ -270,7 +272,7 @@ defineExpose({ recordButtonPressed });
   background-color: rgb(109, 109, 109);
   border-radius: 20px;
   padding: 10px;
-  width: 15%;
+  width: 100%;
   height: fit-content;
 }
 
@@ -295,35 +297,6 @@ defineExpose({ recordButtonPressed });
   flex-direction: column;
 }
 
-.drop-button {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.record-button-green {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-left: 5px;
-}
-
-.record-button-red {
-  background-color: rgb(255, 0, 0);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-left: 5px;
-}
-
 .dropdown {
   position: relative;
   display: inline-block;
@@ -341,9 +314,5 @@ defineExpose({ recordButtonPressed });
 
 .dropdown:hover .dropdown-content {
   display: block;
-}
-
-.dropdown:hover .drop-button {
-  background-color: rgb(22, 131, 28);
 }
 </style>

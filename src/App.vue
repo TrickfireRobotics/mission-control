@@ -1,57 +1,46 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue';
-import MotorGrid from './components/MotorGrid.vue';
-import CameraContainer from './components/CameraContainer.vue';
-import { onBeforeUnmount, provide, reactive, ref } from 'vue';
-import rosInit from './roslib/rosInit';
-import examplePub from './roslib/examplePub';
-import exampleSub from './roslib/exampleSub';
-import heartbeatPub from './roslib/heartbeatPub';
-import getControllerStatus from './script/controller/controllerEvents';
-import cameraSub from './roslib/cameraSub';
-import type { Ref } from 'vue';
+import { useRoslibStore } from './store/useRoslib';
+import { onMounted } from 'vue';
+import gamepadInit from '@/lib/controller/gamepad';
+const rosjs = useRoslibStore();
+// All global subscribers & publishers that do not belong in a component put in here.
+onMounted(() => {
+  // TODO: use environment variables to launch the different ports
+  // Create ros object to communicate over your Rosbridge connection
+  // local host development
+  rosjs.init('ws://localhost:9090');
+  // Connects to the router
+  // rosjs.init('ws://192.168.0.145:9090');
 
-//import startControllerCode from './script/controller/controllerEvents';
-const webSocketStatus = ref(false);
-const test = ref<number>(10001);
+  // Connects to rover
+  // rosjs.init('ws://10.0.0.10:9090');
 
-// Create ros object to communicate over your Rosbridge connection
-// local host development
-const { ros, isWebSocketConnected, stop } = rosInit('ws://localhost:9090');
-
-// Connects to the router
-//const { ros, isWebSocketConnected } = rosInit('ws://192.168.0.145:9090');
-
-// Connects to rover
-// const { ros, isWebSocketConnected } = rosInit('ws://10.0.0.10:9090');
-
-const isGamepadConnected = getControllerStatus(ros);
-const cameras = cameraSub(ros, 0, 1);
-console.log(ros);
-provide('isWebSocketConnected', isWebSocketConnected);
-provide('ros', ros);
-provide('isGamepadConnected', isGamepadConnected);
-provide('cameras', cameras);
-examplePub(ros, test.value);
-
-heartbeatPub(ros, true, 1000); // 1s
-
-const exampleData = exampleSub(ros);
-
-onBeforeUnmount(() => {
-  stop.value = true;
+  gamepadInit();
+  rosjs.heartbeatPub(true, 1000);
 });
 </script>
 
 <template>
-  <Navbar />
-  <router-view v-slot="{ Component }">
-    <KeepAlive>
-      <component :is="Component"></component>
-    </KeepAlive>
-  </router-view>
+  <div id="app">
+    <Navbar />
+    <main id="main-content">
+      <router-view v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component"></component>
+        </KeepAlive>
+      </router-view>
+    </main>
+  </div>
 </template>
 
 <style lang="scss">
-@import './assets/global';
+@forward './assets/global';
+#app {
+  display: flex;
+  flex-direction: column;
+}
+#main {
+  flex: 1;
+}
 </style>

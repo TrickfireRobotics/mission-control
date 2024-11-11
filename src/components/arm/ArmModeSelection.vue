@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import ROSLIB, { Ros } from 'roslib';
-import { ref, onMounted, inject } from 'vue';
-import genericPub from '../roslib/genericPub';
+import ROSLIB from 'roslib';
+import { ref, onMounted } from 'vue';
 
-const myRos = inject<Ros>('ros');
+import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
+
+const roslib = useRoslibStore();
 
 let armModeService: ROSLIB.Service;
 
@@ -19,15 +20,13 @@ let current_arm_mode = ref(-1); // Default is disabled
 //let isLoaded = ref(false);
 
 function initialize() {
-  if (myRos != null) {
-    armModeService = new ROSLIB.Service({
-      ros: myRos,
-      name: '/get_arm_mode',
-      serviceType: 'ArmMode',
-    });
+  armModeService = new ROSLIB.Service({
+    ros: roslib.ros,
+    name: '/get_arm_mode',
+    serviceType: 'ArmMode',
+  });
 
-    getCurrentArmMode();
-  }
+  getCurrentArmMode();
 }
 
 function getCurrentArmMode() {
@@ -45,11 +44,12 @@ function getCurrentArmMode() {
 
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
-
-  if (myRos != null) {
-    genericPub(myRos, targetMode, 'update_arm_mode', 'std_msgs/Int32');
-    getCurrentArmMode();
-  }
+  const armModePublish = roslib.createPublisher({
+    topicName: 'update_arm_mode',
+    topicType: 'std_msgs/Int32',
+  });
+  armModePublish(targetMode);
+  getCurrentArmMode();
 }
 </script>
 
@@ -63,8 +63,8 @@ function changeArmMode(targetMode: number) {
         <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 0,
-            'button-mode-selected': current_arm_mode == 0,
+            'button-toggle--off': current_arm_mode !== 0,
+            'button-toggle--on': current_arm_mode === 0,
           }"
           @click="changeArmMode(0)"
         >
@@ -72,8 +72,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 1,
-            'button-mode-selected': current_arm_mode == 1,
+            'button-toggle--off': current_arm_mode !== 1,
+            'button-toggle--on': current_arm_mode === 1,
           }"
           @click="changeArmMode(1)"
         >
@@ -81,8 +81,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 2,
-            'button-mode-selected': current_arm_mode == 2,
+            'button-toggle--off': current_arm_mode !== 2,
+            'button-toggle--on': current_arm_mode === 2,
           }"
           @click="changeArmMode(2)"
         >
@@ -90,8 +90,8 @@ function changeArmMode(targetMode: number) {
         </button>
         <button
           :class="{
-            'button-mode-unselected': current_arm_mode != 3,
-            'button-mode-selected': current_arm_mode == 3,
+            'button-toggle--off': current_arm_mode !== 3,
+            'button-toggle--on': current_arm_mode === 3,
           }"
           @click="changeArmMode(3)"
         >
@@ -102,7 +102,7 @@ function changeArmMode(targetMode: number) {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .mode-button-container {
   display: flex;
   justify-content: center;
@@ -116,33 +116,5 @@ function changeArmMode(targetMode: number) {
 .mode-button-vertical {
   display: flex;
   flex-direction: column;
-}
-
-.button-mode-unselected {
-  margin: 5px;
-  background-color: rgb(201, 56, 56);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.button-mode-selected {
-  margin: 5px;
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-}
-
-.button-mode-unselected:hover {
-  background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-}
-
-.button-mode-selected:hover {
-  background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
 }
 </style>

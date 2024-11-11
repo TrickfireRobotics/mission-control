@@ -1,5 +1,9 @@
-<script setup>
-const props = defineProps(['itemName', 'isSelected']);
+<script lang="ts" setup>
+type Props = {
+  itemName: string;
+  isSelected: boolean;
+};
+const props = defineProps<Props>();
 </script>
 
 <template>

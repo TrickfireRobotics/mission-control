@@ -1,10 +1,9 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
 import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
-import missionControlSub from '../roslib/missionControlSub';
-import { ref, onMounted, inject, watch } from 'vue';
-import { Ros } from 'roslib';
-import { RobotInfo } from '../script/interface/robotInfo';
+import { ref, onMounted, watch } from 'vue';
+import RobotInfo from '@/lib/interface/robotInfo';
+import { useRoslibStore } from '@/store/useRoslib';
 
 let moteusMotors = [
   {
@@ -64,7 +63,7 @@ let moteusMotors = [
   },
 ];
 
-let update_time_ms = ref(100);
+let updateTimeMs = ref(100);
 
 let recordingAll = ref(false);
 let isFinishedLoading = ref(false);
@@ -75,22 +74,22 @@ let robotInfo;
 
 onMounted(() => initialize());
 
-let myRos = inject<Ros>('ros');
+const roslib = useRoslibStore();
 
 function initialize() {
-  if (myRos != null) {
-    robotInfo = new RobotInfo(myRos);
+  if (roslib.ros !== null) {
+    robotInfo = new RobotInfo(roslib.ros);
   }
 
   isFinishedLoading.value = true;
 }
 
-watch(update_time_ms, (newValue) => {
-  update_time_ms.value = newValue < 4 ? 4 : newValue;
+watch(updateTimeMs, (newValue) => {
+  updateTimeMs.value = newValue < 4 ? 4 : newValue;
 });
 
 function recordAllPressed() {
-  if (myChild.value == null) {
+  if (myChild.value === null) {
     return;
   }
 
@@ -106,40 +105,49 @@ function getMoteusStateProxy(param, dataCallback) {
 }
 </script>
 <template>
-  <div>
-    <div class="period-input-container">
-      <button
-        :class="{ 'record-button-green': !recordingAll, 'record-button-red': recordingAll }"
-        @click="recordAllPressed()"
-      >
-        Record all
-      </button>
+  <div class="two-by-three-grid-page">
+    <div>
+      <div class="period-input-container">
+        <button
+          :class="{ 'button-toggle--on': !recordingAll, 'button-toggle--off': recordingAll }"
+          @click="recordAllPressed()"
+        >
+          Record all
+        </button>
+      </div>
+      <div class="period-input-container">
+        <b class="period-text">Update Delay in ms</b>
+        <input
+          v-model="updateTimeMs"
+          class="period-input"
+          min="4"
+          type="number"
+          title="Number of milliseconds between each time it polls for data. Affects recording as well"
+        />
+      </div>
     </div>
-    <div class="period-input-container">
-      <b class="period-text">Update Delay in ms</b>
-      <input
-        v-model="update_time_ms"
-        class="period-input"
-        min="4"
-        type="number"
-        title="Number of milliseconds between each time it polls for data. Affects recording as well"
-      />
-    </div>
+
     <div class="page">
-      <GenericMotorTelemetry
-        v-for="item in moteusMotors"
-        v-if="isFinishedLoading"
-        ref="myChild"
-        class="telemetry-motor"
-        :display-name="item.displayName"
-        :show-all-features="true"
-        :update_ms="update_time_ms"
-        :motor-type="item.controller"
-        :data-source-method="getMoteusStateProxy"
-        :data-source-paramater="item.canfdID"
-      >
-      </GenericMotorTelemetry>
+      <div v-if="isFinishedLoading">
+        <GenericMotorTelemetry
+          v-for="item in moteusMotors"
+          :key="item.displayName"
+          ref="myChild"
+          class="telemetry-motor"
+          :display-name="item.displayName"
+          :show-all-features="true"
+          :update-ms="updateTimeMs.toString()"
+          :motor-type="item.controller"
+          :data-source-method="getMoteusStateProxy"
+          :data-source-paramater="item.canfdID.toString()"
+        >
+        </GenericMotorTelemetry>
+      </div>
     </div>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
@@ -147,35 +155,11 @@ function getMoteusStateProxy(param, dataCallback) {
 .page {
   display: flex;
   flex-wrap: wrap;
-  padding: 5px;
-  margin: 5px;
-  justify-content: center;
 }
-
 .period-input-container {
   display: flex;
   justify-content: center;
   margin: 10px;
-}
-
-.record-button-green {
-  background-color: rgb(48, 182, 48);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 5px;
-}
-
-.record-button-red {
-  background-color: rgb(255, 0, 0);
-  color: white;
-  padding: 8px;
-  font-size: 16px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 5px;
 }
 
 .period-input {

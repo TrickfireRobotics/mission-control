@@ -6,9 +6,15 @@
     "isolatedModules": false,
     "noImplicitAny": false,
     "baseUrl": ".",
+    "types": ["node"],
+
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // Added to allow Object.hasOwn(). We are targeting the latest versions of javascript.
+    "target": "ES2022",
+    // Added "DOM" to tell Typescript that we have access to window
+    "lib": ["ES2022", "DOM"]
   },
 
   "references": [
