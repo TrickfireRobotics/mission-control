@@ -9,17 +9,22 @@ import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
 
-const props = defineProps({
-  displayName: String,
-  dataSourceMethod: Function,
-  dataSourceParamater: String,
-  update_ms: Number,
-  showAllFeatures: Boolean,
-  motorType: String,
-});
+export interface GenericMotorTelemetryProps {
+  displayName: string;
+  dataSourceMethod: (
+    param: number,
+    dataCallback: (result: { json_payload: string }) => void,
+  ) => void;
+  dataSourceParameter: number;
+  updateMs: number;
+  showAllFeatures: boolean;
+  motorType: string;
+}
+
+const props = defineProps<GenericMotorTelemetryProps>();
 
 let isRecordingData = false;
-let csvData;
+let csvData: SaveCSVData;
 
 // We use this to fill up csv data
 //Each element is another array that holds the actual data
@@ -27,7 +32,7 @@ let showCheckbox = ref(true);
 
 let recordButtonText = ref('Start Recording');
 
-let pollingData; //Used to keep track of the object id when we do setInterval
+let pollingData: number; //Used to keep track of the object id when we do setInterval
 
 let getMoteusMotorStateService: ROSLIB.Service;
 const roslib = useRoslibStore();
@@ -57,9 +62,9 @@ function initialize() {
   // pollingData = setInterval(updateUIWithNewData, props.update_ms);
 }
 
-function updateUIWithNewData(jsonString) {
+function updateUIWithNewData(_jsonString: unknown) {
   if (props.dataSourceMethod !== undefined) {
-    let result = props.dataSourceMethod(props.dataSourceParamater, dataCallback);
+    let result = props.dataSourceMethod(props.dataSourceParameter, dataCallback);
   }
 
   if (isRecordingData) {
@@ -69,15 +74,15 @@ function updateUIWithNewData(jsonString) {
   //This code section is used to change the polling rate
   clearInterval(pollingData); //Stop the interval
 
-  if (props.update_ms === undefined || props.update_ms < 4) {
+  if (props.updateMs === undefined || props.updateMs < 4) {
     //So we dont break the thing by going slower. It is 4 because browser limitations
     pollingData = setInterval(updateUIWithNewData, 4);
   } else {
-    pollingData = setInterval(updateUIWithNewData, props.update_ms);
+    pollingData = setInterval(updateUIWithNewData, props.updateMs);
   }
 }
 
-function dataCallback(result) {
+function dataCallback(result: { json_payload: string }) {
   if (!hasBuiltMoteusDataChoice) {
     hasBuiltMoteusDataChoice = true;
     buildMoteusDataChoice(result);
@@ -108,7 +113,7 @@ function dataCallback(result) {
   }
 }
 
-function buildMoteusDataChoice(result) {
+function buildMoteusDataChoice(result: { json_payload: string }) {
   let json = JSON.parse(result.json_payload);
 
   for (const key in json) {
@@ -137,7 +142,7 @@ function constructRecordingEntry() {
     let entry = moteuesDataChoice.value[index];
 
     //If we have selected that entry to be recorded
-    if (entry.shouldRecordData === true) {
+    if (entry.shouldRecordData) {
       if (entry.dataValue !== 'N/A') {
         tempDataArray.push(entry.dataValue);
       } else {
@@ -189,7 +194,9 @@ function recordButtonPressed() {
     recordButtonText.value = 'Start Recording';
     showCheckbox.value = true;
 
-    csvData.saveToFile(props.displayName);
+    if (props.displayName) {
+      csvData.saveToFile(props.displayName);
+    }
   }
 
   isRecordingData = !isRecordingData;

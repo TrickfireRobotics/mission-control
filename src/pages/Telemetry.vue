@@ -70,7 +70,7 @@ let isFinishedLoading = ref(false);
 
 const myChild = useTemplateRef<(typeof GenericMotorTelemetry)[]>('myChild');
 
-let robotInfo;
+let robotInfo: RobotInfo;
 
 onMounted(() => initialize());
 
@@ -100,7 +100,10 @@ function recordAllPressed() {
   recordingAll.value = !recordingAll.value;
 }
 
-function getMoteusStateProxy(param, dataCallback) {
+function getMoteusStateProxy(
+  param: number,
+  dataCallback: (result: { json_payload: string }) => void,
+) {
   return robotInfo.getMoteusMotorState(param, dataCallback);
 }
 </script>
@@ -136,10 +139,10 @@ function getMoteusStateProxy(param, dataCallback) {
           class="telemetry-motor"
           :display-name="item.displayName"
           :show-all-features="true"
-          :update-ms="updateTimeMs.toString()"
+          :update-ms="updateTimeMs"
           :motor-type="item.controller"
           :data-source-method="getMoteusStateProxy"
-          :data-source-paramater="item.canfdID.toString()"
+          :data-source-parameter="item.canfdID"
         >
         </GenericMotorTelemetry>
       </div>

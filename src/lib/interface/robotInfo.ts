@@ -2,7 +2,7 @@ import ROSLIB from 'roslib';
 
 export default class RobotInfo {
   myROS: ROSLIB.Ros;
-  getMoteusMotorStateService: ROSLIB.Service;
+  getMoteusMotorStateService: ROSLIB.Service<{ target_can_id: number }, { json_payload: string }>;
 
   constructor(givenROS: ROSLIB.Ros) {
     this.myROS = givenROS;
@@ -14,7 +14,7 @@ export default class RobotInfo {
     });
   }
 
-  getMoteusMotorState(canfdID: number, callback) {
+  getMoteusMotorState(canfdID: number, callback: (result: { json_payload: string }) => void) {
     const request = {
       target_can_id: canfdID,
     };
