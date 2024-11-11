@@ -9,35 +9,37 @@ const props = defineProps({});
 const example = useExampleStore();
 
 onActivated(() => {
-  example.subscribeExample({});
+  example.helloWorldSub.start();
 });
 // Cleanup Auto unsubscribes when not loaded to save pan width
 onDeactivated(() => {
-  example.unsubscribeExample();
+  example.helloWorldSub.stop();
 });
 const onAndOffHandler = () => {
-  if (example.isSubOnExample) {
-    example.unsubscribeExample();
+  if (example.helloWorldSub.isOn) {
+    example.helloWorldSub.stop();
   } else {
-    example.subscribeExample({});
+    example.helloWorldSub.start();
   }
 };
 </script>
 <template>
   <div>
-    <h1>Example Data: {{ example.exampleData }}</h1>
-    <button @click="example.examplePublish(example.exampleData + '!')">Add !</button>
-    <button @click="example.unsubscribeExample">Unsub</button>
-    <button @click="example.subscribeExample">sub</button>
+    <h1>Example Data: {{ example.helloWorldSub.data }}</h1>
+    <button @click="example.helloWorldPub.publish({ data: 'hello!', isDebugging: true })">
+      Add !
+    </button>
+    <button @click="example.helloWorldSub.stop()">Unsub</button>
+    <button @click="example.helloWorldSub.start()">sub</button>
     <button
       :class="{
-        'button-toggle--off': !example.isSubOnExample,
-        'button-toggle--on': example.isSubOnExample,
+        'button-toggle--off': !example.helloWorldSub.isOn,
+        'button-toggle--on': example.helloWorldSub.isOn,
       }"
       @click="onAndOffHandler"
     >
       Example Subscriber Status:
-      {{ example.isSubOnExample ? 'On' : 'Off' }}
+      {{ example.helloWorldSub.isOn ? 'On' : 'Off' }}
     </button>
   </div>
 </template>

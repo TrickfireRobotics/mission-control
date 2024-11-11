@@ -2,7 +2,13 @@ import { defineStore } from 'pinia';
 import ROSLIB from 'roslib';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
-import type { TopicType, StdMsg, TopicTypeMap, RosCompressionType } from './rosTypes';
+import type {
+  TopicType,
+  StdMsg,
+  TopicTypeMap,
+  RosCompressionType,
+} from '../lib/roslibUtils/rosTypes';
+import Subscriber from '@/lib/roslibUtils/Subscriber';
 
 const HEARTBEAT_DISCONNECT_SECONDS = 2;
 const RECONNECTION_GRACE_SECONDS = 2;
@@ -36,20 +42,28 @@ export const useRoslibStore = defineStore('roslib', () => {
     });
     // Runs Heartbeat Subscriber so that if there is a long delay, it tells motor to turn off
     // TODO: refactor to retrieve time instead of boolean
-    const [isReceivingHeartBeatData, heartbeatSub] = createSubscriber({
+    const heartBeatSub = new Subscriber({
       topicName: 'hbr',
       topicType: 'std_msgs/Bool',
       startingDefaultValue: false,
     });
-    heartbeatSub({ defaultValue: false, isDebugging: true });
+    heartBeatSub.start({ isDebugging: true });
+
+    // const [isReceivingHeartBeatData, heartbeatSub] = createSubscriber({
+    //   topicName: 'hbr',
+    //   topicType: 'std_msgs/Bool',
+    //   startingDefaultValue: false,
+    // });
+    // heartbeatSub({ defaultValue: false, isDebugging: true });
     // Close the connection if the heartbeat stops for too long.
     const interval = setInterval(() => {
-      if (isReceivingHeartBeatData.value) {
+      console.log(heartBeatSub.data.value, stop.value);
+      if (heartBeatSub.data.value) {
         heartbeatTime = Date.now();
       }
       if (stop.value) {
         clearInterval(interval);
-
+        console.log('clear interval');
         // No need to error if the websocket is already closed.
         try {
           ros.close();
@@ -59,24 +73,28 @@ export const useRoslibStore = defineStore('roslib', () => {
 
         return;
       }
-      if (Date.now() - heartbeatTime > HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) {
-        isWebSocketConnected.value = false;
-
-        // No need to error if the websocket is already closed.
-        try {
-          ros.close();
-        } catch (_) {
-          /* empty */
-        }
-
-        // Forcefully reconnect.
-        // @ts-expect-error socket is private but needs to be set to null to force roslib to reconnect in case of hangs.
-        ros.socket = null;
-        // Give the reconnection extra time so that it doesn't
-        // immediately get killed.
-        heartbeatTime = Date.now() + RECONNECTION_GRACE_SECONDS * SECONDS_TO_TIMESTAMP;
-        ros.connect(serverHost);
+      // console.count(
+      //   (Date.now() - heartbeatTime > HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) + '',
+      // );
+      if (Date.now() - heartbeatTime <= HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) {
+        return;
       }
+      console.log('first');
+      isWebSocketConnected.value = false;
+
+      // No need to error if the websocket is already closed.
+      try {
+        ros.close();
+      } catch (_) {
+        /* empty */
+      }
+      // Forcefully reconnect.
+      // @ts-expect-error socket is private but needs to be set to null to force roslib to reconnect in case of hangs.
+      ros.socket = null;
+      // Give the reconnection extra time so that it doesn't
+      // immediately get killed.
+      heartbeatTime = Date.now() + RECONNECTION_GRACE_SECONDS * SECONDS_TO_TIMESTAMP;
+      ros.connect(serverHost);
     }, 100);
   }
   /**
@@ -98,73 +116,22 @@ export const useRoslibStore = defineStore('roslib', () => {
       compression,
     });
   }
-  /**
-   * Generic Subscriber to interact with Ros
-   * @param options.topicName should start with '/' along with topic name
-   * @param options.topicType Ros Message Type
-   * @param options.startingDefaultValue? optional starting value
-   * @param options.isDebugging? optional prints to console for debugging
-   * @returns data, subscribe callback, unsubscribe callback, isOn = isCurrentlyBeingSubscribed
-   */
-  function createSubscriber<T extends TopicType>(options: {
-    topicName: string;
-    topicType: T;
-    startingDefaultValue?: TopicTypeMap[T];
-  }): [typeof data, typeof subscribe, typeof unsubscribe, typeof isOn] {
-    const { topicName, topicType, startingDefaultValue } = options;
 
-    const isOn = ref<boolean>(false);
-    //as to clean up complex inferred type
-    const data = ref<TopicTypeMap[T] | undefined>(startingDefaultValue) as Ref<
-      TopicTypeMap[T] | undefined
-    >;
-    const topic = new ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>({
-      ros,
-      name: topicName,
-      messageType: topicType,
-      compression: 'cbor',
-    });
-    /**
-     * Subscribe and updates data
-     * @param options.callback optional as to handle more complex logic, can pass in callback (Default behavior of setting to data is then lost)
-     * @param options.defaultValue optional default value if started subscribing
-     * @param options.isDebugging? optional prints to console for debugging
-     * @returns data, subscribe callback, unsubscribe callback, isOn
-     */
-    const subscribe = (options: {
-      callback?: (message: StdMsg<TopicTypeMap[T]>) => void;
-      defaultValue?: TopicTypeMap[T];
-      isDebugging?: boolean;
-    }) => {
-      const { callback, defaultValue, isDebugging } = options;
-      if (isOn.value) {
-        return;
-      }
-      isOn.value = true;
-      if (defaultValue) {
-        data.value = defaultValue;
-      }
-      topic.subscribe((message) => {
-        if (!callback) {
-          data.value = message.data;
-        } else {
-          callback(message);
-        }
-        if (isDebugging) {
-          console.log(`[${topicName}] Subscribing: ${data.value}`);
-        }
-      });
-    };
-    /**
-     * Unsubscribes and stops receiving data from Rover
-     */
-    const unsubscribe = () => {
-      isOn.value = false;
-      topic.unsubscribe();
-    };
-    // Returns an array, so the caller determines the name of the return values
-    return [data, subscribe, unsubscribe, isOn];
-  }
+  // function createSubscriberList<T extends TopicType>(optionsArr:[],
+  //   isDebugging : boolean
+  //   ) {
+  //  {
+
+  //   optionsArr.forEach((options) =>{
+  //     const {topicName, topicType, startingDefaultValue} = options
+  //     const [data, subscribe, unsubscribe, isOn ] = createSubscriber({topicName, topicType,startingDefaultValue})
+
+  //   })
+  //   const { topicName, topicType };
+  //   if (topicName.length !== topicType.length()) {
+  //     throw new RangeError('');
+  //   }
+  // }
   /**
    * Creates Generic Publisher to interact with Ros.
    * @param options.topicName should start with '/' along with topic name
@@ -224,7 +191,6 @@ export const useRoslibStore = defineStore('roslib', () => {
     stop,
     init,
     createNonStandardTopic,
-    createSubscriber,
     createPublisher,
     heartbeatPub,
   };

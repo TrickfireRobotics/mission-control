@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { useRoslibStore } from './useRoslib';
-import type { TopicType } from './rosTypes';
+import type { TopicType } from '../lib/roslibUtils/rosTypes';
 // TODO: figure out names of different controller modes like "tank control" etc"
 type GamePadMode = 'tankControl' | 'standard' | 'arm';
 
