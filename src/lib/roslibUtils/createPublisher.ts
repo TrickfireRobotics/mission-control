@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '../../store/useRoslib';
-import type { Publisher, TopicType, TopicTypeMap } from './rosTypes';
+import type { Publisher, StdMsg, TopicType, TopicTypeMap } from './rosTypes';
 
 /**
  * Creates Generic Publisher to interact with Ros.
@@ -16,7 +16,7 @@ export default function createPublisher<T extends TopicType>(options: {
 }): Publisher<T> {
   const { topicName, topicType, isDebugging } = options;
   const ros = useRoslibStore().ros;
-  const topic = new ROSLIB.Topic({
+  const topic = new ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>({
     ros,
     name: topicName,
     messageType: topicType,
@@ -27,9 +27,7 @@ export default function createPublisher<T extends TopicType>(options: {
    * @param data publishes data
    */
   const publish = (data: TopicTypeMap[T]) => {
-    const message = new ROSLIB.Message({
-      data,
-    });
+    const message: StdMsg<TopicTypeMap[T]> = { data };
     topic.publish(message);
     if (isDebugging) {
       console.log(`[${topicName}] Publishing: ${data}`);
