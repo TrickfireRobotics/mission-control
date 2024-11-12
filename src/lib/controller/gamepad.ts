@@ -8,10 +8,10 @@ const indexToControllerName = new Map();
 const indexToControllerState = new Map();
 export default function gamepadInit() {
   const controller = useControllerStore();
-  console.log('HELLO CONTROLLER CONNECTED');
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
   function onGamePadConnectsHandler(e: GamepadEvent) {
+    console.log('HELLO CONTROLLER CONNECTED');
     console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
     indexToControllerName.set(e.gamepad.index, e.gamepad.id);
     const state = new ControllerState(
