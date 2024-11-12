@@ -145,7 +145,6 @@ export default class ControllerState {
       const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(1),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
       controllerPub.publish({ data: this.leftJoyStickArray[1], isDebugging: true });
     }
@@ -156,7 +155,6 @@ export default class ControllerState {
       const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(2),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
       controllerPub.publish({ data: this.rightJoyStickArray[0], isDebugging: true });
     }
