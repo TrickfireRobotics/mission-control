@@ -5,7 +5,6 @@ import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import SaveCSVData from '../../../lib/saveCSVData';
 import ROSLIB from 'roslib';
-import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
 
@@ -35,7 +34,6 @@ let recordButtonText = ref('Start Recording');
 let pollingData: number; //Used to keep track of the object id when we do setInterval
 
 let getMoteusMotorStateService: ROSLIB.Service;
-const roslib = useRoslibStore();
 
 /**
  * This is used to store what kind of data we will be displaying

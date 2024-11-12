@@ -3,6 +3,7 @@ import ROSLIB from 'roslib';
 import { ref, onMounted } from 'vue';
 
 import { useRoslibStore } from '@/store/useRoslib';
+import createPublisher from '@/lib/roslibUtils/createPublisher';
 
 onMounted(() => initialize());
 
@@ -44,11 +45,11 @@ function getCurrentArmMode() {
 
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
-  const armModePublish = roslib.createPublisher({
+  const armModePublish = createPublisher({
     topicName: 'update_arm_mode',
     topicType: 'std_msgs/Int32',
   });
-  armModePublish(targetMode);
+  armModePublish.publish(targetMode);
   getCurrentArmMode();
 }
 </script>

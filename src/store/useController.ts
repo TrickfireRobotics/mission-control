@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
-import { useRoslibStore } from './useRoslib';
-import type { TopicType } from './rosTypes';
+import { ref } from 'vue';
+import type { TopicType } from '../lib/roslibUtils/rosTypes';
 // TODO: figure out names of different controller modes like "tank control" etc"
 type GamePadMode = 'tankControl' | 'standard' | 'arm';
 
@@ -11,8 +10,6 @@ const TOPIC_TYPE: TopicType = 'std_msgs/String';
 // Should handle global states of all types of controllers including xbox controller and
 export const useControllerStore = defineStore('controller', () => {
   // 1st define any dependency stores
-  // This will most likely only be useRoslibStore
-  const roslib = useRoslibStore();
   // 2nd define any state here in ref<>()
   // TODO: Add support for other controllers and different driving modes
   const isGamepadConnected = ref(false);
@@ -23,5 +20,5 @@ export const useControllerStore = defineStore('controller', () => {
     isGamepadConnected.value = status;
   }
   // Return all state, getters and functions
-  return { isGamepadConnected, setGamepadConnectedStatus };
+  return { isGamepadConnected, gamePadMode, setGamepadConnectedStatus };
 });

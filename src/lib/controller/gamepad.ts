@@ -1,4 +1,3 @@
-import { onMounted, onUnmounted } from 'vue';
 import ControllerState from './controllerState';
 import { useControllerStore } from '@/store/useController';
 
