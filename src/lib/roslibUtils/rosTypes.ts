@@ -36,18 +36,7 @@ export type CompressedImage = {
 
 // Types are from rosbridge Documentation https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/ROSBRIDGE_PROTOCOL.md
 export type RosCompressionType = 'none' | 'png' | 'cbor' | 'cbor-raw';
-/**
- * Generic Subscriber to interact with Ros
- * @param options.topicName should start with '/' along with topic name
- * @param options.topicType Ros Message Type
- * @param options.startingDefaultValue? optional starting value
- * @param options.isDebugging? optional prints to console for debugging
- * @returns {Object} data, subscribe callback, unsubscribe callback, isOn
- * @returns {Ref<TopicTypeMap[T] | undefined>} Object.data - data automatically updated when subscribes
- * @returns {function} Object.start - function that starts subscriber
- * @returns {function} Object.stop - function that turns of subscriber
- * @returns {Ref<boolean>} Object.isOn - Is Subscribing on
- */
+
 export type Subscriber<T extends TopicType> = {
   data: Ref<TopicTypeMap[T] | undefined, TopicTypeMap[T] | undefined>;
   start: (options?: {

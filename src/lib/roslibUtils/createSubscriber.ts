@@ -10,7 +10,11 @@ import { useRoslibStore } from '@/store/useRoslib';
  * @param options.topicType Ros Message Type
  * @param options.startingDefaultValue? optional starting value
  * @param options.isDebugging? optional prints to console for debugging
- * @returns Subscriber
+ * @returns {Object} data, subscribe callback, unsubscribe callback, isOn
+ * @returns {Ref<TopicTypeMap[T] | undefined>} Object.data - data automatically updated when subscribes
+ * @returns {function} Object.start - function that starts subscriber
+ * @returns {function} Object.stop - function that turns of subscriber
+ * @returns {Ref<boolean>} Object.isOn - Is Subscribing on
  */
 export default function createSubscriber<T extends TopicType>(options: {
   topicName: string;

@@ -7,7 +7,8 @@ import type { Publisher, StdMsg, TopicType, TopicTypeMap } from './rosTypes';
  * @param options.topicName should start with '/' along with topic name
  * @param options.topicType TopicType Ros Message Type
  * @param options.isDebugging? optional prints to console for debugging
- * @returns Publisher
+ * @returns {Object} Publisher
+ * @returns Object.publish given data
  */
 export default function createPublisher<T extends TopicType>(options: {
   topicName: string;
