@@ -49,7 +49,7 @@ function changeArmMode(targetMode: number) {
     topicName: 'update_arm_mode',
     topicType: 'std_msgs/Int32',
   });
-  armModePublish.publish(targetMode);
+  armModePublish.publish({ data: targetMode });
   getCurrentArmMode();
 }
 </script>

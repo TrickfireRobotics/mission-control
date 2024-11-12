@@ -10,7 +10,7 @@ import { useRoslibStore } from '@/store/useRoslib';
  * @param options.topicType Ros Message Type
  * @param options.startingDefaultValue? optional starting value
  * @param options.isDebugging? optional prints to console for debugging
- * @returns data, subscribe callback, unsubscribe callback, isOn = isCurrentlyBeingSubscribed
+ * @returns Subscriber
  */
 export default function createSubscriber<T extends TopicType>(options: {
   topicName: string;
@@ -35,7 +35,6 @@ export default function createSubscriber<T extends TopicType>(options: {
    * @param options.callback optional as to handle more complex logic, can pass in callback (Default behavior of setting to data is then lost)
    * @param options.defaultValue optional default value if started subscribing
    * @param options.isDebugging? optional prints to console for debugging
-   * @returns data, subscribe callback, unsubscribe callback, isOn
    */
   const start = (options?: {
     callback?: (message: StdMsg<TopicTypeMap[T]>) => void;
@@ -69,6 +68,6 @@ export default function createSubscriber<T extends TopicType>(options: {
     isOn.value = false;
     topic.unsubscribe();
   };
-  // Returns an array, so the caller determines the name of the return values
-  return { data, start, stop, isOn };
+  // Returns as an object, so caller determines the name of the object
+  return { data, start, stop, isOn } as Subscriber<T>;
 }

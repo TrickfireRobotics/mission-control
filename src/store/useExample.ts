@@ -16,7 +16,6 @@ export const useExampleStore = defineStore('example', () => {
     topicType: 'std_msgs/String',
     startingDefaultValue: 'Hello World',
   });
-
   //3rd define any getters in computed
   const allCapsData = computed(() => helloWorldSub.data.value?.toUpperCase());
   //4th define any functions

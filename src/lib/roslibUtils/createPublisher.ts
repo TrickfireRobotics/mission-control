@@ -7,14 +7,13 @@ import type { Publisher, StdMsg, TopicType, TopicTypeMap } from './rosTypes';
  * @param options.topicName should start with '/' along with topic name
  * @param options.topicType TopicType Ros Message Type
  * @param options.isDebugging? optional prints to console for debugging
- * @returns a callback function that publishes given Data
+ * @returns Publisher
  */
 export default function createPublisher<T extends TopicType>(options: {
   topicName: string;
   topicType: T;
-  isDebugging?: boolean;
 }): Publisher<T> {
-  const { topicName, topicType, isDebugging } = options;
+  const { topicName, topicType } = options;
   const ros = useRoslibStore().ros;
   const topic = new ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>({
     ros,
@@ -26,7 +25,8 @@ export default function createPublisher<T extends TopicType>(options: {
    * Publish given data
    * @param data publishes data
    */
-  const publish = (data: TopicTypeMap[T]) => {
+  const publish = (options: { data: TopicTypeMap[T]; isDebugging?: boolean }) => {
+    const { data, isDebugging } = options;
     const message: StdMsg<TopicTypeMap[T]> = { data };
     topic.publish(message);
     if (isDebugging) {
