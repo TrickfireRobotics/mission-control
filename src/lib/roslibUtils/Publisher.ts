@@ -1,6 +1,6 @@
 import type { StdMsg, TopicType, TopicTypeMap } from '@/lib/roslibUtils/rosTypes';
 import { useRoslibStore } from '@/store/useRoslib';
-import ROSLIB, { Message } from 'roslib';
+import ROSLIB from 'roslib';
 
 // This could have been a function, but to stay consistent with Subscriber and to add future
 export default class Publisher<T extends TopicType> {

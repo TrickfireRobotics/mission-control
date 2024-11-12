@@ -26,7 +26,11 @@ const onAndOffHandler = () => {
 <template>
   <div>
     <h1>Example Data: {{ example.helloWorldSub.data }}</h1>
-    <button @click="example.helloWorldPub.publish({ data: 'hello!', isDebugging: true })">
+    <button
+      @click="
+        example.helloWorldPub.publish({ data: `${example.helloWorldSub.data}!`, isDebugging: true })
+      "
+    >
       Add !
     </button>
     <button @click="example.helloWorldSub.stop()">Unsub</button>

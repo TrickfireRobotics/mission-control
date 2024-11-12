@@ -7,7 +7,7 @@ import type {
   TopicTypeMap,
   RosCompressionType,
 } from '../lib/roslibUtils/rosTypes';
-import Subscriber from '@/lib/roslibUtils/Subscriber';
+import Subscriber from '@/lib/roslibUtils/subscriber';
 
 const HEARTBEAT_DISCONNECT_SECONDS = 2;
 const RECONNECTION_GRACE_SECONDS = 2;
@@ -32,7 +32,8 @@ export const useRoslibStore = defineStore('roslib', () => {
     ros.on('connection', () => {
       isWebSocketConnected.value = true;
     });
-    ros.on('error', (error) => {
+    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/error_event
+    ros.on('error', (error: Event) => {
       isWebSocketConnected.value = false;
       console.error(error);
     });
@@ -46,17 +47,8 @@ export const useRoslibStore = defineStore('roslib', () => {
       topicType: 'std_msgs/Bool',
       startingDefaultValue: false,
     });
-    heartBeatSub.start({ isDebugging: true });
-
-    // const [isReceivingHeartBeatData, heartbeatSub] = createSubscriber({
-    //   topicName: 'hbr',
-    //   topicType: 'std_msgs/Bool',
-    //   startingDefaultValue: false,
-    // });
-    // heartbeatSub({ defaultValue: false, isDebugging: true });
-    // Close the connection if the heartbeat stops for too long.
+    heartBeatSub.start({ defaultValue: false, isDebugging: true });
     const interval = setInterval(() => {
-      console.log(heartBeatSub.data.value, stop.value);
       if (heartBeatSub.data.value) {
         heartbeatTime = Date.now();
       }
@@ -72,15 +64,10 @@ export const useRoslibStore = defineStore('roslib', () => {
 
         return;
       }
-      // console.count(
-      //   (Date.now() - heartbeatTime > HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) + '',
-      // );
       if (Date.now() - heartbeatTime <= HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) {
         return;
       }
-      console.log('first');
       isWebSocketConnected.value = false;
-
       // No need to error if the websocket is already closed.
       try {
         ros.close();
@@ -116,21 +103,6 @@ export const useRoslibStore = defineStore('roslib', () => {
     });
   }
 
-  // function createSubscriberList<T extends TopicType>(optionsArr:[],
-  //   isDebugging : boolean
-  //   ) {
-  //  {
-
-  //   optionsArr.forEach((options) =>{
-  //     const {topicName, topicType, startingDefaultValue} = options
-  //     const [data, subscribe, unsubscribe, isOn ] = createSubscriber({topicName, topicType,startingDefaultValue})
-
-  //   })
-  //   const { topicName, topicType };
-  //   if (topicName.length !== topicType.length()) {
-  //     throw new RangeError('');
-  //   }
-  // }
   /**
    * Creates Generic Publisher to interact with Ros.
    * @param options.topicName should start with '/' along with topic name

@@ -1,4 +1,3 @@
-import { onMounted, onUnmounted } from 'vue';
 import ControllerState from './controllerState';
 import { useControllerStore } from '@/store/useController';
 
@@ -9,10 +8,10 @@ const indexToControllerName = new Map();
 const indexToControllerState = new Map();
 export default function gamepadInit() {
   const controller = useControllerStore();
-  console.log('HELLO CONTROLLER CONNECTED');
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
   function onGamePadConnectsHandler(e: GamepadEvent) {
+    console.log('CONTROLLER CONNECTED');
     console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
     indexToControllerName.set(e.gamepad.index, e.gamepad.id);
     const state = new ControllerState(
@@ -45,7 +44,7 @@ export default function gamepadInit() {
     if (jsGamepad !== null) {
       state.updateState(jsGamepad, 1000 - POLLING_RATE_IN_HERTZ);
       state.publishController();
-      //state.printNumbers();
+      // state.printNumbers();
     }
   }
 }

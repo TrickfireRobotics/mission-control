@@ -1,7 +1,7 @@
 import type { StdMsg, TopicType, TopicTypeMap } from '@/lib/roslibUtils/rosTypes';
 import { useRoslibStore } from '@/store/useRoslib';
-import ROSLIB, { Topic } from 'roslib';
-import { ref } from 'vue';
+import ROSLIB from 'roslib';
+import { markRaw, ref } from 'vue';
 import type { Ref } from 'vue';
 // type CreateSubscriberOptions<T extends TopicType> = {
 //   topicName: string;
@@ -49,7 +49,7 @@ export default class Subscriber<T extends TopicType> {
       messageType: topicType,
       compression: 'cbor',
     });
-    this.data = ref(startingDefaultValue) as Ref<TopicTypeMap[T] | undefined>;
+    this.data = markRaw(ref(startingDefaultValue) as Ref<TopicTypeMap[T] | undefined>);
     console.log(this.data.value);
     // this.data.value = startingDefaultValue || undefined;
   }
@@ -99,13 +99,7 @@ export default class Subscriber<T extends TopicType> {
     //   this.data.value = defaultValue;
     // }
     this.topic.subscribe((message) => {
-      const data = message.data;
-      try {
-        this.data.value = data;
-      } catch (e) {
-        console.log(e);
-      }
-      this.data.value = data;
+      console.log(this.data);
       if (!callback) {
         this.data.value = message.data;
       } else {
