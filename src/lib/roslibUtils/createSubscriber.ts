@@ -1,8 +1,18 @@
 import ROSLIB from 'roslib';
-import type { StdMsg, Subscriber, TopicType, TopicTypeMap } from './rosTypes';
-import { ref } from 'vue';
-import type { Ref } from 'vue';
+import type { TopicType, TopicTypeMap } from './rosTypes';
+import { type Ref, ref } from 'vue';
 import { useRoslibStore } from '@/store/useRoslib';
+
+export type Subscriber<T extends TopicType> = {
+  data: Ref<TopicTypeMap[T] | undefined, TopicTypeMap[T] | undefined>;
+  start: (options?: {
+    callback?: (message: TopicTypeMap[T]) => void;
+    defaultValue?: TopicTypeMap[T];
+    isDebugging?: boolean;
+  }) => void;
+  stop: () => void;
+  isOn: Ref<boolean>;
+};
 
 /**
  * Generic Subscriber to interact with Ros
@@ -19,16 +29,16 @@ import { useRoslibStore } from '@/store/useRoslib';
 export default function createSubscriber<T extends TopicType>(options: {
   topicName: string;
   topicType: T;
-  startingDefaultValue?: TopicTypeMap[T];
+  startingDefaultValue?: TopicTypeMap[T] | null;
 }): Subscriber<T> {
   const { topicName, topicType, startingDefaultValue } = options || {};
   const ros = useRoslibStore().ros;
   const isOn = ref<boolean>(false);
   //as to clean up complex inferred type
-  const data = ref<TopicTypeMap[T] | undefined>(startingDefaultValue) as Ref<
+  const data = ref<TopicTypeMap[T] | null | undefined>(startingDefaultValue) as Ref<
     TopicTypeMap[T] | undefined
   >;
-  const topic = new ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>({
+  const topic = new ROSLIB.Topic<TopicTypeMap[T]>({
     ros,
     name: topicName,
     messageType: topicType,
@@ -41,7 +51,7 @@ export default function createSubscriber<T extends TopicType>(options: {
    * @param options.isDebugging? optional prints to console for debugging
    */
   const start = (options?: {
-    callback?: (message: StdMsg<TopicTypeMap[T]>) => void;
+    callback?: (message: TopicTypeMap[T]) => void;
     defaultValue?: TopicTypeMap[T];
     isDebugging?: boolean;
   }) => {
@@ -56,7 +66,7 @@ export default function createSubscriber<T extends TopicType>(options: {
     }
     topic.subscribe((message) => {
       if (!callback) {
-        data.value = message.data;
+        data.value = message;
       } else {
         callback(message);
       }
@@ -73,5 +83,5 @@ export default function createSubscriber<T extends TopicType>(options: {
     topic.unsubscribe();
   };
   // Returns as an object, so caller determines the name of the object
-  return { data, start, stop, isOn } as Subscriber<T>;
+  return { data, start, stop, isOn };
 }

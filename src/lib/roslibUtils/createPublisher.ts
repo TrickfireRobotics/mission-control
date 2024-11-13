@@ -1,6 +1,10 @@
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '../../store/useRoslib';
-import type { Publisher, StdMsg, TopicType, TopicTypeMap } from './rosTypes';
+import type { StdMsg, TopicType, TopicTypeMap } from './rosTypes';
+
+export type Publisher<T extends TopicType> = {
+  publish: (options: { data: TopicTypeMap[T]; isDebugging?: boolean }) => void;
+};
 
 /**
  * Creates Generic Publisher to interact with Ros.

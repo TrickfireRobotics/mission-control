@@ -1,11 +1,12 @@
 <script setup lang="ts">
 // import type { CompressedImage } from '@/types';
-import type { Subscriber } from '@/lib/roslibUtils/rosTypes';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+import type { Subscriber } from '@/lib/roslibUtils/createSubscriber';
 type Props = {
   cameraSub: Subscriber<'sensor_msgs/msg/CompressedImage'>;
   cameraName: string;
+  cameraUrl: string;
 };
 const props = defineProps<Props>();
 const testRef =
@@ -34,7 +35,7 @@ const onAndOffHandler = () => {
   <div>
     <h3 id="camera-name">{{ props.cameraName }}</h3>
     <h3 id="FPS">FPS:</h3>
-    <img :src="props.cameraSub.data.value" />
+    <img :src="props.cameraUrl" />
     <button
       :class="{
         'button-toggle--off': !props.cameraSub.isOn.value,
