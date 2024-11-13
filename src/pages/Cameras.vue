@@ -30,7 +30,7 @@ const createCalback = (cameraURL: Ref<string>) => (message: CompressedImage) => 
 onMounted(() => {
   cameraOne.start({ callback: createCalback(cameraOneURL) });
   cameraTwo.start({ callback: createCalback(cameraTwoURL) });
-  console.log(cameraOne.data);
+  console.log(cameraOne.msg);
   console.log('HELLOS');
   // cameraTwo.start();
 });

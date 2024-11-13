@@ -4,7 +4,7 @@ import { type Ref, ref } from 'vue';
 import { useRoslibStore } from '@/store/useRoslib';
 
 export type Subscriber<T extends TopicType> = {
-  data: Ref<TopicTypeMap[T] | undefined, TopicTypeMap[T] | undefined>;
+  msg: Ref<TopicTypeMap[T] | undefined, TopicTypeMap[T] | undefined>;
   start: (options?: {
     callback?: (message: TopicTypeMap[T]) => void;
     defaultValue?: TopicTypeMap[T];
@@ -35,7 +35,7 @@ export default function createSubscriber<T extends TopicType>(options: {
   const ros = useRoslibStore().ros;
   const isOn = ref<boolean>(false);
   //as to clean up complex inferred type
-  const data = ref<TopicTypeMap[T] | null | undefined>(startingDefaultValue) as Ref<
+  const msg = ref<TopicTypeMap[T] | null | undefined>(startingDefaultValue) as Ref<
     TopicTypeMap[T] | undefined
   >;
   const topic = new ROSLIB.Topic<TopicTypeMap[T]>({
@@ -62,16 +62,16 @@ export default function createSubscriber<T extends TopicType>(options: {
     }
     isOn.value = true;
     if (defaultValue) {
-      data.value = defaultValue;
+      msg.value = defaultValue;
     }
     topic.subscribe((message) => {
       if (!callback) {
-        data.value = message;
+        msg.value = message;
       } else {
         callback(message);
       }
       if (isDebugging) {
-        console.log(`[${topicName}] Subscribing: ${data.value}`);
+        console.log(`[${topicName}] Subscribing:`, msg.value);
       }
     });
   };
@@ -83,5 +83,5 @@ export default function createSubscriber<T extends TopicType>(options: {
     topic.unsubscribe();
   };
   // Returns as an object, so caller determines the name of the object
-  return { data, start, stop, isOn };
+  return { msg, start, stop, isOn };
 }

@@ -136,7 +136,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(0),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.leftJoyStickArray[0], isDebugging: true });
+      controllerPub.publish({ data: this.leftJoyStickArray[0] }, { isDebugging: true });
     }
 
     //Left joystick Y axis
@@ -146,7 +146,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(1),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.leftJoyStickArray[1], isDebugging: true });
+      controllerPub.publish({ data: this.leftJoyStickArray[1] }, { isDebugging: true });
     }
 
     //Right joystick X axis
@@ -156,7 +156,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(2),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.rightJoyStickArray[0], isDebugging: true });
+      controllerPub.publish({ data: this.rightJoyStickArray[0] }, { isDebugging: true });
     }
 
     //Left joystick Y axis
@@ -166,7 +166,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(3),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.rightJoyStickArray[1], isDebugging: true });
+      controllerPub.publish({ data: this.rightJoyStickArray[1] }, { isDebugging: true });
     }
 
     /*
@@ -179,7 +179,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(6),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.currentStateButtons[6], isDebugging: true });
+      controllerPub.publish({ data: this.currentStateButtons[6] }, { isDebugging: true });
     }
 
     // Right Trigger
@@ -188,7 +188,7 @@ export default class ControllerState {
         topicName: this.joystickIndexToPublisherName.get(7),
         topicType: 'std_msgs/Float32',
       });
-      controllerPub.publish({ data: this.currentStateButtons[7], isDebugging: true });
+      controllerPub.publish({ data: this.currentStateButtons[7] }, { isDebugging: true });
     }
 
     // Send button data. Skip index 6 and 7 as that are the triggers
@@ -198,7 +198,7 @@ export default class ControllerState {
           topicName: this.buttonIndexToPublisherName.get(index),
           topicType: 'std_msgs/Float32',
         });
-        controllerPub.publish({ data: this.currentStateButtons[index], isDebugging: true });
+        controllerPub.publish({ data: this.currentStateButtons[index] }, { isDebugging: true });
       }
     }
   }

@@ -11,7 +11,7 @@ const SECONDS_TO_TIMESTAMP = 1000;
 export const useRoslibStore = defineStore('roslib', () => {
   const ros = new ROSLIB.Ros({ url: undefined });
   const isWebSocketConnected = ref<boolean>(false);
-  const stop = ref<boolean>(false);
+  const stop = { value: false };
   /**
    * Initializes Ros, websocket with Rover and runs heartbeat subscribes. Should only be used in App.vue
    * @param serverHost IP address of websocket
@@ -39,14 +39,19 @@ export const useRoslibStore = defineStore('roslib', () => {
     const heartbeatSub = createSubscriber({
       topicName: 'hbr',
       topicType: 'std_msgs/Bool',
-      startingDefaultValue: false,
+      startingDefaultValue: { data: false },
     });
-    heartbeatSub.start({ defaultValue: false, isDebugging: true });
+    heartbeatSub.start({
+      defaultValue: { data: false },
+      isDebugging: true,
+      callback: (msg) => {
+        if (msg.data) {
+          heartbeatTime = Date.now();
+        }
+      },
+    });
     // Close the connection if the heartbeat stops for too long.
     const interval = setInterval(() => {
-      if (heartbeatSub.data.value) {
-        heartbeatTime = Date.now();
-      }
       if (stop.value) {
         clearInterval(interval);
 

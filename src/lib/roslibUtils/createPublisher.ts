@@ -1,9 +1,9 @@
 import ROSLIB from 'roslib';
 import { useRoslibStore } from '../../store/useRoslib';
-import type { StdMsg, TopicType, TopicTypeMap } from './rosTypes';
+import type { TopicType, TopicTypeMap } from './rosTypes';
 
 export type Publisher<T extends TopicType> = {
-  publish: (options: { data: TopicTypeMap[T]; isDebugging?: boolean }) => void;
+  publish: (data: TopicTypeMap[T], options?: { isDebugging?: boolean }) => void;
 };
 
 /**
@@ -20,7 +20,7 @@ export default function createPublisher<T extends TopicType>(options: {
 }): Publisher<T> {
   const { topicName, topicType } = options;
   const ros = useRoslibStore().ros;
-  const topic = new ROSLIB.Topic<StdMsg<TopicTypeMap[T]>>({
+  const topic = new ROSLIB.Topic<TopicTypeMap[T]>({
     ros,
     name: topicName,
     messageType: topicType,
@@ -30,12 +30,11 @@ export default function createPublisher<T extends TopicType>(options: {
    * Publish given data
    * @param data publishes data
    */
-  const publish = (options: { data: TopicTypeMap[T]; isDebugging?: boolean }) => {
-    const { data, isDebugging } = options;
-    const message: StdMsg<TopicTypeMap[T]> = { data };
-    topic.publish(message);
+  const publish: Publisher<T>['publish'] = (data, options) => {
+    const { isDebugging } = options || {};
+    topic.publish(data);
     if (isDebugging) {
-      console.log(`[${topicName}] Publishing: ${data}`);
+      console.log(`[${topicName}] Publishing:`, data);
     }
   };
   // TODO: Publisher that runs every interval has passed

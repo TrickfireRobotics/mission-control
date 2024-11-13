@@ -14,10 +14,10 @@ export const useExampleStore = defineStore('example', () => {
   const helloWorldSub = createSubscriber({
     topicName: TOPIC_NAME,
     topicType: 'std_msgs/String',
-    startingDefaultValue: 'Hello World',
+    startingDefaultValue: { data: 'Hello World' },
   });
   //3rd define any getters in computed
-  const allCapsData = computed(() => helloWorldSub.data.value?.toUpperCase());
+  const allCapsData = computed(() => helloWorldSub.msg.value?.data.toUpperCase());
   //4th define any functions
   const helloWorldPub = createPublisher({
     topicName: TOPIC_NAME,
