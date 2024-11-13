@@ -31,7 +31,7 @@ export default function createSubscriber<T extends TopicType>(options: {
   topicType: T;
   startingDefaultValue?: TopicTypeMap[T] | null;
 }): Subscriber<T> {
-  const { topicName, topicType, startingDefaultValue } = options || {};
+  const { topicName, topicType, startingDefaultValue } = options;
   const ros = useRoslibStore().ros;
   const isOn = ref<boolean>(false);
   //as to clean up complex inferred type
@@ -71,7 +71,7 @@ export default function createSubscriber<T extends TopicType>(options: {
         callback(message);
       }
       if (isDebugging) {
-        console.log(`[${topicName}] Subscribing:`, msg.value);
+        console.log(`[${topicName}] Received:`, msg.value);
       }
     });
   };
