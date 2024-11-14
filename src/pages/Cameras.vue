@@ -11,14 +11,12 @@ const blackImage =
 const cameraOne = createSubscriber({
   topicName: `video_frames0`,
   topicType: 'sensor_msgs/msg/CompressedImage',
-  startingDefaultValue: null,
 });
 const cameraOneURL = ref<string>(blackImage);
 
 const cameraTwo = createSubscriber({
   topicName: `video_frames1`,
   topicType: 'sensor_msgs/msg/CompressedImage',
-  startingDefaultValue: null,
 });
 const cameraTwoURL = ref<string>(blackImage);
 
@@ -30,9 +28,6 @@ const createCalback = (cameraURL: Ref<string>) => (message: CompressedImage) => 
 onMounted(() => {
   cameraOne.start({ callback: createCalback(cameraOneURL) });
   cameraTwo.start({ callback: createCalback(cameraTwoURL) });
-  console.log(cameraOne.msg);
-  console.log('HELLOS');
-  // cameraTwo.start();
 });
 </script>
 

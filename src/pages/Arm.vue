@@ -4,15 +4,18 @@ import { shallowRef, watch } from 'vue';
 import { TresCanvas } from '@tresjs/core';
 import { OrbitControls, GLTFModel } from '@tresjs/cientos';
 import ArmModeSelection from '../components/arm/ArmModeSelection.vue';
+import type THREE from 'three';
 
 const modelRef = shallowRef<THREE.Object3D>();
 
 watch(modelRef, (model) => {
+  if (!model) return;
+
   // Move model so base is in the center
-  model.instance.position.set(0, 100, -100);
+  model.position.set(0, 100, -100);
 
   // Make sure model faces up
-  model.instance.rotation.set(90, 0, 0);
+  model.rotation.set(90, 0, 0);
 });
 </script>
 <template>
@@ -23,9 +26,9 @@ watch(modelRef, (model) => {
         <TresAmbientLight :intensity="1" />
         <TresDirectionalLight :intensity="2" :position="[3, 3, 3]" />
         <TresPerspectiveCamera />
-        <OrbitControls :enableDamping="false" :enablePan="false" />
+        <OrbitControls :enable-damping="false" :enable-pan="false" />
         <Suspense>
-          <GLTFModel path="arm.glb" draco ref="modelRef" />
+          <GLTFModel ref="modelRef" path="arm.glb" draco />
         </Suspense>
       </TresCanvas>
     </div>
@@ -40,7 +43,7 @@ watch(modelRef, (model) => {
   height: 600px;
 }
 </style>
-<!-- 3D model of the arm, camera arms, Any information related to the arm should be here 
+<!-- 3D model of the arm, camera arms, Any information related to the arm should be here
 <script setup lang="ts">
 import ArmModeSelection from '../components/arm/ArmModeSelection.vue';
 </script>

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import ROSLIB from 'roslib';
 import { ref } from 'vue';
-import type { TopicType, RosCompressionType } from '../lib/roslibUtils/rosTypes';
 import createSubscriber from '@/lib/roslibUtils/createSubscriber';
 
 const HEARTBEAT_DISCONNECT_SECONDS = 2;
@@ -12,6 +11,7 @@ export const useRoslibStore = defineStore('roslib', () => {
   const ros = new ROSLIB.Ros({ url: undefined });
   const isWebSocketConnected = ref<boolean>(false);
   const stop = { value: false };
+
   /**
    * Initializes Ros, websocket with Rover and runs heartbeat subscribes. Should only be used in App.vue
    * @param serverHost IP address of websocket
@@ -84,25 +84,7 @@ export const useRoslibStore = defineStore('roslib', () => {
       }
     }, 100);
   }
-  /**
-   * Creates Topic that return type from subscribing is T. Only use if not StdMsg or isn't a simple {data : T}.
-   * @param topicName should start with '/' along with topic name
-   * @param topicType Ros Message Type
-   * @param compression? optional type of compression to use, like 'png', 'cbor', or 'cbor-raw'
-   * @returns ROSLIB.TOPIC that expects T result
-   */
-  function createNonStandardTopic<T>(
-    topicName: string,
-    topicType: TopicType,
-    compression: RosCompressionType = 'cbor',
-  ) {
-    return new ROSLIB.Topic<T>({
-      ros,
-      name: topicName,
-      messageType: topicType,
-      compression,
-    });
-  }
+
   function heartbeatPub(input: boolean, interval: number) {
     // Function to publish a heartbeat message
     const heartbeat_topic = new ROSLIB.Topic({
@@ -127,7 +109,6 @@ export const useRoslibStore = defineStore('roslib', () => {
     isWebSocketConnected,
     stop,
     init,
-    createNonStandardTopic,
     heartbeatPub,
   };
 });

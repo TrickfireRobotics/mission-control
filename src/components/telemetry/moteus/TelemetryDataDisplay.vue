@@ -1,29 +1,31 @@
 <script lang="ts" setup>
-const props = defineProps([
-  'itemName',
-  'isSelected',
-  'value',
-  'shouldRecordData',
-  'shouldShowCheckBox',
-  'showAllFeatures',
-]);
+export interface TelemetryDataDisplayProps {
+  itemName: string;
+  isSelected: boolean;
+  value: string;
+  shouldRecordData: boolean;
+  shouldShowCheckBox: boolean;
+  showAllFeatures: boolean;
+}
+
+const props = defineProps<TelemetryDataDisplayProps>();
 </script>
 
 <template>
-  <div v-if="isSelected" class="mycontainer">
+  <div v-if="props.isSelected" class="mycontainer">
     <div>
       <input
-        v-if="showAllFeatures"
-        v-show="shouldShowCheckBox"
+        v-if="props.showAllFeatures"
+        v-show="props.shouldShowCheckBox"
         checked
         class="checkbox-style"
         type="checkbox"
         title="Select to include this value when recording data into a .csv file"
-        @click="$emit('checkboxClicked', itemName)"
+        @click="$emit('checkboxClicked', props.itemName)"
       />
-      <b>{{ itemName }}</b>
+      <b>{{ props.itemName }}</b>
     </div>
-    <b>{{ value }}</b>
+    <b>{{ props.value }}</b>
   </div>
 </template>
 

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import type { TopicType } from '../lib/roslibUtils/rosTypes';
 import createSubscriber from '@/lib/roslibUtils/createSubscriber';
 import createPublisher from '@/lib/roslibUtils/createPublisher';
+
 // 0th Define any constants above
 const TOPIC_NAME = '/exampleData';
 const TOPIC_MESSAGE_TYPE: TopicType = 'std_msgs/String';

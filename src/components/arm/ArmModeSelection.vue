@@ -18,7 +18,8 @@ let armModeService: ROSLIB.Service;
  * inverse_kinematics = 3
  */
 let current_arm_mode = ref(-1); // Default is disabled
-//let isLoaded = ref(false);
+// TODO: Implement isLoaded?
+let isLoaded = ref(false);
 
 function initialize() {
   armModeService = new ROSLIB.Service({
@@ -61,7 +62,6 @@ function changeArmMode(targetMode: number) {
         <b class="mode-text">Arm Control Mode:</b>
       </div>
       <div>
-        <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
             'button-toggle--off': current_arm_mode !== 0,

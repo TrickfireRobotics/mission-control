@@ -1,15 +1,8 @@
 // Types from https://docs.ros2.org/galactic/api/std_msgs/index-msg.html
 // TODO: Separate std_msgs and custom messages due to non std_msgs may have more values than just .data that is used in MessageWrapper
 
-// Feel free to add to TopicType, but also Add to TopicTypeMap to its corresponding primitive.
-export type TopicType =
-  | 'std_msgs/Int32'
-  | 'std_msgs/Bool'
-  | 'std_msgs/String'
-  | 'std_msgs/Char'
-  | 'std_msgs/Float32'
-  | 'std_msgs/Time'
-  | 'sensor_msgs/msg/CompressedImage';
+// Feel free to add to TopicTypeMap.
+// Most messages will use StdMsg.
 export type TopicTypeMap = {
   'std_msgs/Int32': StdMsg<number>;
   'std_msgs/Bool': StdMsg<boolean>;
@@ -19,9 +12,13 @@ export type TopicTypeMap = {
   'std_msgs/Time': StdMsg<number>;
   'sensor_msgs/msg/CompressedImage': CompressedImage;
 };
+
+export type TopicType = keyof TopicTypeMap;
+
 export type StdMsg<T> = {
   data: T;
 };
+
 export type CompressedImage = {
   Header: {
     //header is not confirmed on types
@@ -31,6 +28,3 @@ export type CompressedImage = {
   format: 'jpg' | 'png';
   data: Uint8Array;
 };
-
-// Types are from rosbridge Documentation https://github.com/RobotWebTools/rosbridge_suite/blob/ros2/ROSBRIDGE_PROTOCOL.md
-export type RosCompressionType = 'none' | 'png' | 'cbor' | 'cbor-raw';
