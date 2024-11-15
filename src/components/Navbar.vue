@@ -10,6 +10,8 @@ import HomeIcon from 'vue-material-design-icons/Home.vue';
 import CameraIcon from 'vue-material-design-icons/Camera.vue';
 import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
+import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
+import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 import { useRoslibStore } from '../store/useRoslib';
 import { useControllerStore } from '../store/useController';
 
@@ -91,26 +93,17 @@ const pageIconArr: PageIcon = [
       <h4>{{ pageIcon.label }}</h4>
       <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
     </RouterLink>
-    <div class="container">
-      <h4 id="status">WebSocket</h4>
-      <div
-        class="circle"
-        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
-      ></div>
+    <div class="container indicator-container">
+      <h4 id="status">WS</h4>
+      <component :is="PowerPlugIcon" class="page-icon" title="Indicates WebSocket connection" :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
     </div>
-    <div class="container">
-      <h4 id="status">Camera Feed</h4>
-      <div
-        class="circle"
-        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
-      ></div>
+    <div class="container indicator-container">
+      <h4 id="status">CAM</h4>
+      <component :is="CameraIcon" class="page-icon" title="Indicates camera connection" :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
     </div>
-    <div class="container">
-      <h4 id="status">Controller Connected</h4>
-      <div
-        class="circle"
-        :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
-      ></div>
+    <div class="container indicator-container">
+      <h4 id="status">CTRL</h4>
+      <component :is="ControllerIcon" class="page-icon" title="Indicates controller connection" :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"/>
     </div>
     <!-- TODO Implement Latency -->
     <!-- <div class="container">
@@ -125,7 +118,6 @@ nav {
   padding: 0rem 1rem;
   grid-area: nav;
   display: flex;
-  gap: 5px;
   align-items: center;
   height: var(--nav-bar-size);
   background-color: var(--black);
@@ -145,9 +137,11 @@ nav {
     background-color: var(--light-grey);
   }
   .navbar-tab {
-    margin: 0;
     padding: 0 0.3rem;
     min-width: 4rem;
+  }
+  .navbar-tab:not(.current-page):hover {
+    background-color: hsl(0, 0%, 12%);
   }
   #logo {
     max-width: 100%;
@@ -163,19 +157,16 @@ nav {
     align-items: center;
     justify-content: center;
   }
-  .circle {
-    border-radius: 50%;
-    background-color: inherit;
-    height: 22px;
-    width: 22px;
-    border: 2px black solid;
-    border-radius: 50%;
+  .indicator-container {
+    min-width: max-content;
+    padding: 0 1.5rem;
+    background-color: hsl(240, 20%, 20%);
   }
   .red {
-    background-color: var(--error);
+    color: var(--error);
   }
   .green {
-    background-color: var(--correct);
+    color: var(--correct);
   }
 }
 </style>
