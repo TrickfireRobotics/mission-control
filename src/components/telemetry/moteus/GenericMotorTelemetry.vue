@@ -1,11 +1,10 @@
 <!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted, inject } from 'vue';
+import { ref, onMounted } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import SaveCSVData from '../../../lib/saveCSVData';
+import SaveCSVData from '@/lib/saveCSVData';
 import ROSLIB from 'roslib';
-import { useRoslibStore } from '@/store/useRoslib';
 
 onMounted(() => initialize());
 
@@ -34,8 +33,8 @@ let recordButtonText = ref('Start Recording');
 
 let pollingData: number; //Used to keep track of the object id when we do setInterval
 
+// TODO: getMoteusMotorStateService
 let getMoteusMotorStateService: ROSLIB.Service;
-const roslib = useRoslibStore();
 
 /**
  * This is used to store what kind of data we will be displaying

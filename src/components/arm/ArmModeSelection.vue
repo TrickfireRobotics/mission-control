@@ -3,6 +3,7 @@ import ROSLIB from 'roslib';
 import { ref, onMounted } from 'vue';
 
 import { useRoslibStore } from '@/store/useRoslib';
+import createPublisher from '@/lib/roslibUtils/createPublisher';
 
 onMounted(() => initialize());
 
@@ -17,7 +18,8 @@ let armModeService: ROSLIB.Service;
  * inverse_kinematics = 3
  */
 let current_arm_mode = ref(-1); // Default is disabled
-//let isLoaded = ref(false);
+// TODO: Implement isLoaded?
+let isLoaded = ref(false);
 
 function initialize() {
   armModeService = new ROSLIB.Service({
@@ -44,11 +46,11 @@ function getCurrentArmMode() {
 
 function changeArmMode(targetMode: number) {
   console.log('Target mode wanted' + targetMode);
-  const armModePublish = roslib.createPublisher({
+  const armModePublish = createPublisher({
     topicName: 'update_arm_mode',
     topicType: 'std_msgs/Int32',
   });
-  armModePublish(targetMode);
+  armModePublish.publish({ data: targetMode });
   getCurrentArmMode();
 }
 </script>
@@ -60,7 +62,6 @@ function changeArmMode(targetMode: number) {
         <b class="mode-text">Arm Control Mode:</b>
       </div>
       <div>
-        <!--button class="button-mode" @click="sendRequest">TEST</button-->
         <button
           :class="{
             'button-toggle--off': current_arm_mode !== 0,

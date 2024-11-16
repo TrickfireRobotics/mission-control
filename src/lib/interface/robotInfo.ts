@@ -22,5 +22,7 @@ export default class RobotInfo {
     this.getMoteusMotorStateService.callService(request, callback);
   }
 
-  getRMDx8MotorState(can2ID: number) {}
+  getRMDx8MotorState(can2ID: number) {
+    // TODO: getRMDx8MotorState
+  }
 }
