@@ -1,4 +1,4 @@
-import { useRoslibStore } from '@/store/useRoslib';
+import createPublisher from '../roslibUtils/createPublisher';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -128,51 +128,45 @@ export default class ControllerState {
 
   // Publish the values to the ROS network
   publishController() {
-    const rosjs = useRoslibStore();
-
     //Left joystick X axis
 
     if (Math.abs(this.leftJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
       //console.log("send LEFT joystick X");
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(0),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.leftJoyStickArray[0]);
+      controllerPub.publish({ data: this.leftJoyStickArray[0] }, { isDebugging: true });
     }
 
     //Left joystick Y axis
     if (Math.abs(this.leftJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
       //console.log("send LEFT joystick Y");
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(1),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.leftJoyStickArray[1]);
+      controllerPub.publish({ data: this.leftJoyStickArray[1] }, { isDebugging: true });
     }
 
     //Right joystick X axis
     if (Math.abs(this.rightJoyStickArrayDELTA[0]) > this.deltaSensitivity) {
       //console.log("send RIGHT joystick X");
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(2),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.rightJoyStickArray[0]);
+      controllerPub.publish({ data: this.rightJoyStickArray[0] }, { isDebugging: true });
     }
 
     //Left joystick Y axis
     if (Math.abs(this.rightJoyStickArrayDELTA[1]) > this.deltaSensitivity) {
       //console.log("send RIGHT joystick Y");
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(3),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.rightJoyStickArray[1]);
+      controllerPub.publish({ data: this.rightJoyStickArray[1] }, { isDebugging: true });
     }
 
     /*
@@ -181,33 +175,30 @@ export default class ControllerState {
 
     // Left Trigger
     if (Math.abs(this.deltaStateButtons[6]) > this.deltaSensitivity) {
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(6),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.currentStateButtons[6]);
+      controllerPub.publish({ data: this.currentStateButtons[6] }, { isDebugging: true });
     }
 
     // Right Trigger
     if (Math.abs(this.deltaStateButtons[7]) > this.deltaSensitivity) {
-      const controllerPub = rosjs.createPublisher({
+      const controllerPub = createPublisher({
         topicName: this.joystickIndexToPublisherName.get(7),
         topicType: 'std_msgs/Float32',
-        isDebugging: true,
       });
-      controllerPub(this.currentStateButtons[7]);
+      controllerPub.publish({ data: this.currentStateButtons[7] }, { isDebugging: true });
     }
 
     // Send button data. Skip index 6 and 7 as that are the triggers
     for (let index = 0; index < 16; index++) {
       if (index !== 6 && index !== 7 && Math.abs(this.deltaStateButtons[index]) === 1) {
-        const controllerPub = rosjs.createPublisher({
+        const controllerPub = createPublisher({
           topicName: this.buttonIndexToPublisherName.get(index),
           topicType: 'std_msgs/Float32',
-          isDebugging: true,
         });
-        controllerPub(this.currentStateButtons[index]);
+        controllerPub.publish({ data: this.currentStateButtons[index] }, { isDebugging: true });
       }
     }
   }

@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-type Props = {
+export interface DropDownItemProps {
   itemName: string;
   isSelected: boolean;
-};
-const props = defineProps<Props>();
+}
+const props = defineProps<DropDownItemProps>();
 </script>
 
 <template>
   <div class="dropdown-item mycontainer prevent-select hover-highlight" @click="$emit('callback')">
     <div class="item-text">
-      <span>{{ itemName }}</span>
+      <span>{{ props.itemName }}</span>
     </div>
     <div class="item-checkmark">
-      <b v-if="isSelected">✓</b>
+      <b v-if="props.isSelected">✓</b>
     </div>
   </div>
 </template>

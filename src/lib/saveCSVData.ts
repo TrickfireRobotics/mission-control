@@ -9,7 +9,6 @@ export default class SaveCSVData {
   }
 
   addDataEntry(dataEntry: string[]) {
-    //console.log(dataEntry.toString())
     this.csvDataObjects.push(dataEntry);
   }
 
@@ -48,9 +47,5 @@ export default class SaveCSVData {
       '.csv';
     a.href = url;
     a.click();
-  }
-
-  _createrHeaderString() {
-    const outputstr = '';
   }
 }
