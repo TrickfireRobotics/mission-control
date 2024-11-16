@@ -11,6 +11,7 @@ const SECONDS_TO_TIMESTAMP = 1000;
 export const useRoslibStore = defineStore('roslib', () => {
   const ros = new ROSLIB.Ros({ url: undefined });
   const isWebSocketConnected = ref<boolean>(false);
+  const latency = ref<Number>(0);
   const stop = ref<boolean>(false);
   /**
    * Initializes Ros, websocket with Rover and runs heartbeat subscribes. Should only be used in App.vue
@@ -221,6 +222,7 @@ export const useRoslibStore = defineStore('roslib', () => {
   return {
     ros,
     isWebSocketConnected,
+    latency,
     stop,
     init,
     createNonStandardTopic,

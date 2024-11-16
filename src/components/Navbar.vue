@@ -93,23 +93,22 @@ const pageIconArr: PageIcon = [
       <h4>{{ pageIcon.label }}</h4>
       <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
     </RouterLink>
-    <div class="container indicator-container">
+    <div class="container indicator-container" :title = "(`Websocket: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`)">
       <h4 id="status">WS</h4>
-      <component :is="PowerPlugIcon" class="page-icon" title="Indicates WebSocket connection" :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
+      <component :is="PowerPlugIcon" class="page-icon" :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
     </div>
-    <div class="container indicator-container">
+    <div class="container indicator-container" :title = "(`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`)">
       <h4 id="status">CAM</h4>
-      <component :is="CameraIcon" class="page-icon" title="Indicates camera connection" :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
+      <component :is="CameraIcon" class="page-icon"  :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"/>
+    </div>
+    <div class="container indicator-container" :title = "(`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`)">
+      <h4 id="status">CTRL</h4>
+      <component :is="ControllerIcon" class="page-icon" :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"/>
     </div>
     <div class="container indicator-container">
-      <h4 id="status">CTRL</h4>
-      <component :is="ControllerIcon" class="page-icon" title="Indicates controller connection" :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"/>
+      <h4 id="status">Ping</h4>
+      <h4>{{ roslib.latency + "ms" }}</h4>
     </div>
-    <!-- TODO Implement Latency -->
-    <!-- <div class="container">
-      <h4>Ping</h4>
-      <p>{{ `${latency}ms` }}</p>
-    </div> -->
   </nav>
 </template>
 
@@ -141,7 +140,7 @@ nav {
     min-width: 4rem;
   }
   .navbar-tab:not(.current-page):hover {
-    background-color: hsl(0, 0%, 12%);
+    background-color: hsl(0, 0%, 16%);
   }
   #logo {
     max-width: 100%;
