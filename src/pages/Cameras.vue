@@ -39,8 +39,6 @@ onMounted(() => {
     <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
