@@ -27,7 +27,7 @@ Follow the steps below based on your role and setup:
 
 Visit [Mission Control](https://www.trickfirerobotics.org/mission-control/) and follow the **Launching on Rover** instructions below.
 
-#### Launching on Rover
+## **Launching on Rover**
 
 Setup router and ensure connect to trickfirerouter on your computer. The router password is on the router itself Turn the rover computer on by plugging in the c port charger. You will know the computer is on if the LED lights up.
 Run the commands below in Powershell or in your OS terminal. When prompted for a password, please ask a software member.
