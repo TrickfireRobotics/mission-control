@@ -10,7 +10,7 @@ const SECONDS_TO_TIMESTAMP = 1000;
 export const useRoslibStore = defineStore('roslib', () => {
   const ros = new ROSLIB.Ros({ url: undefined });
   const isWebSocketConnected = ref<boolean>(false);
-  const latency = ref<Number>(0);
+  const latency = ref<number>(0);
   const stop = { value: false };
 
   /**
