@@ -2,6 +2,8 @@
 
 Welcome to the mission control subteam! We hope that you will stick around and learn quite a bit of things about frontend development and networking! However, before you can do that, you should review the resources given in this document to familiarize yourself.
 
+If completely new, please refer to the [urc's getting_started.md](https://github.com/TrickfireRobotics/urc-2023/blob/main/docs/getting_started.md) as that gives an overall view of everything. For local development you will need to follow the instructions to setup Docker to run the urc-2023 repository.
+
 ## What's the mission control?
 
 The mission control is the human interface to communicate bidirectionally (Sends and receives information) with the rover. For example, sending joystick inputs to the rover or displaying the rover's camera feed in real time.
