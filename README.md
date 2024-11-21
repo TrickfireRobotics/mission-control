@@ -1,6 +1,6 @@
 # Mission Control
 
-The mission control is the human interface to communicate bidirectionally (sends and receives information) with the rover. For example, sending joystick inputs to the rover or displaying the rover's camera feed in realtime. This is done through a websocket server that is ran on the rover.
+The Mission Control Team designs and develops the application that serves as the operational hub for monitoring the rover's performance during competitions. This application enables the team to interpret real-time data, coordinate task execution, and ensure smooth communication between the rover and its operators, providing the tools necessary for seamless mission management.
 
 ![image](https://github.com/user-attachments/assets/a93314da-d956-468a-8d9c-59329f747919)
 
