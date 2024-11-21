@@ -1,22 +1,22 @@
 # Getting Started
 
-Welcome to the mission control subteam! We hope that you will stick around and learn quite a bit of things about frontend and networking! However, before you can do that, you should review the resources given in this document to familiarize yourself.
+Welcome to the mission control subteam! We hope that you will stick around and learn quite a bit of things about frontend development and networking! However, before you can do that, you should review the resources given in this document to familiarize yourself.
 
 ## What's the mission control?
 
-The mission control is the human interface to communicate bidirectionally (Sends and receives information) with the rover. For example, sending joystick inputs to the rover or displaying the rover's camera feed in realtime.
+The mission control is the human interface to communicate bidirectionally (Sends and receives information) with the rover. For example, sending joystick inputs to the rover or displaying the rover's camera feed in real time.
 
 ## Difference between urc-2023 and mission-control GitHub Repository
 
-The urc-2023 repo is the code that is ran on the rover itself. Due to the code being very hardware specifics, the docker container you run on your computer ensures standardization with the rover. Think of the rover as the "server"
+The urc-2023 repo is the code that is run on the rover itself. Due to the code being very hardware specific, the docker container you run on your computer ensures standardization with the rover. Think of the rover as the "server".
 
-The mission-control repo is completely separate from the urc-2023 as it is webpage-based, meaning the code is ran in the browser, and with modern browsers standardization of features, docker container is not needed. Think of the mission control as the "client"
+The mission-control repo is completely separate from the urc-2023 as it is webpage-based, meaning the code is ran in the browser—and with modern browsers' standardization of features, a docker container is not needed. Think of the mission control as the "client".
 
 ## Recommended IDE Setup
 
 - [VSCode](https://code.visualstudio.com/)
 
-- [Vue DevTools Chrome Extension](https://devtools.vuejs.org/getting-started/installation): Can Inspect Components State and integrated with Pinia, allowing to see store's state
+- [Vue DevTools Chrome Extension](https://devtools.vuejs.org/getting-started/installation): Can Inspect Components State and integrated with Pinia, allowing to see store's state.
 
 ## Libraries/Tools/Technologies that We Utilize
 
@@ -44,7 +44,7 @@ In this particular codebase, we use the following libraries/tools/technologies. 
 
 ## So... what should I do now?
 
-Please look at the [mission-control github issues](https://github.com/TrickfireRobotics/mission-control/issues) and look for **_Good First Issue_**. Some issues might only require only a fraction of the concepts above like UI related ones.
+Please look at the [mission-control GitHub issues](https://github.com/TrickfireRobotics/mission-control/issues) and look for **_Good First Issue_**. Some issues might only require only a fraction of the concepts above like UI related ones.
 
 If you got here this far. I really appreciate you reading the documentation :)
 
