@@ -1,4 +1,4 @@
-### **Developer Download**
+### Developer Download
 
 To develop code for the mission control, please follow the setup below:
 
@@ -12,7 +12,7 @@ To develop code for the mission control, please follow the setup below:
 3. Run `cd mission-control` to open the repository
 4. Run `npm install` to install dependencies
 
-### **Launching**
+### Launching
 
 1. Run `npm run dev`
 2. While running open another VSCode window to the URC repo in the docker environment
