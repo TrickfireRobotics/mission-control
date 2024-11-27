@@ -1,6 +1,6 @@
 <!-- Should have " setup lang="ts" " in script tag for proper Composition and enforce typescript-->
 <script setup lang="ts">
-import { useExampleStore } from '@/store/useExample';
+import { useExampleStore } from '@/lib/store/example';
 import { onActivated, onDeactivated } from 'vue';
 
 //if needed, define props like this. If not, delete this

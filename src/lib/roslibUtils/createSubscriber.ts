@@ -1,7 +1,7 @@
 import ROSLIB from 'roslib';
 import type { TopicType, TopicTypeMap } from './rosTypes';
 import { type Ref, ref } from 'vue';
-import { useRoslibStore } from '@/store/useRoslib';
+import { useRoslibStore } from '@/lib/store/roslib';
 
 // The CB type is there to ensure that we can't access both msg and callback at the same time.
 // It might mess with Intellisense, but it's better than trying to debug why some code is broken
@@ -41,13 +41,28 @@ export interface Subscriber<T extends TopicType, CB extends boolean> {
  * @param options.startingDefaultValue - optional starting value
  * @param options.isDebugging - optional prints to console for debugging
  */
-export default function createSubscriber<T extends TopicType, CB extends boolean>(options: {
+export function createSubscriber<T extends TopicType, CB extends boolean>(options: {
   topicName: string;
   topicType: T;
   startingDefaultValue?: CB extends false ? TopicTypeMap[T] : never;
 }): Subscriber<T, CB> {
+  const ros = useRoslibStore();
+  return createSubscriberForRos(ros.ros, options);
+}
+
+/**
+ * Equivalent to createSubscriber, except using a supplied roslib instead of the
+ * default one.
+ */
+export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
+  ros: ROSLIB.Ros,
+  options: {
+    topicName: string;
+    topicType: T;
+    startingDefaultValue?: CB extends false ? TopicTypeMap[T] : never;
+  },
+): Subscriber<T, CB> {
   const { topicName, topicType, startingDefaultValue } = options;
-  const ros = useRoslibStore().ros;
   const isOn = ref<boolean>(false);
   //as to clean up complex inferred type
   const msg = ref<TopicTypeMap[T] | null | undefined>(startingDefaultValue) as Ref<
@@ -58,6 +73,7 @@ export default function createSubscriber<T extends TopicType, CB extends boolean
     name: topicName,
     messageType: topicType,
     compression: 'cbor',
+    reconnect_on_close: true,
   });
 
   const start: Subscriber<T, CB>['start'] = (options) => {
@@ -77,7 +93,7 @@ export default function createSubscriber<T extends TopicType, CB extends boolean
         callback(message);
       }
       if (isDebugging) {
-        console.log(`[${topicName}] Received:`, msg.value);
+        console.log(`[${topicName}] Received:`, msg.value?.data);
       }
     });
   };

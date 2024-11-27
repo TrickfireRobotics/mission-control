@@ -1,4 +1,4 @@
-import createPublisher from '../roslibUtils/createPublisher';
+import { createPublisher } from '../roslibUtils/createPublisher';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
