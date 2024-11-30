@@ -20,14 +20,14 @@ const cameraTwo = createSubscriber({
 });
 const cameraTwoURL = ref<string>(blackImage);
 
-const createCalback = (cameraURL: Ref<string>) => (message: CompressedImage) => {
+const createCallback = (cameraURL: Ref<string>) => (message: CompressedImage) => {
   const blob = new Blob([message.data], { type: 'image/' + message.format });
   cameraURL.value = URL.createObjectURL(blob);
 };
 
 onMounted(() => {
-  cameraOne.start({ callback: createCalback(cameraOneURL) });
-  cameraTwo.start({ callback: createCalback(cameraTwoURL) });
+  cameraOne.start({ callback: createCallback(cameraOneURL) });
+  cameraTwo.start({ callback: createCallback(cameraTwoURL) });
 });
 </script>
 

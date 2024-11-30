@@ -19,8 +19,7 @@ watch(modelRef, (model) => {
 });
 </script>
 <template>
-  <div class="page">
-    <ArmModeSelection></ArmModeSelection>
+  <div class="two-by-three-grid-page">
     <div class="model-container">
       <TresCanvas shadows alpha>
         <TresAmbientLight :intensity="1" />
@@ -32,11 +31,17 @@ watch(modelRef, (model) => {
         </Suspense>
       </TresCanvas>
     </div>
+    <ArmModeSelection></ArmModeSelection>
+    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.page {
+.model-container {
+  // height: 100%;
+  // width: 100%;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
 }
 
 .model-container {
