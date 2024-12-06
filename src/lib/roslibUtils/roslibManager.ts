@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 import { ref, type Ref, watch } from 'vue';
-import { useSettingsStore } from '@/lib/store/settings';
+import { useSettingsStore } from '@/store/settingsStore';
 import { storeToRefs } from 'pinia';
 import { createSubscriberForRos } from '@/lib/roslibUtils/createSubscriber';
 
@@ -33,8 +33,6 @@ export function roslibManager(): RoslibManager {
   const ros: ROSLIB.Ros = new ROSLIB.Ros({ url: undefined });
 
   let heartbeatRunning: boolean = false;
-  let heartbeatCheckInterval: number | null = null;
-  let heartbeatSendInterval: number | null = null;
   let heartbeatTime: number = 0;
 
   const stop: Ref<boolean> = ref(false);
@@ -102,11 +100,6 @@ export function roslibManager(): RoslibManager {
 
       heartbeatPub.publish(heartbeatData);
     }, HEARTBEAT_SEND_INTERVAL);
-
-    // interval variables exist so that the heartbeat interval doesn't
-    // kill a different interval if heartbeatInterval gets changed.
-    heartbeatCheckInterval = checkInterval;
-    heartbeatSendInterval = sendInterval;
   }
 
   /**
@@ -120,7 +113,18 @@ export function roslibManager(): RoslibManager {
     heartbeatTime = Date.now() + RECONNECTION_GRACE_SECONDS * SECONDS_TO_TIMESTAMP;
 
     close();
-    ros.connect(address);
+
+    try {
+      ros.connect(address);
+    } catch (e) {
+      if (e instanceof DOMException && e.message === 'An invalid or illegal string was specified') {
+        // The websocket address is invalid.
+        // In this case, we can do nothing and
+        // wait for the user to fix it.
+      } else {
+        console.error(e);
+      }
+    }
   }
 
   /**

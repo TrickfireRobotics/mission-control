@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue';
-import { useSettingsStore } from '@/lib/store/settings';
+import { useSettingsStore } from '@/store/settingsStore';
 
 const settings = useSettingsStore();
 
@@ -9,6 +9,7 @@ const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
 const connectionTypes: Record<string, string> = {
   'Rover Production': 'ws://10.0.0.10:9090',
   'Rover Local': 'ws://192.168.0.145:9090',
+  'Local Development': 'ws://localhost:9090',
 };
 
 const connectionNames = Object.keys(connectionTypes);
@@ -27,7 +28,7 @@ const currentConnectionIdx = computed(() => {
 function updateSelectedIdx(newIdx: number) {
   if (newIdx === connectionCustomInputIdx) {
     settings.updateSettings({
-      websocketAddress: 'ws://localhost:9090',
+      websocketAddress: 'ws://',
     });
   } else {
     settings.updateSettings({

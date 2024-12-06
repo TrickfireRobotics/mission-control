@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue';
-import { useRoslibStore } from '@/lib/store/roslib';
+import { useRoslibStore } from '@/store/roslibStore';
 import { onBeforeUnmount, onMounted } from 'vue';
 import gamepadInit from '@/lib/controller/gamepad';
 

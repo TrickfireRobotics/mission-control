@@ -1,5 +1,5 @@
 import ROSLIB from 'roslib';
-import { useRoslibStore } from '@/lib/store/roslib';
+import { useRoslibStore } from '@/store/roslibStore';
 import type { TopicType, TopicTypeMap } from './rosTypes';
 
 /**

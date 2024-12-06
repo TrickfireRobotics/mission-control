@@ -3,7 +3,7 @@
 import GenericMotorTelemetry from '@/components/telemetry/moteus/GenericMotorTelemetry.vue';
 import { ref, onMounted, watch, useTemplateRef } from 'vue';
 import RobotInfo from '@/lib/interface/robotInfo';
-import { useRoslibStore } from '@/lib/store/roslib';
+import { useRoslibStore } from '@/store/roslibStore';
 
 let moteusMotors = [
   {

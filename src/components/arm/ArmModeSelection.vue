@@ -2,7 +2,7 @@
 import ROSLIB from 'roslib';
 import { ref, onMounted } from 'vue';
 
-import { useRoslibStore } from '@/lib/store/roslib';
+import { useRoslibStore } from '@/store/roslibStore';
 import { createPublisher } from '@/lib/roslibUtils/createPublisher';
 
 onMounted(() => initialize());

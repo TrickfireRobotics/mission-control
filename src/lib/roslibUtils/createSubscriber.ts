@@ -1,7 +1,7 @@
 import ROSLIB from 'roslib';
 import type { TopicType, TopicTypeMap } from './rosTypes';
-import { type Ref, ref } from 'vue';
-import { useRoslibStore } from '@/lib/store/roslib';
+import { isProxy, type Ref, ref, toRaw } from 'vue';
+import { useRoslibStore } from '@/store/roslibStore';
 
 // The CB type is there to ensure that we can't access both msg and callback at the same time.
 // It might mess with Intellisense, but it's better than trying to debug why some code is broken
@@ -93,7 +93,7 @@ export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
         callback(message);
       }
       if (isDebugging) {
-        console.log(`[${topicName}] Received:`, msg.value?.data);
+        console.log(`[${topicName}] Received:`, message);
       }
     });
   };

@@ -12,8 +12,8 @@ import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
-import { useRoslibStore } from '@/lib/store/roslib';
-import { useControllerStore } from '@/lib/store/controller';
+import { useRoslibStore } from '@/store/roslibStore';
+import { useControllerStore } from '@/store/controllerStore';
 
 //TODO implement latency
 
