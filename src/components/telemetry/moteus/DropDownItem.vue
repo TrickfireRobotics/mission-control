@@ -4,7 +4,7 @@ export interface DropDownItemProps {
   isSelected: boolean;
 }
 const props = defineProps<DropDownItemProps>();
-defineEmits(['callback']);
+const emit = defineEmits(['callback']);
 </script>
 
 <template>
