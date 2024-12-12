@@ -5,6 +5,9 @@ import { templateCompilerOptions } from '@tresjs/core';
 import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
+
+// vite.config.ts has to be default export
+// eslint-disable-next-line no-restricted-exports
 export default defineConfig({
   plugins: [vue({ ...templateCompilerOptions })],
   server: {

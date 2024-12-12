@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 import type { TopicType, TopicTypeMap } from './rosTypes';
-import { isProxy, type Ref, ref, toRaw } from 'vue';
+import { type Ref, ref } from 'vue';
 import { useRoslibStore } from '@/store/roslibStore';
 
 // The CB type is there to ensure that we can't access both msg and callback at the same time.

@@ -3,8 +3,7 @@
 import { ref, onMounted } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
-import SaveCSVData from '@/lib/saveCSVData';
-import ROSLIB from 'roslib';
+import { SaveCSVData } from '@/lib/saveCSVData';
 
 onMounted(() => initialize());
 
@@ -34,7 +33,8 @@ let recordButtonText = ref('Start Recording');
 let pollingData: number; //Used to keep track of the object id when we do setInterval
 
 // TODO: getMoteusMotorStateService
-let getMoteusMotorStateService: ROSLIB.Service;
+// Will refactor as its not not being used
+// let getMoteusMotorStateService: ROSLIB.Service;
 
 /**
  * This is used to store what kind of data we will be displaying
@@ -60,9 +60,12 @@ function initialize() {
   // TODO: FIX SERVICE
   // pollingData = setInterval(updateUIWithNewData, props.update_ms);
 }
-
+// TODO:Never used, figure out what this does
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function updateUIWithNewData(_jsonString: unknown) {
   if (props.dataSourceMethod !== undefined) {
+    // TODO: Result is never used here, figure what its supposed to do
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let result = props.dataSourceMethod(props.dataSourceParameter, dataCallback);
   }
 
