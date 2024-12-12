@@ -4,7 +4,7 @@ import { useExampleStore } from '@/store/exampleStore';
 import { onActivated, onDeactivated } from 'vue';
 
 //if needed, define props like this. If not, delete this
-const props = defineProps({});
+// const props = defineProps({});
 const example = useExampleStore();
 
 onActivated(() => {

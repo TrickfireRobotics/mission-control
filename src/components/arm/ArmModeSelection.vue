@@ -19,7 +19,7 @@ let armModeService: ROSLIB.Service;
  */
 let current_arm_mode = ref(-1); // Default is disabled
 // TODO: Implement isLoaded?
-let isLoaded = ref(false);
+// let isLoaded = ref(false);
 
 function initialize() {
   armModeService = new ROSLIB.Service({

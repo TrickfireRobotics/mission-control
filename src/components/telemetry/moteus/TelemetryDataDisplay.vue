@@ -9,6 +9,7 @@ export interface TelemetryDataDisplayProps {
 }
 
 const props = defineProps<TelemetryDataDisplayProps>();
+const emit = defineEmits(['checkboxClicked']);
 </script>
 
 <template>
@@ -21,7 +22,7 @@ const props = defineProps<TelemetryDataDisplayProps>();
         class="checkbox-style"
         type="checkbox"
         title="Select to include this value when recording data into a .csv file"
-        @click="$emit('checkboxClicked', props.itemName)"
+        @click="emit('checkboxClicked', props.itemName)"
       />
       <b>{{ props.itemName }}</b>
     </div>

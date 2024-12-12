@@ -1,4 +1,4 @@
-export default class SaveCSVData {
+export class SaveCSVData {
   header: string[] = [];
   csvDataObjects: string[][] = [];
 

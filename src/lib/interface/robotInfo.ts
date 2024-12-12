@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 
-export default class RobotInfo {
+export class RobotInfo {
   myROS: ROSLIB.Ros;
   getMoteusMotorStateService: ROSLIB.Service<{ target_can_id: number }, { json_payload: string }>;
 
@@ -22,7 +22,7 @@ export default class RobotInfo {
     this.getMoteusMotorStateService.callService(request, callback);
   }
 
-  getRMDx8MotorState(can2ID: number) {
-    // TODO: getRMDx8MotorState
-  }
+  // TODO: getRMDx8MotorState
+  // getRMDx8MotorState(can2ID: number) {
+  // }
 }

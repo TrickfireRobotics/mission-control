@@ -1,4 +1,4 @@
-import ControllerState from './controllerState';
+import { ControllerState } from './controllerState';
 import { useControllerStore } from '@/store/controllerStore';
 
 const DELTA_SENSITIVITY = 0.01;
@@ -6,7 +6,7 @@ const POLLING_RATE_IN_HERTZ = 20;
 
 const indexToControllerName = new Map();
 const indexToControllerState = new Map();
-export default function gamepadInit() {
+export function gamepadInit() {
   const controller = useControllerStore();
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
@@ -38,7 +38,7 @@ export default function gamepadInit() {
     indexToControllerState.forEach(processInput);
   }
 
-  function processInput(state: ControllerState, key: number, map: Map<number, Gamepad>) {
+  function processInput(state: ControllerState, key: number) {
     const jsGamepad = navigator.getGamepads()[key];
 
     if (jsGamepad !== null) {
