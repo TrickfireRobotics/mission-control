@@ -18,7 +18,7 @@ import { useOperationStateStore} from '../store/operationStateStore'
 
 //TODO implement latency
 
-//TODO fix importing OperationState type from useOperationStateStore. This is currently a placeholder.
+//TODO fix importing OperationState type from useOperationStateStore. This is currently a temporary solution.
 type OperationState = 'disabled' | 'teleoperation' | 'autonomous';
 
 const roslib = useRoslibStore();
@@ -106,7 +106,7 @@ const pageIconArr: PageIcon = [
     </section>
     <section id = "states-section">
       <div class = "container">
-        <select id = "state-select">
+        <select id = "state-select" v-model = "operationstate" @change = "operationMode.setOperationState(operationstate)">
           <option value = "disabled">Disabled</option>
           <option value = "teleoperated">Teleoperated</option>
           <option value = "autonomous">Autonomous</option>
@@ -165,13 +165,11 @@ nav {
   h2,
   h3,
   h4,
-  p {
+  p,
+  select {
     color: var(--white);
     white-space: nowrap;
     overflow: hidden;
-  }
-  .page-icon {
-    transform: scale(1.25);
   }
   .current-page {
     background-color: var(--light-grey);
@@ -179,9 +177,19 @@ nav {
   .navbar-tab {
     padding: 0 0.3rem;
     min-width: 4.5rem;
+    .page-icon {
+      transform: scale(1.25);
+    }
   }
   .navbar-tab:not(.current-page):hover {
     background-color: hsl(0, 0%, 16%);
+  }
+  .container {
+    height: var(--nav-bar-size);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   #logo-section{
     display: flex;
@@ -196,21 +204,14 @@ nav {
       margin: 0 1rem;
     }
   }
-  .container {
-    height: var(--nav-bar-size);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
   #page-section {
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 1px solid white;
-    border-left: 1px solid white;
+    border-right: 1px solid var(--white);
+    border-left: 1px solid var(--white);
   }
   #states-section {
     display: flex;
@@ -222,10 +223,9 @@ nav {
       margin: 0;
       padding: 0.5rem 0.25rem;
       text-transform: uppercase;
-      background-color: hsl(0,0%,2%);
-      color: white;
-      font-weight: bold;
-      border: 1px solid white;
+      background-color: var(--black);
+      font-weight: 600;
+      border: 5px solid hsl(240, 20%, 15%) !important;
       border-radius: 4px;
     }
   }
@@ -234,9 +234,6 @@ nav {
   }
   .green {
     color: var(--correct);
-  }
-  ::-webkit-scrollbar {
-    display: none;
   }
 }
 </style>
