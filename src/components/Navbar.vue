@@ -14,11 +14,17 @@ import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
+import { useOperationStateStore} from '../store/operationStateStore'
 
 //TODO implement latency
 
+//TODO fix importing OperationState type from useOperationStateStore. This is currently a placeholder.
+type OperationState = 'disabled' | 'teleoperation' | 'autonomous';
+
 const roslib = useRoslibStore();
 const controller = useControllerStore();
+const operationMode = useOperationStateStore();
+let operationstate: OperationState = 'disabled';
 const currentTab = ref(0);
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
@@ -77,12 +83,16 @@ const pageIconArr: PageIcon = [
     helperText: 'Experimental page to test modules',
   },
 ];
+
 </script>
 <template>
   <nav>
-    <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
-    <h1 id="logo-text">Mission Control</h1>
-    <RouterLink
+    <section id = "logo-section">
+      <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
+      <h1 id="logo-text">Mission Control</h1>
+    </section>
+    <section id = "page-section">
+      <RouterLink
       v-for="(pageIcon, index) in pageIconArr"
       :key="index"
       :to="pageIcon.label"
@@ -93,49 +103,59 @@ const pageIconArr: PageIcon = [
       <h4>{{ pageIcon.label }}</h4>
       <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
     </RouterLink>
-    <div
-      class="container indicator-container"
-      :title="`Websocket: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
-    >
-      <h4 id="status">WS</h4>
-      <component
-        :is="PowerPlugIcon"
-        class="page-icon"
-        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
-      />
-    </div>
-    <div
-      class="container indicator-container"
-      :title="`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
-    >
-      <h4 id="status">CAM</h4>
-      <component
-        :is="CameraIcon"
-        class="page-icon"
-        :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
-      />
-    </div>
-    <div
-      class="container indicator-container"
-      :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`"
-    >
-      <h4 id="status">CTRL</h4>
-      <component
-        :is="ControllerIcon"
-        class="page-icon"
-        :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
-      />
-    </div>
-    <div class="container indicator-container">
-      <h4 id="status">Ping</h4>
-      <h4>{{ roslib.latency + 'ms' }}</h4>
-    </div>
+    </section>
+    <section id = "states-section">
+      <div class = "container">
+        <select id = "state-select">
+          <option value = "disabled">Disabled</option>
+          <option value = "teleoperated">Teleoperated</option>
+          <option value = "autonomous">Autonomous</option>
+        </select>
+      </div>
+      <div
+        class="container"
+        :title="`Websocket: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
+      >
+        <h4 id="status">WS</h4>
+        <component
+          :is="PowerPlugIcon"
+          class="page-icon"
+          :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+        />
+      </div>
+      <div
+        class="container"
+        :title="`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
+      >
+        <h4 id="status">CAM</h4>
+        <component
+          :is="CameraIcon"
+          class="page-icon"
+          :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+        />
+      </div>
+      <div
+        class="container"
+        :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`"
+      >
+        <h4 id="status">CTRL</h4>
+        <component
+          :is="ControllerIcon"
+          class="page-icon"
+          :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
+        />
+      </div>
+      <div class="container">
+        <h4 id="status">Ping</h4>
+        <h4>{{ roslib.latency + 'ms' }}</h4>
+      </div>
+    </section>
   </nav>
 </template>
 
 <style lang="scss" scoped>
 nav {
-  padding: 0rem 1rem;
+  padding: 0 0 0 1rem;
   grid-area: nav;
   display: flex;
   align-items: center;
@@ -158,17 +178,23 @@ nav {
   }
   .navbar-tab {
     padding: 0 0.3rem;
-    min-width: 4rem;
+    min-width: 4.5rem;
   }
   .navbar-tab:not(.current-page):hover {
     background-color: hsl(0, 0%, 16%);
   }
-  #logo {
-    max-width: 100%;
-    max-height: 4rem;
-  }
-  #logo-text {
-    margin: 0 1rem;
+  #logo-section{
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    #logo {
+      max-width: 100%;
+      max-height: 3rem;
+    }
+    #logo-text {
+      margin: 0 1rem;
+    }
   }
   .container {
     height: var(--nav-bar-size);
@@ -177,16 +203,40 @@ nav {
     align-items: center;
     justify-content: center;
   }
-  .indicator-container {
-    min-width: max-content;
-    padding: 0 1.5rem;
+  #page-section {
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    flex-grow: 1;
+    border-right: 1px solid white;
+    border-left: 1px solid white;
+  }
+  #states-section {
+    display: flex;
+    gap: 2rem;
+    padding: 0 2rem 0 1.5rem;
     background-color: hsl(240, 20%, 20%);
+
+    #state-select {
+      margin: 0;
+      padding: 0.5rem 0.25rem;
+      text-transform: uppercase;
+      background-color: hsl(0,0%,2%);
+      color: white;
+      font-weight: bold;
+      border: 1px solid white;
+      border-radius: 4px;
+    }
   }
   .red {
     color: var(--error);
   }
   .green {
     color: var(--correct);
+  }
+  ::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>
