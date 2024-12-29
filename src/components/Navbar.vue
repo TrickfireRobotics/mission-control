@@ -14,7 +14,7 @@ import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
-import { useOperationStateStore} from '../store/operationStateStore'
+import { useOperationStateStore } from '../store/operationStateStore';
 
 //TODO implement latency
 
@@ -83,33 +83,36 @@ const pageIconArr: PageIcon = [
     helperText: 'Experimental page to test modules',
   },
 ];
-
 </script>
 <template>
   <nav>
-    <section id = "logo-section">
+    <section id="logo-section">
       <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
       <h1 id="logo-text">Mission Control</h1>
     </section>
-    <section id = "page-section">
+    <section id="page-section">
       <RouterLink
-      v-for="(pageIcon, index) in pageIconArr"
-      :key="index"
-      :to="pageIcon.label"
-      class="container navbar-tab"
-      :class="{ 'current-page': currentTab === index }"
-      @click="setCurrentTab(index)"
-    >
-      <h4>{{ pageIcon.label }}</h4>
-      <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
-    </RouterLink>
+        v-for="(pageIcon, index) in pageIconArr"
+        :key="index"
+        :to="pageIcon.label"
+        class="container navbar-tab"
+        :class="{ 'current-page': currentTab === index }"
+        @click="setCurrentTab(index)"
+      >
+        <h4>{{ pageIcon.label }}</h4>
+        <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
+      </RouterLink>
     </section>
-    <section id = "states-section">
-      <div class = "container">
-        <select id = "state-select" v-model = "operationstate" @change = "operationMode.setOperationState(operationstate)">
-          <option value = "disabled">Disabled</option>
-          <option value = "teleoperated">Teleoperated</option>
-          <option value = "autonomous">Autonomous</option>
+    <section id="states-section">
+      <div class="container">
+        <select
+          id="state-select"
+          v-model="operationstate"
+          @change="operationMode.setOperationState(operationstate)"
+        >
+          <option value="disabled">Disabled</option>
+          <option value="teleoperated">Teleoperated</option>
+          <option value="autonomous">Autonomous</option>
         </select>
       </div>
       <div
@@ -191,7 +194,7 @@ nav {
     align-items: center;
     justify-content: center;
   }
-  #logo-section{
+  #logo-section {
     display: flex;
     align-items: center;
     flex-shrink: 0;
