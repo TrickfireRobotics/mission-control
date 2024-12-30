@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Map, MapStyle, config, Marker } from '@maptiler/sdk';
+import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 
@@ -32,8 +32,15 @@ onUnmounted(() => {
 
 function addPin(lat: number, lng: number): void {
   if (map.value) {
+    const timestamp = new Date().toISOString();
+    const popupContent = `Latitude: ${lat}<br>Longitude: ${lng}<br>Timestamp: ${timestamp}`;
+
+    const popup = new Popup()
+      .setHTML(popupContent);
+
     new Marker()
       .setLngLat([lng, lat])
+      .setPopup(popup)
       .addTo(map.value);
   }
 }
