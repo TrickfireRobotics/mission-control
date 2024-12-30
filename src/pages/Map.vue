@@ -4,30 +4,39 @@
   </div>
 </template>
 
-<script setup>
-import { Map, MapStyle, config } from '@maptiler/sdk';
+<script lang="ts" setup>
+import { Map, MapStyle, config, Marker } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 
-const mapContainer = shallowRef(null);
-const map = shallowRef(null);
+const mapContainer = shallowRef<HTMLElement | null>(null);
+const map = shallowRef<Map | null>(null);
 
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
 
-  const initialState = { lng: 139.753, lat: 35.6844, zoom: 14 };
+  // Set initial coordinates to a point in the Utah Desert
+  const initialState = { lng: -111.950684, lat: 39.419220, zoom: 14 };
 
   map.value = markRaw(new Map({
-    container: mapContainer.value,
-    style: MapStyle.STREETS,
+    container: mapContainer.value as HTMLElement,
+    style: MapStyle.SATELLITE,
     center: [initialState.lng, initialState.lat],
     zoom: initialState.zoom
   }));
+});
 
-}),
 onUnmounted(() => {
   map.value?.remove();
-})
+});
+
+function addPin(lat: number, lng: number): void {
+  if (map.value) {
+    new Marker()
+      .setLngLat([lng, lat])
+      .addTo(map.value);
+  }
+}
 </script>
 
 <style scoped>
