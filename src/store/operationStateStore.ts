@@ -13,7 +13,7 @@ export const useOperationStateStore = defineStore('operationType', () => {
 
   // Sets the operation state to the specified state and sends out a message on the ros topic to change the state.
   function setOperationState(state: OperationState) {
-    operationState.value = state;
+    operationState.value = 'autonomous';
     operationStatePublisher.publish({ data: operationState.value });
   }
 

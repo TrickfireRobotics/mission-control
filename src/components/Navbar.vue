@@ -18,13 +18,9 @@ import { useOperationStateStore } from '../store/operationStateStore';
 
 //TODO implement latency
 
-//TODO fix importing OperationState type from useOperationStateStore. This is currently a temporary solution.
-type OperationState = 'disabled' | 'teleoperation' | 'autonomous';
-
 const roslib = useRoslibStore();
 const controller = useControllerStore();
-const operationMode = useOperationStateStore();
-let operationstate: OperationState = 'disabled';
+const operation = useOperationStateStore();
 const currentTab = ref(0);
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
@@ -107,12 +103,13 @@ const pageIconArr: PageIcon = [
       <div class="container">
         <select
           id="state-select"
-          v-model="operationstate"
-          @change="operationMode.setOperationState(operationstate)"
+          v-model="operation.operationState"
+          :class="operation.operationState"
+          @change="operation.setOperationState(operation.operationState)"
         >
           <option value="disabled">Disabled</option>
-          <option value="teleoperated">Teleoperated</option>
           <option value="autonomous">Autonomous</option>
+          <option value="teleoperated">Teleoperated</option>
         </select>
       </div>
       <div
@@ -222,14 +219,16 @@ nav {
     padding: 0 2rem 0 1.5rem;
     background-color: hsl(240, 20%, 20%);
 
-    #state-select {
-      margin: 0;
-      padding: 0.5rem 0.25rem;
-      text-transform: uppercase;
-      background-color: var(--black);
-      font-weight: 600;
-      border: 5px solid hsl(240, 20%, 15%) !important;
-      border-radius: 4px;
+    #state-select.disabled {
+      background-color: hsl(0, 100%, 27%);
+    }
+
+    #state-select.autonomous {
+      background-color: hsl(300, 100%, 23%);
+    }
+
+    #state-select.teleoperated {
+      background-color: hsl(120, 100%, 15%);
     }
   }
   .red {
