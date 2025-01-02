@@ -11,9 +11,12 @@ export const useOperationStateStore = defineStore('operationType', () => {
   });
   const operationState = ref<OperationState>('disabled');
 
-  // Sets the operation state to the specified state and sends out a message on the ros topic to change the state.
+  /**
+   * This function sets the operation state to the specified state and sends out a message on the ros topic to change the state.
+   * @param state - the new operation state to set the driver to.
+   */
   function setOperationState(state: OperationState) {
-    operationState.value = 'autonomous';
+    operationState.value = state;
     operationStatePublisher.publish({ data: operationState.value });
   }
 

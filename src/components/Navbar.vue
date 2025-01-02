@@ -100,17 +100,31 @@ const pageIconArr: PageIcon = [
       </RouterLink>
     </section>
     <section id="states-section">
-      <div class="container">
-        <select
-          id="state-select"
-          v-model="operation.operationState"
-          :class="operation.operationState"
-          @change="operation.setOperationState(operation.operationState)"
+      <div id="operation-selector" class="container">
+        <button
+          id="disabled-button"
+          title="Disabled"
+          @click="operation.setOperationState('disabled')"
+          :class="{ checked: operation.operationState === 'disabled' }"
         >
-          <option value="disabled">Disabled</option>
-          <option value="autonomous">Autonomous</option>
-          <option value="teleoperated">Teleoperated</option>
-        </select>
+          Off
+        </button>
+        <button
+          id="teleoperation-button"
+          title="TeleOperation"
+          @click="operation.setOperationState('teleoperation')"
+          :class="{ checked: operation.operationState === 'teleoperation' }"
+        >
+          TeleOp
+        </button>
+        <button
+          id="autonomous-button"
+          title="Autonomous"
+          @click="operation.setOperationState('autonomous')"
+          :class="{ checked: operation.operationState === 'autonomous' }"
+        >
+          Auto
+        </button>
       </div>
       <div
         class="container"
@@ -215,20 +229,51 @@ nav {
   }
   #states-section {
     display: flex;
-    gap: 2rem;
+    gap: 1.75rem;
+    height: var(--nav-bar-size);
     padding: 0 2rem 0 1.5rem;
     background-color: hsl(240, 20%, 20%);
 
-    #state-select.disabled {
-      background-color: hsl(0, 100%, 27%);
-    }
+    #operation-selector {
+      margin: auto 0;
+      display: flex;
+      flex-direction: row;
+      padding: 0 0.5rem;
+      background-color: hsl(240, 20%, 10%);
+      border-radius: 4px;
+      height: 80%;
+      gap: 0.25rem;
 
-    #state-select.autonomous {
-      background-color: hsl(300, 100%, 23%);
-    }
+      button {
+        height: 80%;
+        cursor: pointer;
+        align-items: center;
+        padding: 0 1rem;
+        border-radius: 4px;
+        background-color: transparent;
+        color: white;
+      }
 
-    #state-select.teleoperated {
-      background-color: hsl(120, 100%, 15%);
+      button:hover:not(.checked) {
+        background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+      }
+
+      button.checked {
+        background-image: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button#disabled-button.checked {
+        background-color: hsl(0, 100%, 27%);
+      }
+
+      button#autonomous-button.checked {
+        background-color: hsl(300, 100%, 23%);
+      }
+
+      button#teleoperation-button.checked {
+        background-color: hsl(120, 100%, 15%);
+      }
     }
   }
   .red {
