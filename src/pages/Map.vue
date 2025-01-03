@@ -16,14 +16,16 @@ onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
 
   // Set initial coordinates to a point in the Utah Desert
-  const initialState = { lng: -111.950684, lat: 39.419220, zoom: 14 };
+  const initialState = { lng: -111.950684, lat: 39.41922, zoom: 14 };
 
-  map.value = markRaw(new Map({
-    container: mapContainer.value as HTMLElement,
-    style: MapStyle.SATELLITE,
-    center: [initialState.lng, initialState.lat],
-    zoom: initialState.zoom
-  }));
+  map.value = markRaw(
+    new Map({
+      container: mapContainer.value as HTMLElement,
+      style: MapStyle.SATELLITE,
+      center: [initialState.lng, initialState.lat],
+      zoom: initialState.zoom,
+    }),
+  );
 });
 
 onUnmounted(() => {
@@ -35,13 +37,9 @@ function addPin(lat: number, lng: number): void {
     const timestamp = new Date().toISOString();
     const popupContent = `Latitude: ${lat}<br>Longitude: ${lng}<br>Timestamp: ${timestamp}`;
 
-    const popup = new Popup()
-      .setHTML(popupContent);
+    const popup = new Popup().setHTML(popupContent);
 
-    new Marker()
-      .setLngLat([lng, lat])
-      .setPopup(popup)
-      .addTo(map.value);
+    new Marker().setLngLat([lng, lat]).setPopup(popup).addTo(map.value);
   }
 }
 </script>
