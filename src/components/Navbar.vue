@@ -104,24 +104,24 @@ const pageIconArr: PageIcon = [
         <button
           id="disabled-button"
           title="Disabled"
-          @click="operation.setOperationState('disabled')"
           :class="{ checked: operation.operationState === 'disabled' }"
+          @click="operation.setOperationState('disabled')"
         >
-          Off
+          Disable
         </button>
         <button
           id="teleoperation-button"
           title="TeleOperation"
-          @click="operation.setOperationState('teleoperation')"
           :class="{ checked: operation.operationState === 'teleoperation' }"
+          @click="operation.setOperationState('teleoperation')"
         >
           TeleOp
         </button>
         <button
           id="autonomous-button"
           title="Autonomous"
-          @click="operation.setOperationState('autonomous')"
           :class="{ checked: operation.operationState === 'autonomous' }"
+          @click="operation.setOperationState('autonomous')"
         >
           Auto
         </button>
