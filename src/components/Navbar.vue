@@ -102,7 +102,7 @@ const pageIconArr: PageIcon = [
     <section id="states-section">
       <div id="operation-selector" class="container">
         <button
-          id="disabled-button"
+          id="disable-button"
           title="Disabled"
           :class="{ checked: operation.operationState === 'disabled' }"
           @click="operation.setOperationState('disabled')"
@@ -252,27 +252,23 @@ nav {
         border-radius: 4px;
         background-color: transparent;
         color: white;
-      }
 
-      button:hover:not(.checked) {
-        background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
-      }
+        &.checked {
+          background-image: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
 
-      button.checked {
-        background-image: none;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      }
+        &#disable-button.checked {
+          background-color: hsl(0, 100%, 27%);
+        }
 
-      button#disabled-button.checked {
-        background-color: hsl(0, 100%, 27%);
-      }
+        &#autonomous-button.checked {
+          background-color: hsl(300, 100%, 23%);
+        }
 
-      button#autonomous-button.checked {
-        background-color: hsl(300, 100%, 23%);
-      }
-
-      button#teleoperation-button.checked {
-        background-color: hsl(120, 100%, 15%);
+        &#teleoperation-button.checked {
+          background-color: hsl(120, 100%, 15%);
+        }
       }
     }
   }
