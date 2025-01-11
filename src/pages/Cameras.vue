@@ -1,7 +1,7 @@
 <!-- Camera: Shows all the cameras, can select which cameras to show -->
 <script setup lang="ts">
 import CameraModule from '@/components/camera/CameraModule.vue';
-import createSubscriber from '@/lib/roslibUtils/createSubscriber';
+import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
 import type { CompressedImage } from '@/lib/roslibUtils/rosTypes';
 import { onMounted, type Ref, ref } from 'vue';
 

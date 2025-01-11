@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import Navbar from './components/Navbar.vue';
-import { useRoslibStore } from './store/useRoslib';
+import Navbar from '@/components/Navbar.vue';
+import { useRoslibStore } from '@/store/roslibStore';
 import { onBeforeUnmount, onMounted } from 'vue';
-import gamepadInit from '@/lib/controller/gamepad';
+import { gamepadInit } from '@/lib/controller/gamepad';
+
 const rosjs = useRoslibStore();
 // All global subscribers & publishers that do not belong in a component put in here.
 onMounted(() => {
-  // TODO: use environment variables to launch the different ports
-  // Create ros object to communicate over your Rosbridge connection
-  // local host development
-  rosjs.init('ws://localhost:9090');
-  // Connects to the router
-  // rosjs.init('ws://192.168.0.145:9090');
-
-  // Connects to rover
-  // rosjs.init('ws://10.0.0.10:9090');
+  // Create a new connection if the current one is stopped.
+  // This mostly exists for debug mode.
+  if (rosjs.stop) {
+    rosjs.$reset();
+  }
 
   gamepadInit();
-  rosjs.heartbeatPub(true, 1000);
 });
 
 onBeforeUnmount(() => {
   // Stop the websocket when the app unloads.
-  rosjs.stop.value = true;
+  rosjs.stop = true;
 });
 </script>
 

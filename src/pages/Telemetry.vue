@@ -1,9 +1,9 @@
 <!-- All information about rover like motor speed etc, position, potential record and export to csv -->
 <script setup lang="ts">
-import GenericMotorTelemetry from '../components/telemetry/moteus/GenericMotorTelemetry.vue';
+import GenericMotorTelemetry from '@/components/telemetry/moteus/GenericMotorTelemetry.vue';
 import { ref, onMounted, watch, useTemplateRef } from 'vue';
-import RobotInfo from '@/lib/interface/robotInfo';
-import { useRoslibStore } from '@/store/useRoslib';
+import { RobotInfo } from '@/lib/interface/robotInfo';
+import { useRoslibStore } from '@/store/roslibStore';
 
 let moteusMotors = [
   {
@@ -77,9 +77,7 @@ onMounted(() => initialize());
 const roslib = useRoslibStore();
 
 function initialize() {
-  if (roslib.ros !== null) {
-    robotInfo = new RobotInfo(roslib.ros);
-  }
+  robotInfo = new RobotInfo(roslib.ros);
 
   isFinishedLoading.value = true;
 }

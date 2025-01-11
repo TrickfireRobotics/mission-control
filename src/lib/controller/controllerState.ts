@@ -1,4 +1,4 @@
-import createPublisher from '../roslibUtils/createPublisher';
+import { createPublisher } from '../roslibUtils/createPublisher';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -8,7 +8,7 @@ import createPublisher from '../roslibUtils/createPublisher';
  * and determine if it is fast enough to send data.
  */
 
-export default class ControllerState {
+export class ControllerState {
   // Joysticks
   leftJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
   rightJoyStickArray = Array(2).fill(0); // [0] = x-axis [1] = y-axis
@@ -99,6 +99,8 @@ export default class ControllerState {
   }
 
   // Update both the delta and the current values on the controller
+  // TODO: Update deltaT
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateState(gamepad: Gamepad, deltaT: number) {
     const joystickArray = gamepad.axes;
     const buttonArray = gamepad.buttons;

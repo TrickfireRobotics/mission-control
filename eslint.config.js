@@ -34,6 +34,14 @@ module.exports = ts.config(
         },
       ],
       'vue/multi-word-component-names': ['off'],
+      'no-restricted-exports': [
+        'error',
+        {
+          restrictDefaultExports: {
+            direct: true,
+          },
+        },
+      ],
     },
   },
   {

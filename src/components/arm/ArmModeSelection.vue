@@ -2,8 +2,8 @@
 import ROSLIB from 'roslib';
 import { ref, onMounted } from 'vue';
 
-import { useRoslibStore } from '@/store/useRoslib';
-import createPublisher from '@/lib/roslibUtils/createPublisher';
+import { useRoslibStore } from '@/store/roslibStore';
+import { createPublisher } from '@/lib/roslibUtils/createPublisher';
 
 onMounted(() => initialize());
 
@@ -19,7 +19,7 @@ let armModeService: ROSLIB.Service;
  */
 let current_arm_mode = ref(-1); // Default is disabled
 // TODO: Implement isLoaded?
-let isLoaded = ref(false);
+// let isLoaded = ref(false);
 
 function initialize() {
   armModeService = new ROSLIB.Service({

@@ -4,10 +4,11 @@ export interface DropDownItemProps {
   isSelected: boolean;
 }
 const props = defineProps<DropDownItemProps>();
+const emit = defineEmits(['callback']);
 </script>
 
 <template>
-  <div class="dropdown-item mycontainer prevent-select hover-highlight" @click="$emit('callback')">
+  <div class="dropdown-item mycontainer prevent-select hover-highlight" @click="emit('callback')">
     <div class="item-text">
       <span>{{ props.itemName }}</span>
     </div>

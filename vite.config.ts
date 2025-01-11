@@ -8,6 +8,9 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 const useDevTools = process.env.USE_VITE_DEVTOOLS === 'true';
 const plugin = useDevTools ? [vueDevTools()] : [];
 // https://vitejs.dev/config/
+
+// vite.config.ts has to be default export
+// eslint-disable-next-line no-restricted-exports
 export default defineConfig({
   plugins: [vue({ ...templateCompilerOptions }), ...plugin],
   server: {
