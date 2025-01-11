@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev-with-tools": "cross-env USE_VITE_DEVTOOLS=true vite",
+    "dev-tools": "cross-env USE_VITE_DEVTOOLS=true vite",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
