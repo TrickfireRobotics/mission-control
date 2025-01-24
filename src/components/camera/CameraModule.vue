@@ -1,35 +1,54 @@
 <script setup lang="ts">
-import type { Subscriber } from '@/lib/roslibUtils/createSubscriber';
+import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
+import { onMounted, ref } from 'vue';
+import type { CompressedImage } from '@/lib/roslibUtils/rosTypes';
 
 export interface CameraModuleProps {
-  cameraSub: Subscriber<'sensor_msgs/msg/CompressedImage', true>;
+  cameraId: number;
   cameraName: string;
-  cameraUrl: string;
 }
 const props = defineProps<CameraModuleProps>();
 
+const blackImage =
+  'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==';
+
+const cameraSub = createSubscriber({
+  topicName: `video_frames${props.cameraId}`,
+  topicType: 'sensor_msgs/msg/CompressedImage',
+});
+const cameraSubURL = ref<string>(blackImage);
+
+function cameraCallback(message: CompressedImage) {
+  const blob = new Blob([message.data], { type: 'image/' + message.format });
+  cameraSubURL.value = URL.createObjectURL(blob);
+}
+
 const onAndOffHandler = () => {
-  if (props.cameraSub.isOn.value) {
-    props.cameraSub.stop();
+  if (cameraSub.isOn.value) {
+    cameraSub.stop();
   } else {
-    props.cameraSub.start();
+    cameraSub.start({ callback: cameraCallback });
   }
 };
+
+onMounted(() => {
+  cameraSub.start({ callback: cameraCallback });
+});
 </script>
 
 <template>
   <div>
     <h3 class="camera-name">{{ props.cameraName }}</h3>
     <h3 class="camera-fps">FPS:</h3>
-    <img :alt="cameraName" :src="props.cameraUrl" />
+    <img :alt="cameraName" :src="cameraSubURL" />
     <button
       :class="{
-        'button-toggle--off': !props.cameraSub.isOn.value,
-        'button-toggle--on': props.cameraSub.isOn.value,
+        'button-toggle--off': !cameraSub.isOn.value,
+        'button-toggle--on': cameraSub.isOn.value,
       }"
       @click="onAndOffHandler"
     >
-      {{ props.cameraSub.isOn.value ? 'On' : 'Off' }}
+      {{ cameraSub.isOn.value ? 'On' : 'Off' }}
     </button>
   </div>
 </template>

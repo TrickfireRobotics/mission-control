@@ -47,7 +47,7 @@ export function createSubscriber<T extends TopicType, CB extends boolean>(option
   startingDefaultValue?: CB extends false ? TopicTypeMap[T] : never;
 }): Subscriber<T, CB> {
   const ros = useRoslibStore();
-  return createSubscriberForRos(ros.ros, options);
+  return createSubscriberForRos(ros.getTopic, options);
 }
 
 /**
@@ -55,7 +55,7 @@ export function createSubscriber<T extends TopicType, CB extends boolean>(option
  * default one.
  */
 export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
-  ros: ROSLIB.Ros,
+  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
   options: {
     topicName: string;
     topicType: T;
@@ -68,13 +68,9 @@ export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
   const msg = ref<TopicTypeMap[T] | null | undefined>(startingDefaultValue) as Ref<
     TopicTypeMap[T] | undefined
   > as Subscriber<T, CB>['msg'];
-  const topic = new ROSLIB.Topic<TopicTypeMap[T]>({
-    ros,
-    name: topicName,
-    messageType: topicType,
-    compression: 'cbor',
-    reconnect_on_close: true,
-  });
+  const topic = getTopic<TopicTypeMap[T]>(topicName, topicType);
+
+  let subCallback: ((msg: TopicTypeMap[T]) => void) | null = null;
 
   const start: Subscriber<T, CB>['start'] = (options) => {
     // If options is not passed in, then variables below are undefined. || {} allows this function to called without passing an empty {} manually
@@ -86,7 +82,14 @@ export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
     if (defaultValue) {
       msg.value = defaultValue;
     }
-    topic.subscribe((message) => {
+
+    // Save the old callback so we can unsubscribe from it.
+    // We aren't unsubscribing here because it might lead
+    // to an actual unsubscribe message being sent to the rover,
+    // followed by a subscribe message, which is wasteful.
+    const prevCallback = subCallback;
+
+    subCallback = (message) => {
       if (!callback) {
         msg.value = message;
       } else {
@@ -95,12 +98,17 @@ export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
       if (isDebugging) {
         console.log(`[${topicName}] Received:`, message);
       }
-    });
+    };
+    topic.subscribe(subCallback);
+
+    if (prevCallback) topic.unsubscribe(prevCallback);
   };
 
   const stop: Subscriber<T, CB>['stop'] = () => {
     isOn.value = false;
-    topic.unsubscribe();
+
+    if (subCallback) topic.unsubscribe(subCallback);
+    subCallback = null;
   };
   // Returns as an object, so caller determines the name of the object
   return { msg, start, stop, isOn };
