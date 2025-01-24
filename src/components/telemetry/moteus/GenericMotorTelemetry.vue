@@ -1,9 +1,10 @@
-<!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import { SaveCSVData } from '@/lib/saveCSVData';
+import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
+import { type StdMsg } from '@/lib/roslibUtils/rosTypes';
 
 onMounted(() => initialize());
 
@@ -21,29 +22,37 @@ export interface GenericMotorTelemetryProps {
 
 const props = defineProps<GenericMotorTelemetryProps>();
 
-let isRecordingData = false;
+let isRecordingData = ref(false);
 let csvData: SaveCSVData;
 
 // We use this to fill up csv data
 //Each element is another array that holds the actual data
 let showCheckbox = ref(true);
 
-let recordButtonText = ref('Start Recording');
+/**
+ * Builds the data choices when the page is first loaded,
+ * then disables itself immediately afterward.
+ */
+const missionControlUpdaterBuilder = createSubscriber({
+  topicName: 'mission_control_updater',
+  topicType: 'std_msgs/String',
+});
 
-let pollingData: number; //Used to keep track of the object id when we do setInterval
-
-// TODO: getMoteusMotorStateService
-// Will refactor as its not not being used
-// let getMoteusMotorStateService: ROSLIB.Service;
+/**
+ * Retrieves data when telemetry is active.
+ */
+const missionControlUpdaterData = createSubscriber({
+  topicName: 'mission_control_updater',
+  topicType: 'std_msgs/String',
+});
 
 /**
  * This is used to store what kind of data we will be displaying
  * and handling through the whole thing.
  *
- * It should be possible to simply add another entry to this, and everyting should
- * show up, assuming that the data recieved from the the rover also has these values
+ * It should be possible to simply add another entry to this, and everything should
+ * show up, assuming that the data received from the rover also has these values
  */
-
 interface MoteuesDataChoice {
   prettyName: string;
   identifier: string;
@@ -57,82 +66,116 @@ let hasBuiltMoteusDataChoice = false;
 
 function initialize() {
   csvData = new SaveCSVData();
-  // TODO: FIX SERVICE
-  // pollingData = setInterval(updateUIWithNewData, props.update_ms);
-}
-// TODO:Never used, figure out what this does
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function updateUIWithNewData(_jsonString: unknown) {
-  if (props.dataSourceMethod !== undefined) {
-    // TODO: Result is never used here, figure what its supposed to do
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let result = props.dataSourceMethod(props.dataSourceParameter, dataCallback);
-  }
-
-  if (isRecordingData) {
-    constructRecordingEntry();
-  }
-
-  //This code section is used to change the polling rate
-  clearInterval(pollingData); //Stop the interval
-
-  if (props.updateMs === undefined || props.updateMs < 4) {
-    //So we dont break the thing by going slower. It is 4 because browser limitations
-    pollingData = setInterval(updateUIWithNewData, 4);
-  } else {
-    pollingData = setInterval(updateUIWithNewData, props.updateMs);
-  }
+  missionControlUpdaterBuilder.start({ callback: builderCallback });
 }
 
-function dataCallback(result: { json_payload: string }) {
+/**
+ * Extracts the data for the motor that we're looking for, if it exists.
+ */
+function parseData(data: StdMsg<string>): ({ can_id: number } & Record<string, unknown>) | null {
+  if (!data?.data) return null;
+
+  const parsedData = JSON.parse(data.data);
+  console.log('parsed', parsedData);
+  if (
+    !parsedData?.moteusMotors ||
+    typeof parsedData.moteusMotors !== 'object' ||
+    !Array.isArray(parsedData.moteusMotors)
+  ) {
+    return null;
+  }
+
+  return parsedData.moteusMotors.find(
+    (motor: { can_id: number }) => motor.can_id === props.dataSourceParameter,
+  );
+}
+
+/**
+ * The callback for the builder subscriber, which is responsible
+ * for querying what data we have access to.
+ */
+function builderCallback(result: StdMsg<string>) {
+  const data = parseData(result);
+  if (!data) {
+    // If we get no data, it probably means that the motor
+    // is disconnected.
+    // This is an error, but if we don't stop the subscriber, then
+    // we'll just flood the connection with unneeded data.
+    console.error('Error! Can ID not found for ' + props.dataSourceParameter);
+
+    missionControlUpdaterBuilder.stop();
+    return;
+  }
+
   if (!hasBuiltMoteusDataChoice) {
     hasBuiltMoteusDataChoice = true;
-    buildMoteusDataChoice(result);
+    buildMoteusDataChoice(data);
   }
 
-  //update the data
-  let json = JSON.parse(result.json_payload);
-  // TODO: Refactor so doesn't use in and Object.hasOwn
-  // Conversation about it: https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1828811375
-  for (const key in json) {
-    if (Object.hasOwn(json, key)) {
-      let object = getMoteusDataObjectFromIdentifier(key);
+  // Now that data choices are built, there's
+  // no reason to keep this active.
+  missionControlUpdaterBuilder.stop();
+}
 
-      if (object !== null) {
-        let dataEntry = parseFloat(json[key]);
-        if (!Number.isNaN(dataEntry)) {
-          if (Number.isInteger(dataEntry)) {
-            //if int
-            object.dataValue = dataEntry.toString();
-          } else {
-            object.dataValue = dataEntry.toFixed(5);
-          }
+/**
+ * The callback for the data subscriber, which is responsible for reading
+ * in the data and saving it.
+ */
+function dataCallback(result: StdMsg<string>) {
+  const data = parseData(result);
+  if (!data) return;
+
+  if (!hasBuiltMoteusDataChoice) {
+    hasBuiltMoteusDataChoice = true;
+    buildMoteusDataChoice(data);
+  }
+
+  // update the data
+
+  for (const key in data) {
+    // Saving the can_id is redundant.
+    if (key === 'can_id') continue;
+
+    const value = data[key];
+
+    let object = getMoteusDataObjectFromIdentifier(key);
+
+    if (object !== null) {
+      let dataEntry =
+        typeof value === 'string' ? parseFloat(value) : typeof value === 'number' ? value : null;
+
+      if (!Number.isNaN(dataEntry) && dataEntry != null) {
+        if (Number.isInteger(dataEntry)) {
+          // if int
+          object.dataValue = dataEntry.toString();
         } else {
-          object.dataValue = 'N/A';
+          object.dataValue = dataEntry.toFixed(5);
         }
+      } else {
+        object.dataValue = 'N/A';
       }
     }
   }
+
+  // Add it to the CSV file
+  constructRecordingEntry();
 }
 
-function buildMoteusDataChoice(result: { json_payload: string }) {
-  let json = JSON.parse(result.json_payload);
+function buildMoteusDataChoice(result: Record<string, unknown>) {
+  for (const key in result) {
+    // Saving the can_id is redundant.
+    if (key === 'can_id') continue;
 
-  for (const key in json) {
     let entry = {
-      prettyName: 'prettyName',
-      identifier: 'identifier',
-      dataValue: 'dataValue',
+      prettyName: key,
+      identifier: key,
+      // This will get filled in later.
+      dataValue: 'N/A',
       isSelected: true,
       shouldRecordData: true,
     };
-    if (Object.hasOwn(json, key)) {
-      entry.prettyName = key;
-      entry.identifier = key;
-      entry.dataValue = json[key];
 
-      moteuesDataChoice.value.push(entry);
-    }
+    moteuesDataChoice.value.push(entry);
   }
 }
 
@@ -175,8 +218,7 @@ function itemClicked(itemName: string) {
  * After stopping the recording, it will build the csv file
  */
 function recordButtonPressed() {
-  if (!isRecordingData) {
-    recordButtonText.value = 'Stop Recording';
+  if (!isRecordingData.value) {
     showCheckbox.value = false;
 
     csvData = new SaveCSVData();
@@ -186,22 +228,25 @@ function recordButtonPressed() {
     for (let index = 0; index < moteuesDataChoice.value.length; index++) {
       let entry = moteuesDataChoice.value[index];
 
-      if (entry.shouldRecordData === true) {
+      if (entry.shouldRecordData) {
         header.push(entry.identifier);
       }
     }
 
     csvData.setHeader(header);
+
+    missionControlUpdaterData.start({ callback: dataCallback });
   } else {
-    recordButtonText.value = 'Start Recording';
     showCheckbox.value = true;
+
+    missionControlUpdaterData.stop();
 
     if (props.displayName) {
       csvData.saveToFile(props.displayName);
     }
   }
 
-  isRecordingData = !isRecordingData;
+  isRecordingData.value = !isRecordingData.value;
 }
 
 function getMoteusDataObjectFromIdentifier(itemName: string): MoteuesDataChoice | null {
@@ -258,7 +303,7 @@ defineExpose({ recordButtonPressed });
           :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
           @click="recordButtonPressed"
         >
-          {{ recordButtonText }}
+          {{ isRecordingData ? 'Stop Recording' : 'Start Recording' }}
         </button>
       </div>
     </div>
