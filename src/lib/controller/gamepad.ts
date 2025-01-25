@@ -43,7 +43,6 @@ export function gamepadInit() {
 
     if (jsGamepad !== null) {
       state.updateState(jsGamepad, 1000 - POLLING_RATE_IN_HERTZ);
-      state.publishController();
       //state.printNumbers();
     }
   }
