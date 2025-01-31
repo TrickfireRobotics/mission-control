@@ -26,7 +26,7 @@ export function createPublisher<T extends TopicType>(options: {
   topicType: T;
 }): Publisher<T> {
   const ros = useRoslibStore();
-  return createPublisherForRos(ros.ros, options);
+  return createPublisherForRos(ros.getTopic, options);
 }
 
 /**
@@ -34,20 +34,14 @@ export function createPublisher<T extends TopicType>(options: {
  * default one.
  */
 export function createPublisherForRos<T extends TopicType>(
-  ros: ROSLIB.Ros,
+  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
   options: {
     topicName: string;
     topicType: T;
   },
 ): Publisher<T> {
   const { topicName, topicType } = options;
-  const topic = new ROSLIB.Topic<TopicTypeMap[T]>({
-    ros,
-    name: topicName,
-    messageType: topicType,
-    compression: 'cbor',
-    reconnect_on_close: true,
-  });
+  const topic = getTopic<TopicTypeMap[T]>(topicName, topicType);
 
   const publish: Publisher<T>['publish'] = (data, options) => {
     const { isDebugging } = options || {};
