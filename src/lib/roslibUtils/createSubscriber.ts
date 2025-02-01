@@ -21,7 +21,7 @@ export interface Subscriber<T extends TopicType, CB extends boolean> {
    * @param options - are the options used during the duration of this startup.
    * @param options.callback - is a callback that will be ran when data is received, containing the data itself.
    * @param options.defaultValue - is an optional value to set `msg` to after subscribing.
-   * @param options.isDebugging - should we show debug output?
+   * @param options.isDebugging - prints out message when subscriber receives message.
    */
   start: (options?: {
     callback?: CB extends true ? (message: TopicTypeMap[T]) => void : never;

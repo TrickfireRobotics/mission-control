@@ -15,6 +15,7 @@ import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
+import { onMounted } from 'vue';
 
 //TODO implement latency
 
@@ -25,6 +26,10 @@ const currentTab = ref(0);
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
 };
+
+onMounted(() => {
+  operation.operationState.start();
+})
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
 
@@ -104,24 +109,24 @@ const pageIconArr: PageIcon = [
         <button
           id="disable-button"
           title="Disabled"
-          :class="{ checked: operation.operationState === 'disabled' }"
-          @click="operation.setOperationState('disabled')"
+          :class="{ checked: operation.operationState.msg?.data === 'disabled' }"
+          @click="operation.setOperationState({data: 'disabled'})"
         >
           Disable
         </button>
         <button
           id="teleoperation-button"
           title="TeleOperation"
-          :class="{ checked: operation.operationState === 'teleoperation' }"
-          @click="operation.setOperationState('teleoperation')"
+          :class="{ checked: operation.operationState.msg?.data === 'teleoperation' }"
+          @click="operation.setOperationState({data: 'teleoperation'})"
         >
           TeleOp
         </button>
         <button
           id="autonomous-button"
           title="Autonomous"
-          :class="{ checked: operation.operationState === 'autonomous' }"
-          @click="operation.setOperationState('autonomous')"
+          :class="{ checked: operation.operationState.msg?.data === 'autonomous' }"
+          @click="operation.setOperationState({data: 'autonomous'})"
         >
           Auto
         </button>
