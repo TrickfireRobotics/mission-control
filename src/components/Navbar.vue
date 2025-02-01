@@ -169,7 +169,6 @@ const pageIconArr: PageIcon = [
 
 <style lang="scss" scoped>
 nav {
-  padding: 0 0 0 1rem;
   grid-area: nav;
   display: flex;
   align-items: center;
@@ -209,13 +208,16 @@ nav {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    background-color: var(--purple);
+    padding: 0 1rem;
+    height: 100%;
 
     #logo {
       max-width: 100%;
       max-height: 3rem;
     }
     #logo-text {
-      margin: 0 1rem;
+      margin: 0 0 0 0.75rem;
     }
   }
   #page-section {
