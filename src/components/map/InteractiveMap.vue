@@ -1,23 +1,3 @@
-<template>
-  <div class="map-wrap">
-    <div class="map" ref="mapContainer"></div>
-  </div>
-</template>
-
-<style lang="scss" scoped>
-.map-wrap {
-  position: relative;
-  width: 100%;
-  height: calc(100vh - 77px); // calculate height of the screen minus the heading
-}
-
-.map {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-</style>
-
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
@@ -57,3 +37,7 @@ function addPin(lat: number, lng: number): void {
   }
 }
 </script>
+
+<template>
+  <div id="map" ref="mapContainer"></div>
+</template>
