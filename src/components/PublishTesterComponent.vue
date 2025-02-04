@@ -27,10 +27,31 @@ const currentConnectionIdx = computed(() => {
   return idx;
 });
 
+function convertMessage(topicType: string, message: string) {
+  switch (topicType) {
+    case 'std_msgs/Int32':
+      return { data: parseInt(message) };
+    case 'std_msgs/Bool':
+      return { data: message.toLowerCase() === 'true' };
+    case 'std_msgs/String':
+      return { data: message };
+    case 'std_msgs/Char':
+      return { data: message.charAt(0) };
+    case 'std_msgs/Float32':
+      return { data: parseFloat(message) };
+    case 'std_msgs/Time':
+      return { data: new Date(message).toISOString() };
+    case 'sensor_msgs/msg/CompressedImage':
+      return { data: message }; // Assuming the message is a base64 encoded string
+    default:
+      return { data: message };
+  }
+}
+
 function publishTest() {
   const topicName = input1.value;
   const topicType = currentConnectionIdx.value === messageTypes.length ? customMessageType.value : input2.value;
-  const topicMessage = input3.value;
+  const topicMessage = convertMessage(topicType, input3.value);
 
   if (topicName && topicType && topicMessage) {
     const testPublisher = createPublisher({
@@ -38,10 +59,7 @@ function publishTest() {
       topicType: topicType as TopicType,
     });
 
-    testPublisher.publish({
-      data: topicMessage,
-    });
-    console.log("Published:", { topicName, topicType, data: topicMessage });
+    testPublisher.publish(topicMessage);
 
     const testSubscriber = createSubscriber({
       topicName: topicName,
@@ -84,12 +102,14 @@ function publishTest() {
       <input v-model="input3" type="text" id="textfield-input" required />
     </div>
     <button type="submit">Publish</button>
+
+    <div v-if="receivedMessage" class="subscriber-box">
+      <h2>Received Message:</h2>
+      <pre>{{ receivedMessage }}</pre>
+    </div>
   </form>
 
-  <div v-if="receivedMessage" class="subscriber-box">
-    <h2>Received Message:</h2>
-    <pre>{{ receivedMessage }}</pre>
-  </div>
+  
 </template>
 
 <style lang="scss" scoped>
@@ -139,11 +159,13 @@ button {
   border-radius: 5px;
   background-color: var(--dark-grey);
   color: var(--white);
-  width: 100%;
+  width: 300px;
+  max-height: 80px;
 }
 
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
+  font-size: 12px;
 }
 </style>
