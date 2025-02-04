@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
-import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
+import { shallowRef, onMounted, markRaw } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 
 const mapContainer = shallowRef<HTMLElement | null>(null);
