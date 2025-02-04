@@ -39,7 +39,6 @@ function addPin(lat: number, lng: number): void {
     new Marker().setLngLat([lng, lat]).setPopup(popup).addTo(map.value);
   }
 }
-
 </script>
 
 <template>
