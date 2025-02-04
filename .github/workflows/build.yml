@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   build:
@@ -22,9 +22,9 @@ jobs:
 
       - name: Build
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
+          NODE_OPTIONS: '--max_old_space_size=4096'
         run: npm run build
-  
+
       - uses: actions/upload-artifact@v4
         with:
           name: mission-control
