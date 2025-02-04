@@ -22,10 +22,13 @@ onMounted(() => {
   );
 });
 
-onUnmounted(() => {
-  map.value?.remove();
-});
-
+/**
+ * Adds a pin to the map at the specified coordinates.
+ *
+ * @param lat - The latitude of the pin location.
+ * @param lng - The longitude of the pin location.
+ */
+/*
 function addPin(lat: number, lng: number): void {
   if (map.value) {
     const timestamp = new Date().toISOString();
@@ -36,6 +39,7 @@ function addPin(lat: number, lng: number): void {
     new Marker().setLngLat([lng, lat]).setPopup(popup).addTo(map.value);
   }
 }
+  */
 </script>
 
 <template>
