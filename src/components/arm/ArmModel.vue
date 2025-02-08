@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, watch } from 'vue';
 import { TresCanvas } from '@tresjs/core';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { useLoader } from '@tresjs/core';
 import { OrbitControls, GLTFModel } from '@tresjs/cientos';
 import type { Object3D } from 'three';
 
