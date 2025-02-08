@@ -84,7 +84,7 @@ function publishTest() {
     <form id="publish-form" class="content" @submit.prevent="publishTest">
       <div class="textfield">
         <label for="topic-name-input">Topic Name: </label>
-        <input v-model="topicNameInput" id="topic-name-input" type="text" required />
+        <input id="topic-name-input" v-model="topicNameInput" type="text" required />
       </div>
 
       <div class="textfield">
@@ -106,7 +106,7 @@ function publishTest() {
 
       <div class="textfield">
         <label for="textfield-input">Data: </label>
-        <input v-model="dataInput" id="textfield-input" type="text" required />
+        <input id="textfield-input" v-model="dataInput" type="text" required />
       </div>
 
       <div class="button-container">
