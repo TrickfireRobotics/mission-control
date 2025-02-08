@@ -1,8 +1,10 @@
-<!-- Display map where the rover is, the target and line the rover will take -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import InteractiveMap from '@/components/map/InteractiveMap.vue';
+</script>
+
 <template>
   <div class="two-by-three-grid-page">
-    <img id="map" src="../assets/image.png" alt="" />
+    <InteractiveMap />
     <h1>Not yet Implemented</h1>
     <h1>Not yet Implemented</h1>
   </div>
