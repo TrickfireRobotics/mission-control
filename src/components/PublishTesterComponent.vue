@@ -81,15 +81,15 @@ function publishTest() {
 <template>
   <div class="container">
     <h2>Test Publisher</h2>
-    <form @submit.prevent="publishTest" id="publish-form" class="content">
+    <form id="publish-form" class="content" @submit.prevent="publishTest">
       <div class="textfield">
         <label for="topic-name-input">Topic Name: </label>
-        <input v-model="topicNameInput" type="text" id="topic-name-input" required />
+        <input v-model="topicNameInput" id="topic-name-input" type="text" required />
       </div>
 
       <div class="textfield">
         <label for="message-type-input">Message Type: </label>
-        <select v-model="messageTypeInput" id="message-type-input" required>
+        <select id="message-type-input" v-model="messageTypeInput" required>
           <option v-for="messageType in messageTypes" :key="messageType" :value="messageType">
             {{ messageType }}
           </option>
@@ -106,7 +106,7 @@ function publishTest() {
 
       <div class="textfield">
         <label for="textfield-input">Data: </label>
-        <input v-model="dataInput" type="text" id="textfield-input" required />
+        <input v-model="dataInput" id="textfield-input" type="text" required />
       </div>
 
       <div class="button-container">
