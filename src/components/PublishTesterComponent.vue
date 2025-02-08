@@ -15,14 +15,14 @@ const messageTypes = [
   'sensor_msgs/msg/CompressedImage',
 ];
 
-const input1 = ref('');
-const input2 = ref('');
-const input3 = ref('');
+const topicNameInput = ref('');
+const messageTypeInput = ref('');
+const dataInput = ref('');
 const customMessageType = ref('');
 const receivedMessage = ref('');
 
-const currentConnectionIdx = computed(() => {
-  let idx = messageTypes.indexOf(input2.value);
+const messageTypeID = computed(() => {
+  let idx = messageTypes.indexOf(messageTypeInput.value);
   if (idx === -1) idx = messageTypes.length; // Custom input index
   return idx;
 });
@@ -49,17 +49,16 @@ function convertMessage(topicType: string, message: string) {
 }
 
 function publishTest() {
-  const topicName = input1.value;
-  const topicType = currentConnectionIdx.value === messageTypes.length ? customMessageType.value : input2.value;
-  const topicMessage = convertMessage(topicType, input3.value);
+  const topicName = topicNameInput.value;
+  const topicType =
+    messageTypeID.value === messageTypes.length ? customMessageType.value : messageTypeInput.value;
+  const topicMessage = convertMessage(topicType, dataInput.value);
 
   if (topicName && topicType && topicMessage) {
     const testPublisher = createPublisher({
       topicName: topicName,
       topicType: topicType as TopicType,
     });
-
-    testPublisher.publish(topicMessage);
 
     const testSubscriber = createSubscriber({
       topicName: topicName,
@@ -71,51 +70,63 @@ function publishTest() {
         receivedMessage.value = JSON.stringify(message);
       },
     });
+
+    testPublisher.publish(topicMessage);
   } else {
-    alert("Please fill in all fields.");
+    alert('Please fill in all fields.');
   }
 }
 </script>
 
 <template>
-  <form @submit.prevent="publishTest" id="publish-form" class="content">
-    <h1>Test Publisher</h1>
+  <div class="container">
+    <h2>Test Publisher</h2>
+    <form @submit.prevent="publishTest" id="publish-form" class="content">
+      <div class="textfield">
+        <label for="topic-name-input">Topic Name: </label>
+        <input v-model="topicNameInput" type="text" id="topic-name-input" required />
+      </div>
 
-    <div class="textfield">
-      <label for="topic-name-input">Topic Name: </label>
-      <input v-model="input1" type="text" id="topic-name-input" required />
-    </div>
+      <div class="textfield">
+        <label for="message-type-input">Message Type: </label>
+        <select v-model="messageTypeInput" id="message-type-input" required>
+          <option v-for="messageType in messageTypes" :key="messageType" :value="messageType">
+            {{ messageType }}
+          </option>
+          <option value="">Other</option>
+        </select>
+        <input
+          v-if="messageTypeID === messageTypes.length"
+          v-model="customMessageType"
+          type="text"
+          placeholder="Custom Message Type"
+          required
+        />
+      </div>
 
-    <div class="textfield">
-      <label for="message-type-input">Message Type: </label>
-      <select v-model="input2" id="message-type-input" required>
-        <option v-for="messageType in messageTypes" :key="messageType" :value="messageType">
-          {{ messageType }}
-        </option>
-        <option value="">Other</option>
-      </select>
-      <input v-if="currentConnectionIdx === messageTypes.length" v-model="customMessageType" type="text" placeholder="Custom Message Type" required />
-    </div>
+      <div class="textfield">
+        <label for="textfield-input">Data: </label>
+        <input v-model="dataInput" type="text" id="textfield-input" required />
+      </div>
 
-    <div class="textfield">
-      <label for="textfield-input">Data: </label>
-      <input v-model="input3" type="text" id="textfield-input" required />
-    </div>
-    <button type="submit">Publish</button>
+      <div class="button-container">
+        <div class="taking-space"></div>
+        <button type="submit">Publish</button>
+      </div>
 
-    <div v-if="receivedMessage" class="subscriber-box">
-      <h2>Received Message:</h2>
-      <pre>{{ receivedMessage }}</pre>
-    </div>
-  </form>
-
-  
+      <div v-if="receivedMessage" class="subscriber-box">
+        <h2>Received Message:</h2>
+        <pre>{{ receivedMessage }}</pre>
+      </div>
+    </form>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-h1 {
-  margin-bottom: 20px;
-}
+// .container {
+//   display: flex;
+//   flex-direction: column;
+// }
 
 .content {
   display: flex;
@@ -126,30 +137,45 @@ h1 {
 
 .textfield {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 }
 
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 270px;
+  width: 100%;
+  flex-shrink: 1;
+}
+
 #message-type-input {
-  width: 140px;
+  width: 143px;
 }
 
 label {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   width: 120px;
   text-align: right;
 }
 
 input {
-  flex: 1; 
+  flex: 1;
   height: 30px;
+}
+
+taking-space {
+  margin-right: auto;
 }
 
 button {
   background-color: var(--correct);
-  align-self: center;
+  // margin-left: auto;
+  flex-shrink: 0;
 }
 
 .subscriber-box {
