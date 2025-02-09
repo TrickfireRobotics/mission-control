@@ -16,6 +16,7 @@ import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
 import { onMounted } from 'vue';
+import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
 
 //TODO implement latency
 
@@ -27,8 +28,15 @@ const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
 };
 
+const pingSubscriber = createSubscriber({
+  topicName: "/ping",
+  topicType: "std_msgs/Float32",
+  startingDefaultValue: {data: 0.0},
+})
+
 onMounted(() => {
   operation.operationState.start();
+  pingSubscriber.start();
 })
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
@@ -166,7 +174,7 @@ const pageIconArr: PageIcon = [
       </div>
       <div class="container">
         <h4 id="status">Ping</h4>
-        <h4>{{ roslib.latency + 'ms' }}</h4>
+        <h4>{{ pingSubscriber.msg?.value?.data ? (Math.round(pingSubscriber.msg?.value?.data * 1000)) + 'ms' : "N/A" }}</h4>
       </div>
     </section>
   </nav>
