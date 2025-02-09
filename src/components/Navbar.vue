@@ -29,15 +29,15 @@ const setCurrentTab = (newValue: number) => {
 };
 
 const pingSubscriber = createSubscriber({
-  topicName: "/ping",
-  topicType: "std_msgs/Float32",
-  startingDefaultValue: {data: 0.0},
-})
+  topicName: '/ping',
+  topicType: 'std_msgs/Float32',
+  startingDefaultValue: { data: 0.0 },
+});
 
 onMounted(() => {
   operation.operationState.start();
   pingSubscriber.start();
-})
+});
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
 
@@ -118,7 +118,7 @@ const pageIconArr: PageIcon = [
           id="disable-button"
           title="Disabled"
           :class="{ checked: operation.operationState.msg?.data === 'disabled' }"
-          @click="operation.setOperationState({data: 'disabled'})"
+          @click="operation.setOperationState({ data: 'disabled' })"
         >
           Disable
         </button>
@@ -126,7 +126,7 @@ const pageIconArr: PageIcon = [
           id="teleoperation-button"
           title="TeleOperation"
           :class="{ checked: operation.operationState.msg?.data === 'teleoperation' }"
-          @click="operation.setOperationState({data: 'teleoperation'})"
+          @click="operation.setOperationState({ data: 'teleoperation' })"
         >
           TeleOp
         </button>
@@ -134,7 +134,7 @@ const pageIconArr: PageIcon = [
           id="autonomous-button"
           title="Autonomous"
           :class="{ checked: operation.operationState.msg?.data === 'autonomous' }"
-          @click="operation.setOperationState({data: 'autonomous'})"
+          @click="operation.setOperationState({ data: 'autonomous' })"
         >
           Auto
         </button>
@@ -174,7 +174,13 @@ const pageIconArr: PageIcon = [
       </div>
       <div class="container">
         <h4 id="status">Ping</h4>
-        <h4>{{ pingSubscriber.msg?.value?.data ? (Math.round(pingSubscriber.msg?.value?.data * 1000)) + 'ms' : "N/A" }}</h4>
+        <h4>
+          {{
+            pingSubscriber.msg?.value?.data
+              ? Math.round(pingSubscriber.msg?.value?.data * 1000) + 'ms'
+              : 'N/A'
+          }}
+        </h4>
       </div>
     </section>
   </nav>
