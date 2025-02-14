@@ -232,7 +232,7 @@ nav {
     gap: 1.75rem;
     height: var(--nav-bar-size);
     padding: 0 2rem 0 1.5rem;
-    background-color: hsl(240, 20%, 20%);
+    background-color: var(--accent-color);
 
     #operation-selector {
       margin: auto 0;
