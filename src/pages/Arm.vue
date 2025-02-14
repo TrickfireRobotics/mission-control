@@ -9,8 +9,6 @@ import ArmModel from '../components/arm/ArmModel.vue';
     <Suspense>
       <ArmModel />
     </Suspense>
-
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 

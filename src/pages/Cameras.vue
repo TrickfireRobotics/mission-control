@@ -7,10 +7,6 @@ import CameraModule from '@/components/camera/CameraModule.vue';
   <div class="two-by-three-grid-page">
     <CameraModule :camera-id="0" camera-name="Front" />
     <CameraModule :camera-id="1" camera-name="Back" />
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
