@@ -16,9 +16,6 @@ import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
 import { onMounted } from 'vue';
-import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
-
-//TODO implement latency
 
 const roslib = useRoslibStore();
 const controller = useControllerStore();
@@ -28,14 +25,8 @@ const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
 };
 
-const pingSubscriber = createSubscriber({
-  topicName: '/ping',
-  topicType: 'std_msgs/Float32',
-});
-
 onMounted(() => {
   operation.operationState.start();
-  pingSubscriber.start();
 });
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
@@ -171,14 +162,10 @@ const pageIconArr: PageIcon = [
           :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
         />
       </div>
-      <div id = "ping_container" class="container">
+      <div id="ping_container" class="container">
         <h4 id="status">Ping</h4>
         <h5>
-          {{
-            pingSubscriber.msg?.value?.data
-              ? Math.round(pingSubscriber.msg?.value?.data * 1000) + 'ms'
-              : 'N/A'
-          }}
+          {{ roslib.latency ? Math.round(roslib.latency) + 'ms' : 'N/A' }}
         </h5>
       </div>
     </section>
@@ -221,8 +208,7 @@ nav {
     align-items: center;
     justify-content: center;
 
-    &#ping_container
-    {
+    &#ping_container {
       justify-content: start;
       margin: 0.2rem;
       max-width: 2rem;
