@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, type Ref, ref } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import { SaveCSVData } from '@/lib/saveCSVData';
-import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
-import { type StdMsg } from '@/lib/roslibUtils/rosTypes';
+import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry';
 
 onMounted(() => initialize());
 
@@ -22,29 +21,16 @@ export interface GenericMotorTelemetryProps {
 
 const props = defineProps<GenericMotorTelemetryProps>();
 
+// TODO: We need one telemetry for displaying the data,
+//       and a separate one for recording (recording shouldn't stop on navigate).
+const telemetry = useTelemetry();
+
 let isRecordingData = ref(false);
 let csvData: SaveCSVData;
 
 // We use this to fill up csv data
-//Each element is another array that holds the actual data
+// Each element is another array that holds the actual data
 let showCheckbox = ref(true);
-
-/**
- * Builds the data choices when the page is first loaded,
- * then disables itself immediately afterward.
- */
-const missionControlUpdaterBuilder = createSubscriber({
-  topicName: 'mission_control_updater',
-  topicType: 'std_msgs/String',
-});
-
-/**
- * Retrieves data when telemetry is active.
- */
-const missionControlUpdaterData = createSubscriber({
-  topicName: 'mission_control_updater',
-  topicType: 'std_msgs/String',
-});
 
 /**
  * This is used to store what kind of data we will be displaying
@@ -54,138 +40,99 @@ const missionControlUpdaterData = createSubscriber({
  * show up, assuming that the data received from the rover also has these values
  */
 interface MoteuesDataChoice {
+  identifier: keyof MoteusMotorState;
   prettyName: string;
-  identifier: string;
   dataValue: string;
   isSelected: boolean;
   shouldRecordData: boolean;
 }
 
-const moteuesDataChoice = ref<MoteuesDataChoice[]>([]);
-let hasBuiltMoteusDataChoice = false;
+const moteusDataChoices: Ref<MoteuesDataChoice[]> = ref(
+  createDataChoices({
+    position: 'Position',
+    velocity: 'Velocity',
+    torque: 'Torque',
+    temperature: 'Temperature',
+    power: 'Power',
+    input_voltage: 'Controller Voltage',
+    q_current: 'Q Phase (Amps)',
+    d_current: 'D Phase (Amps)',
+  }),
+);
 
 function initialize() {
   csvData = new SaveCSVData();
-  missionControlUpdaterBuilder.start({ callback: builderCallback });
+}
+
+function createDataChoices(
+  idToPretty: Partial<Record<keyof MoteusMotorState, string>>,
+): MoteuesDataChoice[] {
+  const output: MoteuesDataChoice[] = [];
+
+  for (const key in idToPretty) {
+    output.push({
+      identifier: key as keyof MoteusMotorState,
+      prettyName: idToPretty[key as keyof MoteusMotorState] as string,
+      dataValue: 'N/A',
+      isSelected: true,
+      shouldRecordData: true,
+    });
+  }
+
+  return output;
 }
 
 /**
- * Extracts the data for the motor that we're looking for, if it exists.
+ * Converts a piece of data related to one of the motors
+ * into a nice string for the UI.
+ * @param data - is the data value.
  */
-function parseData(data: StdMsg<string>): ({ can_id: number } & Record<string, unknown>) | null {
-  if (!data?.data) return null;
-
-  const parsedData = JSON.parse(data.data);
-  console.log('parsed', parsedData);
-  if (
-    !parsedData?.moteusMotors ||
-    typeof parsedData.moteusMotors !== 'object' ||
-    !Array.isArray(parsedData.moteusMotors)
-  ) {
-    return null;
+function moteusDataToString(data: string | number | null | undefined): string {
+  if (typeof data === 'string') {
+    data = parseFloat(data);
   }
 
-  return parsedData.moteusMotors.find(
-    (motor: { can_id: number }) => motor.can_id === props.dataSourceParameter,
-  );
-}
-
-/**
- * The callback for the builder subscriber, which is responsible
- * for querying what data we have access to.
- */
-function builderCallback(result: StdMsg<string>) {
-  const data = parseData(result);
-  if (!data) {
-    // If we get no data, it probably means that the motor
-    // is disconnected.
-    // This is an error, but if we don't stop the subscriber, then
-    // we'll just flood the connection with unneeded data.
-    console.error('Error! Can ID not found for ' + props.dataSourceParameter);
-
-    missionControlUpdaterBuilder.stop();
-    return;
+  if (typeof data !== 'number') {
+    data = null;
   }
 
-  if (!hasBuiltMoteusDataChoice) {
-    hasBuiltMoteusDataChoice = true;
-    buildMoteusDataChoice(data);
+  if (!Number.isNaN(data) && data != null) {
+    if (Number.isInteger(data)) {
+      // if int
+      return data.toString();
+    } else {
+      return data.toFixed(5);
+    }
+  } else {
+    return 'N/A';
   }
-
-  // Now that data choices are built, there's
-  // no reason to keep this active.
-  missionControlUpdaterBuilder.stop();
 }
 
 /**
  * The callback for the data subscriber, which is responsible for reading
  * in the data and saving it.
  */
-function dataCallback(result: StdMsg<string>) {
-  const data = parseData(result);
-  if (!data) return;
-
-  if (!hasBuiltMoteusDataChoice) {
-    hasBuiltMoteusDataChoice = true;
-    buildMoteusDataChoice(data);
+function dataCallback(result: MoteusMotorState[]) {
+  const motor = result.find((motor) => motor.can_id === props.dataSourceParameter);
+  if (!motor) {
+    return;
   }
 
   // update the data
 
-  for (const key in data) {
-    // Saving the can_id is redundant.
-    if (key === 'can_id') continue;
-
-    const value = data[key];
-
-    let object = getMoteusDataObjectFromIdentifier(key);
-
-    if (object !== null) {
-      let dataEntry =
-        typeof value === 'string' ? parseFloat(value) : typeof value === 'number' ? value : null;
-
-      if (!Number.isNaN(dataEntry) && dataEntry != null) {
-        if (Number.isInteger(dataEntry)) {
-          // if int
-          object.dataValue = dataEntry.toString();
-        } else {
-          object.dataValue = dataEntry.toFixed(5);
-        }
-      } else {
-        object.dataValue = 'N/A';
-      }
-    }
+  for (const item of moteusDataChoices.value) {
+    item.dataValue = moteusDataToString(motor[item.identifier]);
   }
 
   // Add it to the CSV file
   constructRecordingEntry();
 }
 
-function buildMoteusDataChoice(result: Record<string, unknown>) {
-  for (const key in result) {
-    // Saving the can_id is redundant.
-    if (key === 'can_id') continue;
-
-    let entry = {
-      prettyName: key,
-      identifier: key,
-      // This will get filled in later.
-      dataValue: 'N/A',
-      isSelected: true,
-      shouldRecordData: true,
-    };
-
-    moteuesDataChoice.value.push(entry);
-  }
-}
-
 function constructRecordingEntry() {
   let tempDataArray: string[] = [];
 
   // Go through each possible entry
-  for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    let entry = moteuesDataChoice.value[index];
-
+  for (const entry of moteusDataChoices.value) {
     //If we have selected that entry to be recorded
     if (entry.shouldRecordData) {
       if (entry.dataValue !== 'N/A') {
@@ -225,9 +172,7 @@ function recordButtonPressed() {
 
     let header: string[] = [];
 
-    for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-      let entry = moteuesDataChoice.value[index];
-
+    for (const entry of moteusDataChoices.value) {
       if (entry.shouldRecordData) {
         header.push(entry.identifier);
       }
@@ -235,11 +180,11 @@ function recordButtonPressed() {
 
     csvData.setHeader(header);
 
-    missionControlUpdaterData.start({ callback: dataCallback });
+    telemetry.start(dataCallback);
   } else {
     showCheckbox.value = true;
 
-    missionControlUpdaterData.stop();
+    telemetry.stop();
 
     if (props.displayName) {
       csvData.saveToFile(props.displayName);
@@ -250,9 +195,9 @@ function recordButtonPressed() {
 }
 
 function getMoteusDataObjectFromIdentifier(itemName: string): MoteuesDataChoice | null {
-  for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    if (moteuesDataChoice.value[index].identifier === itemName) {
-      return moteuesDataChoice.value[index];
+  for (const entry of moteusDataChoices.value) {
+    if (entry.identifier === itemName) {
+      return entry;
     }
   }
 
@@ -287,7 +232,7 @@ defineExpose({ recordButtonPressed });
         </button>
         <div class="dropdown-content">
           <DropDownItem
-            v-for="item in moteuesDataChoice"
+            v-for="item in moteusDataChoices"
             :key="item.prettyName"
             :item-name="item.prettyName"
             :is-selected="item.isSelected"
@@ -314,7 +259,7 @@ defineExpose({ recordButtonPressed });
       </div>
 
       <TelemetryDataDisplay
-        v-for="item in moteuesDataChoice"
+        v-for="item in moteusDataChoices"
         :key="item.identifier"
         :item-name="item.identifier"
         :is-selected="item.isSelected"
