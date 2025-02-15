@@ -20,7 +20,7 @@ export interface RoslibManager {
   stop: Ref<boolean>;
   isWebSocketConnected: Ref<boolean>;
   latency: Ref<number>;
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
+  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>
 }
 
 /**
@@ -36,9 +36,11 @@ export function roslibManager(): RoslibManager {
   let heartbeatRunning: boolean = false;
   let heartbeatTime: number = 0;
 
+  const sendTime: Ref<number> = ref(0);
+  const latency: Ref<number> = ref(0);
+
   const stop: Ref<boolean> = ref(false);
   const isWebSocketConnected: Ref<boolean> = ref(false);
-  const latency: Ref<number> = ref(0);
 
   let serverHost: string | null = settings.settings.value.websocketAddress;
 
@@ -101,6 +103,7 @@ export function roslibManager(): RoslibManager {
       callback: (msg) => {
         if (msg.data) {
           heartbeatTime = Date.now();
+          latency.value = (Date.now() - sendTime.value) / 2;
         }
       },
     });
@@ -141,6 +144,7 @@ export function roslibManager(): RoslibManager {
       }
 
       heartbeatPub.publish(heartbeatData);
+      sendTime.value = Date.now();
     }, HEARTBEAT_SEND_INTERVAL);
   }
 

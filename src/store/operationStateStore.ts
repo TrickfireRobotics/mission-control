@@ -14,14 +14,14 @@ export const useOperationStateStore = defineStore('operationType', () => {
   const operationState = createSubscriber({
     topicName: '/setOperationState',
     topicType: 'std_msgs/String',
-    startingDefaultValue: {data: 'disabled'}
+    startingDefaultValue: { data: 'disabled' },
   });
 
   /**
    * This function sets the operation state to the specified state and sends out a message on the ros topic to change the state.
    * @param state - the new operation state to set the driver to.
    */
-  function setOperationState(state: {data : OperationState}) {
+  function setOperationState(state: { data: OperationState }) {
     operationStatePublisher.publish(state);
   }
 

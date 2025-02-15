@@ -31,7 +31,6 @@ const setCurrentTab = (newValue: number) => {
 const pingSubscriber = createSubscriber({
   topicName: '/ping',
   topicType: 'std_msgs/Float32',
-  startingDefaultValue: { data: 0.0 },
 });
 
 onMounted(() => {
@@ -172,15 +171,15 @@ const pageIconArr: PageIcon = [
           :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
         />
       </div>
-      <div class="container">
+      <div id = "ping_container" class="container">
         <h4 id="status">Ping</h4>
-        <h4>
+        <h5>
           {{
             pingSubscriber.msg?.value?.data
               ? Math.round(pingSubscriber.msg?.value?.data * 1000) + 'ms'
               : 'N/A'
           }}
-        </h4>
+        </h5>
       </div>
     </section>
   </nav>
@@ -188,10 +187,8 @@ const pageIconArr: PageIcon = [
 
 <style lang="scss" scoped>
 nav {
-  padding: 0 0 0 1rem;
   grid-area: nav;
   display: flex;
-  align-items: center;
   height: var(--nav-bar-size);
   background-color: var(--black);
   h1,
@@ -223,18 +220,28 @@ nav {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    &#ping_container
+    {
+      justify-content: start;
+      margin: 0.2rem;
+      max-width: 2rem;
+    }
   }
   #logo-section {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    background-color: var(--space-purple);
 
     #logo {
       max-width: 100%;
       max-height: 3rem;
+      margin: 0 0 0 1rem;
     }
     #logo-text {
-      margin: 0 1rem;
+      margin: 0 1rem 0 0.8rem;
+      font-size: 1.5rem;
     }
   }
   #page-section {
@@ -243,15 +250,15 @@ nav {
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 1px solid var(--white);
-    border-left: 1px solid var(--white);
+    border-right: 2px solid var(--white);
+    border-left: 2px solid var(--white);
   }
   #states-section {
     display: flex;
     gap: 1.75rem;
     height: var(--nav-bar-size);
     padding: 0 2rem 0 1.5rem;
-    background-color: hsl(240, 20%, 20%);
+    background-color: var(--space-purple);
 
     #operation-selector {
       margin: auto 0;
