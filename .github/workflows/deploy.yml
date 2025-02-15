@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-    - master
+      - master
 
 jobs:
   build:
@@ -19,10 +19,10 @@ jobs:
 
       - name: Build
         env:
-          NODE_OPTIONS: "--max_old_space_size=4096"
-          GH_PAGES: "true"
+          NODE_OPTIONS: '--max_old_space_size=4096'
+          GH_PAGES: 'true'
         run: npm run build
-  
+
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3

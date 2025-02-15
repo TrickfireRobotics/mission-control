@@ -20,6 +20,7 @@ export interface RoslibManager {
   stop: Ref<boolean>;
   isWebSocketConnected: Ref<boolean>;
   latency: Ref<number>;
+  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
 }
 
 /**
@@ -41,6 +42,47 @@ export function roslibManager(): RoslibManager {
 
   let serverHost: string | null = settings.settings.value.websocketAddress;
 
+  // Topics are cached to ensure that we don't
+  // use up excessive bandwidth.
+  const topicCache: Record<
+    string,
+    {
+      type: string;
+      topic: ROSLIB.Topic<unknown>;
+    }
+  > = {};
+
+  /**
+   * Gets or creates a topic with the given name and type.
+   */
+  function getTopic<T>(name: string, type: string): ROSLIB.Topic<T> {
+    if (!topicCache[name]) {
+      const topic = new ROSLIB.Topic<unknown>({
+        ros,
+        name: name,
+        messageType: type,
+        compression: 'cbor',
+        reconnect_on_close: true,
+      });
+
+      topicCache[name] = {
+        topic,
+        type,
+      };
+    }
+
+    if (topicCache[name].type !== type) {
+      throw new Error(
+        'Conflicting type for shared subscriber: original ' +
+          topicCache[name].type +
+          ' != new ' +
+          type,
+      );
+    }
+
+    return topicCache[name].topic as ROSLIB.Topic<T>;
+  }
+
   /**
    * Runs the heartbeat loops.
    */
@@ -48,7 +90,7 @@ export function roslibManager(): RoslibManager {
     if (heartbeatRunning) return;
     heartbeatRunning = true;
 
-    const heartbeatSub = createSubscriberForRos(ros, {
+    const heartbeatSub = createSubscriberForRos(getTopic, {
       topicName: 'hbr',
       topicType: 'std_msgs/Bool',
       startingDefaultValue: { data: false },
@@ -183,6 +225,7 @@ export function roslibManager(): RoslibManager {
     ros,
     latency,
     stop,
+    getTopic,
     isWebSocketConnected,
   };
 }
