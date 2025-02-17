@@ -42,7 +42,7 @@ export function gamepadInit() {
     const jsGamepad = navigator.getGamepads()[key];
 
     if (jsGamepad !== null) {
-      state.updateState(jsGamepad, 1000 - POLLING_RATE_IN_HERTZ);
+      state.updateState(jsGamepad);
       //state.printNumbers();
     }
   }

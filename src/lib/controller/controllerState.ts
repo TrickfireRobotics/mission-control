@@ -50,7 +50,7 @@ export class ControllerState {
       }[];
     } = JSON.parse(stringJson);
 
-    // Fill publisherNameToPublisher with entry and values.
+    // Fill bindingEntryToPublisher with entry and values.
     for (const entry of json.bindings) {
       const publisher = createPublisher({
         topicName: entry.publisher,
@@ -93,7 +93,7 @@ export class ControllerState {
       }
     }
   }
-  
+
   // Print the current state of the controller as seen by the browser
   printNumbers() {}
 }
