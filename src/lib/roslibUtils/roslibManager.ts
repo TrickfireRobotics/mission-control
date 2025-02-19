@@ -20,7 +20,7 @@ export interface RoslibManager {
   stop: Ref<boolean>;
   isWebSocketConnected: Ref<boolean>;
   latency: Ref<number>;
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>
+  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
 }
 
 /**

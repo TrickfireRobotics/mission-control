@@ -26,7 +26,7 @@ const setCurrentTab = (newValue: number) => {
 };
 
 onMounted(() => {
-  operation.operationState.start();
+  operation.operationStateSub.start();
 });
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
@@ -107,7 +107,7 @@ const pageIconArr: PageIcon = [
         <button
           id="disable-button"
           title="Disabled"
-          :class="{ checked: operation.operationState.msg?.data === 'disabled' }"
+          :class="{ checked: operation.getOperationState() === 'disabled' }"
           @click="operation.setOperationState({ data: 'disabled' })"
         >
           Disable
@@ -115,7 +115,7 @@ const pageIconArr: PageIcon = [
         <button
           id="teleoperation-button"
           title="TeleOperation"
-          :class="{ checked: operation.operationState.msg?.data === 'teleoperation' }"
+          :class="{ checked: operation.getOperationState() === 'teleoperation' }"
           @click="operation.setOperationState({ data: 'teleoperation' })"
         >
           TeleOp
@@ -123,7 +123,7 @@ const pageIconArr: PageIcon = [
         <button
           id="autonomous-button"
           title="Autonomous"
-          :class="{ checked: operation.operationState.msg?.data === 'autonomous' }"
+          :class="{ checked: operation.getOperationState() === 'autonomous' }"
           @click="operation.setOperationState({ data: 'autonomous' })"
         >
           Auto
