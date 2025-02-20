@@ -1,9 +1,9 @@
-<!-- TODO: Need to refactor entire to fix Typescript issues -->
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, type Ref, ref } from 'vue';
 import DropDownItem from './DropDownItem.vue';
 import TelemetryDataDisplay from './TelemetryDataDisplay.vue';
 import { SaveCSVData } from '@/lib/saveCSVData';
+import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry';
 
 onMounted(() => initialize());
 
@@ -21,128 +21,118 @@ export interface GenericMotorTelemetryProps {
 
 const props = defineProps<GenericMotorTelemetryProps>();
 
-let isRecordingData = false;
+// TODO: We need one telemetry for displaying the data,
+//       and a separate one for recording (recording shouldn't stop on navigate).
+const telemetry = useTelemetry();
+
+let isRecordingData = ref(false);
 let csvData: SaveCSVData;
 
 // We use this to fill up csv data
-//Each element is another array that holds the actual data
+// Each element is another array that holds the actual data
 let showCheckbox = ref(true);
-
-let recordButtonText = ref('Start Recording');
-
-let pollingData: number; //Used to keep track of the object id when we do setInterval
-
-// TODO: getMoteusMotorStateService
-// Will refactor as its not not being used
-// let getMoteusMotorStateService: ROSLIB.Service;
 
 /**
  * This is used to store what kind of data we will be displaying
  * and handling through the whole thing.
  *
- * It should be possible to simply add another entry to this, and everyting should
- * show up, assuming that the data recieved from the the rover also has these values
+ * It should be possible to simply add another entry to this, and everything should
+ * show up, assuming that the data received from the rover also has these values
  */
-
 interface MoteuesDataChoice {
+  identifier: keyof MoteusMotorState;
   prettyName: string;
-  identifier: string;
   dataValue: string;
   isSelected: boolean;
   shouldRecordData: boolean;
 }
 
-const moteuesDataChoice = ref<MoteuesDataChoice[]>([]);
-let hasBuiltMoteusDataChoice = false;
+const moteusDataChoices: Ref<MoteuesDataChoice[]> = ref(
+  createDataChoices({
+    position: 'Position',
+    velocity: 'Velocity',
+    torque: 'Torque',
+    temperature: 'Temperature',
+    power: 'Power',
+    input_voltage: 'Controller Voltage',
+    q_current: 'Q Phase (Amps)',
+    d_current: 'D Phase (Amps)',
+  }),
+);
 
 function initialize() {
   csvData = new SaveCSVData();
-  // TODO: FIX SERVICE
-  // pollingData = setInterval(updateUIWithNewData, props.update_ms);
-}
-// TODO:Never used, figure out what this does
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function updateUIWithNewData(_jsonString: unknown) {
-  if (props.dataSourceMethod !== undefined) {
-    // TODO: Result is never used here, figure what its supposed to do
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let result = props.dataSourceMethod(props.dataSourceParameter, dataCallback);
-  }
-
-  if (isRecordingData) {
-    constructRecordingEntry();
-  }
-
-  //This code section is used to change the polling rate
-  clearInterval(pollingData); //Stop the interval
-
-  if (props.updateMs === undefined || props.updateMs < 4) {
-    //So we dont break the thing by going slower. It is 4 because browser limitations
-    pollingData = setInterval(updateUIWithNewData, 4);
-  } else {
-    pollingData = setInterval(updateUIWithNewData, props.updateMs);
-  }
 }
 
-function dataCallback(result: { json_payload: string }) {
-  if (!hasBuiltMoteusDataChoice) {
-    hasBuiltMoteusDataChoice = true;
-    buildMoteusDataChoice(result);
-  }
+function createDataChoices(
+  idToPretty: Partial<Record<keyof MoteusMotorState, string>>,
+): MoteuesDataChoice[] {
+  const output: MoteuesDataChoice[] = [];
 
-  //update the data
-  let json = JSON.parse(result.json_payload);
-  // TODO: Refactor so doesn't use in and Object.hasOwn
-  // Conversation about it: https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1828811375
-  for (const key in json) {
-    if (Object.hasOwn(json, key)) {
-      let object = getMoteusDataObjectFromIdentifier(key);
-
-      if (object !== null) {
-        let dataEntry = parseFloat(json[key]);
-        if (!Number.isNaN(dataEntry)) {
-          if (Number.isInteger(dataEntry)) {
-            //if int
-            object.dataValue = dataEntry.toString();
-          } else {
-            object.dataValue = dataEntry.toFixed(5);
-          }
-        } else {
-          object.dataValue = 'N/A';
-        }
-      }
-    }
-  }
-}
-
-function buildMoteusDataChoice(result: { json_payload: string }) {
-  let json = JSON.parse(result.json_payload);
-
-  for (const key in json) {
-    let entry = {
-      prettyName: 'prettyName',
-      identifier: 'identifier',
-      dataValue: 'dataValue',
+  for (const key in idToPretty) {
+    output.push({
+      identifier: key as keyof MoteusMotorState,
+      prettyName: idToPretty[key as keyof MoteusMotorState] as string,
+      dataValue: 'N/A',
       isSelected: true,
       shouldRecordData: true,
-    };
-    if (Object.hasOwn(json, key)) {
-      entry.prettyName = key;
-      entry.identifier = key;
-      entry.dataValue = json[key];
-
-      moteuesDataChoice.value.push(entry);
-    }
+    });
   }
+
+  return output;
+}
+
+/**
+ * Converts a piece of data related to one of the motors
+ * into a nice string for the UI.
+ * @param data - is the data value.
+ */
+function moteusDataToString(data: string | number | null | undefined): string {
+  if (typeof data === 'string') {
+    data = parseFloat(data);
+  }
+
+  if (typeof data !== 'number') {
+    data = null;
+  }
+
+  if (!Number.isNaN(data) && data != null) {
+    if (Number.isInteger(data)) {
+      // if int
+      return data.toString();
+    } else {
+      return data.toFixed(5);
+    }
+  } else {
+    return 'N/A';
+  }
+}
+
+/**
+ * The callback for the data subscriber, which is responsible for reading
+ * in the data and saving it.
+ */
+function dataCallback(result: MoteusMotorState[]) {
+  const motor = result.find((motor) => motor.can_id === props.dataSourceParameter);
+  if (!motor) {
+    return;
+  }
+
+  // update the data
+
+  for (const item of moteusDataChoices.value) {
+    item.dataValue = moteusDataToString(motor[item.identifier]);
+  }
+
+  // Add it to the CSV file
+  constructRecordingEntry();
 }
 
 function constructRecordingEntry() {
   let tempDataArray: string[] = [];
 
   // Go through each possible entry
-  for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    let entry = moteuesDataChoice.value[index];
-
+  for (const entry of moteusDataChoices.value) {
     //If we have selected that entry to be recorded
     if (entry.shouldRecordData) {
       if (entry.dataValue !== 'N/A') {
@@ -175,39 +165,39 @@ function itemClicked(itemName: string) {
  * After stopping the recording, it will build the csv file
  */
 function recordButtonPressed() {
-  if (!isRecordingData) {
-    recordButtonText.value = 'Stop Recording';
+  if (!isRecordingData.value) {
     showCheckbox.value = false;
 
     csvData = new SaveCSVData();
 
     let header: string[] = [];
 
-    for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-      let entry = moteuesDataChoice.value[index];
-
-      if (entry.shouldRecordData === true) {
+    for (const entry of moteusDataChoices.value) {
+      if (entry.shouldRecordData) {
         header.push(entry.identifier);
       }
     }
 
     csvData.setHeader(header);
+
+    telemetry.start(dataCallback);
   } else {
-    recordButtonText.value = 'Start Recording';
     showCheckbox.value = true;
+
+    telemetry.stop();
 
     if (props.displayName) {
       csvData.saveToFile(props.displayName);
     }
   }
 
-  isRecordingData = !isRecordingData;
+  isRecordingData.value = !isRecordingData.value;
 }
 
 function getMoteusDataObjectFromIdentifier(itemName: string): MoteuesDataChoice | null {
-  for (let index = 0; index < moteuesDataChoice.value.length; index++) {
-    if (moteuesDataChoice.value[index].identifier === itemName) {
-      return moteuesDataChoice.value[index];
+  for (const entry of moteusDataChoices.value) {
+    if (entry.identifier === itemName) {
+      return entry;
     }
   }
 
@@ -242,7 +232,7 @@ defineExpose({ recordButtonPressed });
         </button>
         <div class="dropdown-content">
           <DropDownItem
-            v-for="item in moteuesDataChoice"
+            v-for="item in moteusDataChoices"
             :key="item.prettyName"
             :item-name="item.prettyName"
             :is-selected="item.isSelected"
@@ -258,7 +248,7 @@ defineExpose({ recordButtonPressed });
           :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
           @click="recordButtonPressed"
         >
-          {{ recordButtonText }}
+          {{ isRecordingData ? 'Stop Recording' : 'Start Recording' }}
         </button>
       </div>
     </div>
@@ -269,7 +259,7 @@ defineExpose({ recordButtonPressed });
       </div>
 
       <TelemetryDataDisplay
-        v-for="item in moteuesDataChoice"
+        v-for="item in moteusDataChoices"
         :key="item.identifier"
         :item-name="item.identifier"
         :is-selected="item.isSelected"
