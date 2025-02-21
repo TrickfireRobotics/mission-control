@@ -5,7 +5,6 @@ import { OrbitControls, GLTFModel } from '@tresjs/cientos';
 import type { Object3D } from 'three';
 
 const modelRef = shallowRef<Object3D>();
-// const { scene } = await useLoader(GLTFLoader, 'arm.glb');
 
 watch(modelRef, (model) => {
   if (!model) return;
