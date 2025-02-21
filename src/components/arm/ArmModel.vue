@@ -5,7 +5,6 @@ import { OrbitControls, GLTFModel } from '@tresjs/cientos';
 import type { Object3D } from 'three';
 
 const modelRef = shallowRef<Object3D>();
-// const { scene } = await useLoader(GLTFLoader, 'arm.glb');
 
 watch(modelRef, (model) => {
   if (!model) return;
@@ -16,11 +15,11 @@ watch(modelRef, (model) => {
   <div id="arm">
     <TresCanvas shadows alpha>
       <TresAmbientLight :intensity="1" />
-      <TresDirectionalLight :intensity="2" :position="[3, 3, 3]" />
-      <TresPerspectiveCamera :position="[500, 500, 500]" />
+      <TresDirectionalLight :intensity="2" :position="[1, 1, 1]" />
+      <TresPerspectiveCamera :position="[1, 1, 1]" />
       <OrbitControls :enable-damping="false" :enable-pan="false" />
       <Suspense>
-        <GLTFModel ref="modelRef" path="arm.glb" draco :rotation="[0, 0, 0]" />
+        <GLTFModel ref="modelRef" path="newarm.glb" draco :rotation="[0, 0, 0]" />
       </Suspense>
     </TresCanvas>
   </div>

@@ -24,7 +24,7 @@ const emit = defineEmits(['checkboxClicked']);
         title="Select to include this value when recording data into a .csv file"
         @click="emit('checkboxClicked', props.itemName)"
       />
-      <b>{{ props.itemName }}</b>
+      <b>{{ props.itemName }}: </b>
     </div>
     <b>{{ props.value }}</b>
   </div>
