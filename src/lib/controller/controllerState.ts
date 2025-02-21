@@ -1,4 +1,3 @@
-import { hydrateOnVisible } from 'vue';
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { gamepadNames, joystickNames } from './controllerBindings';
 
