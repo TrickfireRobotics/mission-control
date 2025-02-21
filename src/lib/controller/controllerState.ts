@@ -1,6 +1,6 @@
-import { hydrateOnVisible } from 'vue';
-import { createPublisher } from '../roslibUtils/createPublisher';
-import { gamepadNames, joystickNames } from './controllerBindings';
+import { createPublisher, type Publisher } from '../roslibUtils/createPublisher';
+import { type inputType, gamepadButtonTypeMap, gamepadJoystickTypeMap } from './controllerBindings';
+import { onKeyDown, onKeyPressed } from '@vueuse/core'
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -12,23 +12,22 @@ import { gamepadNames, joystickNames } from './controllerBindings';
 
 export class ControllerState {
   // Same format as currentStateButtons
-  deltaStateButtons = Array(16).fill(0);
   deltaSensitivity = 0;
 
   //Key bindings
-  bindingEntryToPublisher = new Map();
-  friendlyNameToCurrentValue: Map<string, number> = new Map();
-  friendlyNameToDelta: Map<string, number> = new Map();
+  inputStore: {
+    [input: string]: {
+      publisher: Publisher<'std_msgs/Float32'>;
+      type: inputType;
+      currentValue: number;
+      deltaValue: number;
+      deltaSensitivity?: number;
+    };
+  } = {};
 
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
   constructor(jsonControllerBinding: string, deltaSensitivity: number) {
     this.deltaSensitivity = deltaSensitivity;
-
-    // Set up the current value and delta value maps with friendly names of inputs
-    for (const friendlyName of Object.values(gamepadNames).concat(Object.values(joystickNames))) {
-      this.friendlyNameToCurrentValue.set(friendlyName, 0);
-      this.friendlyNameToDelta.set(friendlyName, 0);
-    }
 
     fetch(jsonControllerBinding)
       .then((response) => response.json())
@@ -42,22 +41,31 @@ export class ControllerState {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     const stringJson = JSON.stringify(jsonInput);
     const json: {
-      length: number;
-      bindings: {
-        name: string;
-        type: 'digitalButton' | 'analogButton' | 'joystick';
-        publisher: string;
-      }[];
+      [friendlyInput: string]: string | { type: inputType; deltaSensitivity: number };
     } = JSON.parse(stringJson);
 
     // Fill bindingEntryToPublisher with entry and values.
-    for (const entry of json.bindings) {
+    for (const [inputName, inputEntry] of Object.entries(json)) {
       const publisher = createPublisher({
-        topicName: entry.publisher,
+        topicName: inputName,
         topicType: 'std_msgs/Float32',
       });
 
-      this.bindingEntryToPublisher.set(entry, publisher);
+      if (!gamepadButtonTypeMap.hasOwnProperty(inputName) && !gamepadJoystickTypeMap.hasOwnProperty(inputName)) {
+        onKeyDown(inputName, () => publisher.publish({data: 1}, {isDebugging: true}));
+      }
+      else {
+        this.inputStore[inputName] = {
+          publisher: publisher,
+          type: 'digitalButton',
+          currentValue: 0,
+          deltaValue: 0,
+        };
+  
+        if (typeof inputEntry === 'object') {
+          this.inputStore[inputName].deltaSensitivity = inputEntry.deltaSensitivity;
+        }
+      }
     }
   }
 
@@ -67,33 +75,27 @@ export class ControllerState {
     const buttonArray = gamepad.buttons;
 
     for (let i: number = 0; i < buttonArray.length; i++) {
-      const friendlyName = gamepadNames[i];
-      const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
-      if (currentValue != null) {
-        this.friendlyNameToDelta.set(friendlyName, currentValue - buttonArray[i].value);
-        this.friendlyNameToCurrentValue.set(friendlyName, buttonArray[i].value);
+      const currentInput = this.inputStore[gamepadButtonTypeMap[i]];
+
+      if (currentInput) {
+        currentInput.deltaValue = currentInput.currentValue - buttonArray[i].value;
+        currentInput.currentValue = buttonArray[i].value;
       }
     }
 
     for (let i: number = 0; i < joystickArray.length; i++) {
-      const friendlyName = joystickNames[i];
-      const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
-      if (currentValue != null) {
-        this.friendlyNameToDelta.set(friendlyName, currentValue - joystickArray[i].valueOf());
-        this.friendlyNameToCurrentValue.set(friendlyName, joystickArray[i].valueOf());
+      const currentInput = this.inputStore[gamepadJoystickTypeMap[i]];
+
+      if (currentInput) {
+        currentInput.deltaValue = currentInput.currentValue - joystickArray[i].valueOf();
+        currentInput.currentValue = joystickArray[i].valueOf();
       }
     }
 
-    for (const [entry, publisher] of this.bindingEntryToPublisher) {
-      if (this.friendlyNameToDelta.get(entry.name)) {
-        publisher.publish(
-          { data: this.friendlyNameToCurrentValue.get(entry.name) },
-          { isDebugging: true },
-        );
+    for (const inputEntry of Object.values(this.inputStore)) {
+      if (inputEntry.deltaValue > (this.deltaSensitivity)) {
+        inputEntry.publisher.publish({ data: inputEntry.currentValue }, { isDebugging: true });
       }
     }
   }
-
-  // Print the current state of the controller as seen by the browser
-  printNumbers() {}
 }

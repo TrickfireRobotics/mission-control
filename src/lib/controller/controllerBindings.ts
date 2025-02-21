@@ -1,29 +1,30 @@
-type indexToFriendlyName = {
-  [index: number]: string;
+export type inputType = 'digitalButton' | 'analogButton' | 'joystick';
+type inputTypeMap = {
+  [inputName: string]: inputType;
 };
 
-export const gamepadNames: indexToFriendlyName = {
-  0: 'aButton',
-  1: 'bButton',
-  2: 'xButton',
-  3: 'yButton',
-  4: 'leftBumperButton',
-  5: 'rightBumperButton',
-  6: 'leftTriggerButton',
-  7: 'rightTriggerButton',
-  8: 'backButton',
-  9: 'startButton',
-  10: 'leftJoystickButton',
-  11: 'rightJoystickButton',
-  12: 'dpadUPButton',
-  13: 'dpadDOWNButton',
-  14: 'dpadLEFTButton',
-  15: 'dpadRIGHTButton',
+export const gamepadButtonTypeMap: inputTypeMap = {
+  aButton: 'digitalButton',
+  bButton: 'digitalButton',
+  xButton: 'digitalButton',
+  yButton: 'digitalButton',
+  leftBumperButton: 'digitalButton',
+  rightBumperButton: 'digitalButton',
+  leftTriggerButton: 'digitalButton',
+  rightTriggerButton: 'digitalButton',
+  backButton: 'digitalButton',
+  startButton: 'digitalButton',
+  leftJoystickButton: 'analogButton',
+  rightJoystickButton: 'analogButton',
+  dpadUPButton: 'digitalButton',
+  dpadDOWNButton: 'digitalButton',
+  dpadLEFTButton: 'digitalButton',
+  dpadRIGHTButton: 'digitalButton',
 };
 
-export const joystickNames: indexToFriendlyName = {
-  0: 'leftJoyXAxis',
-  1: 'leftJoyYAxis',
-  2: 'rightJoyXAxis',
-  3: 'rightJoyYAxis',
+export const gamepadJoystickTypeMap: inputTypeMap = {
+  leftJoyXAxis: 'joystick',
+  leftJoyYAxis: 'joystick',
+  rightJoyXAxis: 'joystick',
+  rightJoyYAxis: 'joystick',
 };

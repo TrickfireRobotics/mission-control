@@ -20,7 +20,7 @@ export function gamepadInit() {
     );
     indexToControllerState.set(e.gamepad.index, state);
 
-    if (indexToControllerName.has(0)) {
+    if (indexToControllerName.size) {
       controller.setGamepadConnectedStatus(true);
       setInterval(pollController, 1000 / POLLING_RATE_IN_HERTZ);
     }
