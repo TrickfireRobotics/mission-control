@@ -1,4 +1,3 @@
-import { hydrateOnVisible } from 'vue';
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { gamepadNames, joystickNames } from './controllerBindings';
 
@@ -39,7 +38,7 @@ export class ControllerState {
     // Convert the JSON to be read
     // Use glob import or static import in https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1827239874
     // Look at comment on how to cast it https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1834908954
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+
     const stringJson = JSON.stringify(jsonInput);
     const json: {
       length: number;
