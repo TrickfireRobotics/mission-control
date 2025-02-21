@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import { templateCompilerOptions } from '@tresjs/core';
 import vue from '@vitejs/plugin-vue';
-import vueDevTools from 'vite-plugin-vue-devtools'
+import vueDevTools from 'vite-plugin-vue-devtools';
 
 const useDevTools = process.env.USE_VITE_DEVTOOLS === 'true';
 const plugin = useDevTools ? [vueDevTools()] : [];

@@ -29,4 +29,13 @@ To develop code for the mission control, please follow the setup below:
 1. Run `npm run dev`
 2. While running open another VSCode window to the URC repo in the docker environment
    - Run `./build.sh` and `./launch.sh` commands in the container terminal
-3. If the Websocket icon becomes **green**, you are connected!
+3. On the mission control, navigate to the setting tab and change the websocket to where the urc is ran
+
+TABLE 1: Connection
+| Value | Rover Production | Rover Local | Local Development |
+| ---- | ---- | ---- | ---- |
+| IP address | `192.168.0.145` | `10.0.0.10` | `localhost` |
+| Router Color | White | Grey | N/A |
+| Wi-Fi Name | `trickfirerouter` | `viator` | N/A |
+
+4. If the Websocket icon becomes **green**, you are connected!
