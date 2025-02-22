@@ -1,5 +1,5 @@
 import { createPublisher, type Publisher } from '../roslibUtils/createPublisher';
-import { type inputType, gamepadButtonTypeMap, gamepadJoystickTypeMap } from './controllerBindings';
+import { type inputType, controllerIndexButtonMap, controllerIndexJoystickMap } from './controllerBindings';
 import { onKeyDown, onKeyPressed } from '@vueuse/core'
 
 /* This stores controller data for each controller connected to the system.
@@ -41,7 +41,7 @@ export class ControllerState {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     const stringJson = JSON.stringify(jsonInput);
     const json: {
-      [friendlyInput: string]: string | { type: inputType; deltaSensitivity: number };
+      [friendlyInput: string]: string | { name: string; deltaSensitivity: number };
     } = JSON.parse(stringJson);
 
     // Fill bindingEntryToPublisher with entry and values.
@@ -51,20 +51,15 @@ export class ControllerState {
         topicType: 'std_msgs/Float32',
       });
 
-      if (!gamepadButtonTypeMap.hasOwnProperty(inputName) && !gamepadJoystickTypeMap.hasOwnProperty(inputName)) {
-        onKeyDown(inputName, () => publisher.publish({data: 1}, {isDebugging: true}));
-      }
-      else {
-        this.inputStore[inputName] = {
-          publisher: publisher,
-          type: 'digitalButton',
-          currentValue: 0,
-          deltaValue: 0,
-        };
-  
-        if (typeof inputEntry === 'object') {
-          this.inputStore[inputName].deltaSensitivity = inputEntry.deltaSensitivity;
-        }
+      this.inputStore[inputName] = {
+        publisher: publisher,
+        type: 'digitalButton',
+        currentValue: 0,
+        deltaValue: 0,
+      };
+
+      if (typeof inputEntry === 'object') {
+        this.inputStore[inputName].deltaSensitivity = inputEntry.deltaSensitivity;
       }
     }
   }
@@ -75,19 +70,21 @@ export class ControllerState {
     const buttonArray = gamepad.buttons;
 
     for (let i: number = 0; i < buttonArray.length; i++) {
-      const currentInput = this.inputStore[gamepadButtonTypeMap[i]];
+      const currentInput = this.inputStore[controllerIndexButtonMap[i]?.name];
 
       if (currentInput) {
-        currentInput.deltaValue = currentInput.currentValue - buttonArray[i].value;
+        currentInput.type = controllerIndexButtonMap[i].type;
+        currentInput.deltaValue = Math.abs(currentInput.currentValue - buttonArray[i].value);
         currentInput.currentValue = buttonArray[i].value;
       }
     }
 
     for (let i: number = 0; i < joystickArray.length; i++) {
-      const currentInput = this.inputStore[gamepadJoystickTypeMap[i]];
+      const currentInput = this.inputStore[controllerIndexJoystickMap[i]?.name];
 
       if (currentInput) {
-        currentInput.deltaValue = currentInput.currentValue - joystickArray[i].valueOf();
+        currentInput.type = controllerIndexJoystickMap[i].type;
+        currentInput.deltaValue = Math.abs(currentInput.currentValue - joystickArray[i].valueOf());
         currentInput.currentValue = joystickArray[i].valueOf();
       }
     }

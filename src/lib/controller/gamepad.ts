@@ -10,6 +10,9 @@ export function gamepadInit() {
   const controller = useControllerStore();
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
+
+
+  
   function onGamePadConnectsHandler(e: GamepadEvent) {
     console.log('HELLO CONTROLLER CONNECTED');
     console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
