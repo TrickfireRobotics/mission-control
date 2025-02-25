@@ -28,3 +28,23 @@ export type CompressedImage = {
   format: 'jpg' | 'png';
   data: Uint8Array;
 };
+
+//https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/NavSatFix.html
+export type NavSatFix = {
+  header: {
+    stamp: {
+      sec: number;
+      nanosec: number;
+    },
+    frame_id: string,
+  },
+  status: {
+    status: number;
+    service: number;
+  }
+  latitude: 47.7918611;
+  longitude: -122.1755833;
+  altitude: 106.607;
+  position_covariance: number[];
+  position_covariance_type: number;
+}
