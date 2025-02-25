@@ -11,6 +11,7 @@ export type TopicTypeMap = {
   'std_msgs/Float32': StdMsg<number>;
   'std_msgs/Time': StdMsg<number>;
   'sensor_msgs/msg/CompressedImage': CompressedImage;
+  'sensor_msgs/NavSatFix': NavSatFix;
 };
 
 export type TopicType = keyof TopicTypeMap;
@@ -42,9 +43,9 @@ export type NavSatFix = {
     status: number;
     service: number;
   }
-  latitude: 47.7918611;
-  longitude: -122.1755833;
-  altitude: 106.607;
+  latitude: number;
+  longitude: number;
+  altitude: number;
   position_covariance: number[];
   position_covariance_type: number;
 }

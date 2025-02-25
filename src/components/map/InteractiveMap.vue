@@ -1,10 +1,22 @@
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
 import { shallowRef, onMounted, markRaw } from 'vue';
+import { useMapStore } from '@/store/mapStore';
+import { onActivated, onDeactivated } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 
 const mapContainer = shallowRef<HTMLElement | null>(null);
 const map = shallowRef<Map | null>(null);
+const leafyMapStore = useMapStore();
+
+onActivated(() => {
+  leafyMapStore.start();
+});
+
+onDeactivated(() => {
+  leafyMapStore.stop();
+});
+
 
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
@@ -20,6 +32,14 @@ onMounted(() => {
       zoom: initialState.zoom,
     }),
   );
+
+  while (leafyMapStore.isOn) {
+    const latitude = leafyMapStore.msg?.latitude;
+    const longitude = leafyMapStore.msg?.longitude;
+    if (latitude !== undefined && longitude !== undefined) {
+      addPin(latitude, longitude);
+    }
+  }
 });
 
 /**
