@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
-import { shallowRef, onMounted, markRaw } from 'vue';
+import { shallowRef, onMounted, markRaw, watch } from 'vue';
 import { useMapStore } from '@/store/mapStore';
 import { onActivated, onDeactivated } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
@@ -8,16 +8,18 @@ import '@maptiler/sdk/dist/maptiler-sdk.css';
 const mapContainer = shallowRef<HTMLElement | null>(null);
 const map = shallowRef<Map | null>(null);
 const leafyMapStore = useMapStore();
-
 onActivated(() => {
-  leafyMapStore.start();
+  leafyMapStore.start({ isDebugging: true });
+  console.log('ADAM MAP IS ONNN');
 });
 
 onDeactivated(() => {
   leafyMapStore.stop();
 });
 
-
+// watch(leafyMapStore.msg, (newData) => {
+//   map.value.
+// })
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
 
@@ -32,12 +34,16 @@ onMounted(() => {
       zoom: initialState.zoom,
     }),
   );
-
+  // Create a marker (initial position)
+  const marker = new Marker().setLngLat([0, 0]).addTo(map.value);
+  addPin(0, 0);
   while (leafyMapStore.isOn) {
     const latitude = leafyMapStore.msg?.latitude;
     const longitude = leafyMapStore.msg?.longitude;
     if (latitude !== undefined && longitude !== undefined) {
-      addPin(latitude, longitude);
+      marker.setLngLat([latitude, longitude]);
+      map.value.setCenter([latitude, longitude]);
+      // addPin(latitude, longitude);
     }
   }
 });
