@@ -30,7 +30,7 @@ function telemetryCallback(result: MoteusMotorState[]) {
   // If we have a valid telemetry position, update the bone rotation.
   if (shoulderMotor?.position != null) {
     // Multiply the telemetry fraction by 2π to get the incoming additional radians.
-    const additionalShoulderRotation = shoulderMotor.position * 2 * Math.PI;
+    const additionalShoulderRotation = shoulderMotor.position * -2 * Math.PI;
     // The final rotation equals the default plus the telemetry offset.
     const shoulderRotation = shoulderDefault + additionalShoulderRotation;
     shoulder.rotation.x = shoulderRotation;
