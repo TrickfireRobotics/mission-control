@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onActivated, onDeactivated, onMounted, onUnmounted, ref, watch } from 'vue';
+import { onActivated, onDeactivated } from 'vue';
 import { TresCanvas } from '@tresjs/core';
-import { OrbitControls, GLTFModel, useGLTF } from '@tresjs/cientos';
-import { Bone, Object3D, Vector3 } from 'three';
+import { OrbitControls, useGLTF } from '@tresjs/cientos';
+import { Bone } from 'three';
 import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry';
 
 const { scene } = await useGLTF('newarm.glb');
