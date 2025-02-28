@@ -18,6 +18,16 @@ import CameraModule from '@/components/camera/CameraModule.vue';
     <Suspense>
       <ArmModel />
     </Suspense>
+  import RoverVelocityDisplay from '@/components/rover_velocity_display/RoverVelocityDisplay.vue';
+</script>
+<template>
+  <div class="two-by-three-grid-page">
+    <RoverVelocityDisplay />
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
+    <h1>Not yet Implemented</h1>
   </div>
 </template>
 

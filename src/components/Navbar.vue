@@ -219,6 +219,8 @@ nav {
     align-items: center;
     flex-shrink: 0;
     background-color: var(--space-purple);
+    padding: 0 1rem;
+    height: 100%;
 
     #logo {
       max-width: 100%;
@@ -226,8 +228,7 @@ nav {
       margin: 0 0 0 1rem;
     }
     #logo-text {
-      margin: 0 1rem 0 0.8rem;
-      font-size: 1.5rem;
+      margin: 0 1rem;
     }
   }
   #page-section {
