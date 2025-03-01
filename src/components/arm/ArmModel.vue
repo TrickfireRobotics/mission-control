@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { onActivated, onDeactivated } from 'vue';
 import { TresCanvas } from '@tresjs/core';
 import { OrbitControls, useGLTF } from '@tresjs/cientos';
 import { Bone } from 'three';
-import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry';
+import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 
 const { scene } = await useGLTF('newarm.glb');
 
@@ -20,35 +19,19 @@ function degreesToRadians(degrees: number): number {
 const shoulderDefault = degreesToRadians(-72.88);
 const elbowDefault = degreesToRadians(153.65);
 
-const telemetry = useTelemetry();
-
-function telemetryCallback(result: MoteusMotorState[]) {
-  // Find the telemetry data for each motor using the canfdID.
-  const shoulderMotor = result.find((motor) => motor.can_id === 1);
-  const elbowMotor = result.find((motor) => motor.can_id === 2);
-
-  // If we have a valid telemetry position, update the bone rotation.
-  if (shoulderMotor?.position != null) {
+useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow], (data) => data.position, null, {
+  armShoulder: (position) => {
     // Multiply the telemetry fraction by 2π to get the incoming additional radians.
-    const additionalShoulderRotation = shoulderMotor.position * -2 * Math.PI;
+    const additionalShoulderRotation = position * -2 * Math.PI;
     // The final rotation equals the default plus the telemetry offset.
     const shoulderRotation = shoulderDefault + additionalShoulderRotation;
     shoulder.rotation.x = shoulderRotation;
-  }
-
-  if (elbowMotor?.position != null) {
-    const additionalElbowRotation = elbowMotor.position * 2 * Math.PI;
+  },
+  armElbow: (position) => {
+    const additionalElbowRotation = position * 2 * Math.PI;
     const elbowRotation = elbowDefault + additionalElbowRotation;
     elbow.rotation.x = elbowRotation;
-  }
-}
-
-onActivated(() => {
-  telemetry.start(telemetryCallback);
-});
-
-onDeactivated(() => {
-  telemetry.stop();
+  },
 });
 </script>
 <template>
