@@ -1,26 +1,47 @@
 <script setup lang="ts">
-import { shallowRef, watch } from 'vue';
 import { TresCanvas } from '@tresjs/core';
-import { OrbitControls, GLTFModel } from '@tresjs/cientos';
-import type { Object3D } from 'three';
+import { OrbitControls, useGLTF } from '@tresjs/cientos';
+import { Bone } from 'three';
+import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 
-const modelRef = shallowRef<Object3D>();
+const { scene } = await useGLTF('newarm.glb');
 
-watch(modelRef, (model) => {
-  if (!model) return;
-  console.log('Model is rendered');
+//TODO: - add remaining bones
+//      - connect data to bones
+const shoulder = scene.getObjectByName('Shoulder') as Bone;
+const elbow = scene.getObjectByName('Elbow') as Bone;
+
+function degreesToRadians(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
+//default rotations on the 3d model
+const shoulderDefault = degreesToRadians(-72.88);
+const elbowDefault = degreesToRadians(153.65);
+
+useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow], (data) => data.position, null, {
+  armShoulder: (position) => {
+    // Multiply the telemetry fraction by 2π to get the incoming additional radians.
+    const additionalShoulderRotation = position * -2 * Math.PI;
+    // The final rotation equals the default plus the telemetry offset.
+    const shoulderRotation = shoulderDefault + additionalShoulderRotation;
+    shoulder.rotation.x = shoulderRotation;
+  },
+  armElbow: (position) => {
+    const additionalElbowRotation = position * 2 * Math.PI;
+    const elbowRotation = elbowDefault + additionalElbowRotation;
+    elbow.rotation.x = elbowRotation;
+  },
 });
 </script>
 <template>
   <div id="arm">
     <TresCanvas shadows alpha>
       <TresAmbientLight :intensity="1" />
-      <TresDirectionalLight :intensity="2" :position="[1, 1, 1]" />
-      <TresPerspectiveCamera :position="[1, 1, 1]" />
+      <TresDirectionalLight :intensity="3" :position="[1, 1, 1]" />
+      <TresPerspectiveCamera :position="[1.2, 0, 0]" />
       <OrbitControls :enable-damping="false" :enable-pan="false" />
-      <Suspense>
-        <GLTFModel ref="modelRef" path="newarm.glb" draco :rotation="[0, 0, 0]" />
-      </Suspense>
+      <primitive :object="scene" />
     </TresCanvas>
   </div>
 </template>

@@ -15,8 +15,7 @@ import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
-
-//TODO implement latency
+import { onMounted } from 'vue';
 
 const roslib = useRoslibStore();
 const controller = useControllerStore();
@@ -25,6 +24,10 @@ const currentTab = ref(0);
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
 };
+
+onMounted(() => {
+  operation.operationStateSub.start();
+});
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
 
@@ -104,24 +107,24 @@ const pageIconArr: PageIcon = [
         <button
           id="disable-button"
           title="Disabled"
-          :class="{ checked: operation.operationState === 'disabled' }"
-          @click="operation.setOperationState('disabled')"
+          :class="{ checked: operation.getOperationState() === 'disabled' }"
+          @click="operation.setOperationState({ data: 'disabled' })"
         >
           Disable
         </button>
         <button
           id="teleoperation-button"
           title="TeleOperation"
-          :class="{ checked: operation.operationState === 'teleoperation' }"
-          @click="operation.setOperationState('teleoperation')"
+          :class="{ checked: operation.getOperationState() === 'teleoperation' }"
+          @click="operation.setOperationState({ data: 'teleoperation' })"
         >
           TeleOp
         </button>
         <button
           id="autonomous-button"
           title="Autonomous"
-          :class="{ checked: operation.operationState === 'autonomous' }"
-          @click="operation.setOperationState('autonomous')"
+          :class="{ checked: operation.getOperationState() === 'autonomous' }"
+          @click="operation.setOperationState({ data: 'autonomous' })"
         >
           Auto
         </button>
@@ -159,9 +162,11 @@ const pageIconArr: PageIcon = [
           :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
         />
       </div>
-      <div class="container">
+      <div id="ping_container" class="container">
         <h4 id="status">Ping</h4>
-        <h4>{{ roslib.latency + 'ms' }}</h4>
+        <h5>
+          {{ roslib.latency ? Math.round(roslib.latency) + 'ms' : 'N/A' }}
+        </h5>
       </div>
     </section>
   </nav>
@@ -171,7 +176,6 @@ const pageIconArr: PageIcon = [
 nav {
   grid-area: nav;
   display: flex;
-  align-items: center;
   height: var(--nav-bar-size);
   background-color: var(--black);
   h1,
@@ -203,6 +207,12 @@ nav {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    &#ping_container {
+      justify-content: start;
+      margin: 0.2rem;
+      max-width: 2rem;
+    }
   }
   #logo-section {
     display: flex;
@@ -215,6 +225,7 @@ nav {
     #logo {
       max-width: 100%;
       max-height: 3rem;
+      margin: 0 0 0 1rem;
     }
     #logo-text {
       margin: 0 0 0 0.75rem;
@@ -226,15 +237,15 @@ nav {
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 1px solid var(--white);
-    border-left: 1px solid var(--white);
+    border-right: 2px solid var(--white);
+    border-left: 2px solid var(--white);
   }
   #states-section {
     display: flex;
     gap: 1.75rem;
     height: var(--nav-bar-size);
     padding: 0 2rem 0 1.5rem;
-    background-color: hsl(240, 20%, 20%);
+    background-color: var(--space-purple);
 
     #operation-selector {
       margin: auto 0;
