@@ -5,6 +5,7 @@ import '@maptiler/sdk/dist/maptiler-sdk.css';
 
 const mapContainer = shallowRef<HTMLElement | null>(null);
 const map = shallowRef<Map | null>(null);
+
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
 
