@@ -6,7 +6,7 @@ import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 
 const { scene } = await useGLTF('newarm.glb');
 
-const wrist = scene.getObjectByName('Wrist') as Bone;
+//const wrist = scene.getObjectByName('Wrist') as Bone;
 const shoulder = scene.getObjectByName('Shoulder') as Bone;
 const elbow = scene.getObjectByName('Elbow') as Bone;
 const turntable = scene.getObjectByName('Turntable') as Bone;
@@ -16,7 +16,7 @@ function degreesToRadians(degrees: number): number {
 }
 
 //default rotations on the 3d model
-const wristDefault = degreesToRadians(12.69);
+//const wristDefault = degreesToRadians(12.69);
 const shoulderDefault = degreesToRadians(-72.88);
 const elbowDefault = degreesToRadians(153.65);
 const turntableDefault = degreesToRadians(-37.76);
