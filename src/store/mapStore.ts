@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia';
-import { computed } from 'vue';
-import type { TopicType } from '@/lib/roslibUtils/rosTypes';
 import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
-import { createPublisher } from '@/lib/roslibUtils/createPublisher';
 import { useRoslibStore } from '@/store/roslibStore';
 
 // 0th Define any constants above
-const TOPIC_NAME = '/fix';
 // const TOPIC_MESSAGE_TYPE: TopicType = 'sensor_msgs/NavSatFix';
 
 export const useMapStore = defineStore('example', () => {
