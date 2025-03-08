@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
-import { shallowRef, onMounted, markRaw, watch } from 'vue';
+import { shallowRef, onMounted, markRaw } from 'vue';
 import { useMapStore } from '@/store/mapStore';
 import { onActivated, onDeactivated } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
@@ -17,9 +17,6 @@ onDeactivated(() => {
   leafyMapStore.stop();
 });
 
-// watch(leafyMapStore.msg, (newData) => {
-//   map.value.
-// })
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
 
