@@ -6,20 +6,22 @@ import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 
 const { scene } = await useGLTF('newarm.glb');
 
-//TODO: - add remaining bones
-//      - connect data to bones
+const wrist = scene.getObjectByName('Wrist') as Bone;
 const shoulder = scene.getObjectByName('Shoulder') as Bone;
 const elbow = scene.getObjectByName('Elbow') as Bone;
+const turntable = scene.getObjectByName('Turntable') as Bone;
 
 function degreesToRadians(degrees: number): number {
   return degrees * (Math.PI / 180);
 }
 
 //default rotations on the 3d model
+const wristDefault = degreesToRadians(12.69);
 const shoulderDefault = degreesToRadians(-72.88);
 const elbowDefault = degreesToRadians(153.65);
+const turntableDefault = degreesToRadians(-37.76);
 
-useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow], (data) => data.position, null, {
+useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable], (data) => data.position, null, {
   armShoulder: (position) => {
     // Multiply the telemetry fraction by 2π to get the incoming additional radians.
     const additionalShoulderRotation = position * -2 * Math.PI;
@@ -32,6 +34,11 @@ useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow], (data) => data.posit
     const elbowRotation = elbowDefault + additionalElbowRotation;
     elbow.rotation.x = elbowRotation;
   },
+  armTurntable: (position) => {
+    const additionalTurntableRotation = position * 2 * Math.PI;
+    const turntableRotation = turntableDefault + additionalTurntableRotation;
+    turntable.rotation.x = turntableRotation;
+  }
 });
 </script>
 <template>
