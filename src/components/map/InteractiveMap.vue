@@ -10,7 +10,6 @@ const map = shallowRef<Map | null>(null);
 const leafyMapStore = useMapStore();
 onActivated(() => {
   leafyMapStore.start({ isDebugging: true });
-  console.log('ADAM MAP IS ONNN');
 });
 
 onDeactivated(() => {
