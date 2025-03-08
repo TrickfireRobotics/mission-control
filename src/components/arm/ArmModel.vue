@@ -57,11 +57,4 @@ useTelemetryData(
     </TresCanvas>
   </div>
 </template>
-<style lang="scss" scoped>
-#arm {
-  height: 100%;
-  width: 100%;
-  grid-column: 2 / span 2;
-  grid-row: 1 / span 2;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -8,11 +8,6 @@ import PublishTesterComponent from '@/components/PublishTesterComponent.vue';
   <div class="two-by-three-grid-page">
     <ExampleComponent />
     <PublishTesterComponent />
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 

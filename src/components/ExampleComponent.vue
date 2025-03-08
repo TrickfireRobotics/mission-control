@@ -24,7 +24,12 @@ const onAndOffHandler = () => {
 </script>
 <template>
   <div>
-    <h1>Example Data: {{ example.helloWorldSub.msg?.data }}</h1>
+    <div class="dialogue-box">
+      <h2>Example Data:</h2>
+      <p>
+        {{ example.helloWorldSub.msg?.data }}
+      </p>
+    </div>
     <button @click="example.helloWorldPub.publish({ data: example.helloWorldSub.msg?.data + '!' })">
       Add !
     </button>

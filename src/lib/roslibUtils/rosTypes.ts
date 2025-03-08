@@ -11,6 +11,7 @@ export type TopicTypeMap = {
   'std_msgs/Float32': StdMsg<number>;
   'std_msgs/Time': StdMsg<number>;
   'sensor_msgs/msg/CompressedImage': CompressedImage;
+  'sensor_msgs/msg/NavSatFix': NavSatFix;
 };
 
 export type TopicType = keyof TopicTypeMap;
@@ -27,4 +28,24 @@ export type CompressedImage = {
   };
   format: 'jpg' | 'png';
   data: Uint8Array;
+};
+
+//https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/NavSatFix.html
+export type NavSatFix = {
+  header: {
+    stamp: {
+      sec: number;
+      nanosec: number;
+    };
+    frame_id: string;
+  };
+  status: {
+    status: number;
+    service: number;
+  };
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  position_covariance: number[];
+  position_covariance_type: number;
 };

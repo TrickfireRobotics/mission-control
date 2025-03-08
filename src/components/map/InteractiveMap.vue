@@ -1,10 +1,20 @@
 <script lang="ts" setup>
 import { Map, MapStyle, config, Marker, Popup } from '@maptiler/sdk';
 import { shallowRef, onMounted, markRaw } from 'vue';
+import { useMapStore } from '@/store/mapStore';
+import { onActivated, onDeactivated } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 
 const mapContainer = shallowRef<HTMLElement | null>(null);
 const map = shallowRef<Map | null>(null);
+const leafyMapStore = useMapStore();
+onActivated(() => {
+  leafyMapStore.start({ isDebugging: true });
+});
+
+onDeactivated(() => {
+  leafyMapStore.stop();
+});
 
 onMounted(() => {
   config.apiKey = 'Q7DDIQDDZYYErXyqd3qb';
@@ -20,6 +30,18 @@ onMounted(() => {
       zoom: initialState.zoom,
     }),
   );
+  // Create a marker (initial position)
+  const marker = new Marker().setLngLat([0, 0]).addTo(map.value);
+  addPin(0, 0);
+  while (leafyMapStore.isOn) {
+    const latitude = leafyMapStore.msg?.latitude;
+    const longitude = leafyMapStore.msg?.longitude;
+    if (latitude !== undefined && longitude !== undefined) {
+      marker.setLngLat([latitude, longitude]);
+      map.value.setCenter([latitude, longitude]);
+      // addPin(latitude, longitude);
+    }
+  }
 });
 
 /**
@@ -28,7 +50,6 @@ onMounted(() => {
  * @param lat - The latitude of the pin location.
  * @param lng - The longitude of the pin location.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function addPin(lat: number, lng: number): void {
   if (map.value) {
     const timestamp = new Date().toISOString();
