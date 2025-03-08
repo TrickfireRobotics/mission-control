@@ -21,25 +21,30 @@ const shoulderDefault = degreesToRadians(-72.88);
 const elbowDefault = degreesToRadians(153.65);
 const turntableDefault = degreesToRadians(-37.76);
 
-useTelemetryData([CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable], (data) => data.position, null, {
-  armShoulder: (position) => {
-    // Multiply the telemetry fraction by 2π to get the incoming additional radians.
-    const additionalShoulderRotation = position * -2 * Math.PI;
-    // The final rotation equals the default plus the telemetry offset.
-    const shoulderRotation = shoulderDefault + additionalShoulderRotation;
-    shoulder.rotation.x = shoulderRotation;
+useTelemetryData(
+  [CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable],
+  (data) => data.position,
+  null,
+  {
+    armShoulder: (position) => {
+      // Multiply the telemetry fraction by 2π to get the incoming additional radians.
+      const additionalShoulderRotation = position * -2 * Math.PI;
+      // The final rotation equals the default plus the telemetry offset.
+      const shoulderRotation = shoulderDefault + additionalShoulderRotation;
+      shoulder.rotation.x = shoulderRotation;
+    },
+    armElbow: (position) => {
+      const additionalElbowRotation = position * 2 * Math.PI;
+      const elbowRotation = elbowDefault + additionalElbowRotation;
+      elbow.rotation.x = elbowRotation;
+    },
+    armTurntable: (position) => {
+      const additionalTurntableRotation = position * 2 * Math.PI;
+      const turntableRotation = turntableDefault + additionalTurntableRotation;
+      turntable.rotation.x = turntableRotation;
+    },
   },
-  armElbow: (position) => {
-    const additionalElbowRotation = position * 2 * Math.PI;
-    const elbowRotation = elbowDefault + additionalElbowRotation;
-    elbow.rotation.x = elbowRotation;
-  },
-  armTurntable: (position) => {
-    const additionalTurntableRotation = position * 2 * Math.PI;
-    const turntableRotation = turntableDefault + additionalTurntableRotation;
-    turntable.rotation.x = turntableRotation;
-  }
-});
+);
 </script>
 <template>
   <div id="arm">
