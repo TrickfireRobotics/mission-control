@@ -28,7 +28,7 @@ onMounted(() => {
  * @param lat - The latitude of the pin location.
  * @param lng - The longitude of the pin location.
  */
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function addPin(lat: number, lng: number): void {
   if (map.value) {
     const timestamp = new Date().toISOString();
