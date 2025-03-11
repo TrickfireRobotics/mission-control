@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createSubscriber } from '@/lib/roslibUtils/createSubscriber';
+import { useSubscriber } from '@/lib/roslibUtils/createSubscriber';
 import { onMounted, ref } from 'vue';
 import type { CompressedImage } from '@/lib/roslibUtils/rosTypes';
 
@@ -12,7 +12,7 @@ const props = defineProps<CameraModuleProps>();
 const blackImage =
   'data:image/jpg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==';
 
-const cameraSub = createSubscriber({
+const cameraSub = useSubscriber({
   topicName: `video_frames${props.cameraId}`,
   topicType: 'sensor_msgs/msg/CompressedImage',
 });
