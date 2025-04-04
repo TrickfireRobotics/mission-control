@@ -117,7 +117,7 @@ function getMoteusStateProxy(
         </button>
       </div>
       <div class="period-input-container">
-        <b class="period-text">Update Delay in ms</b>
+        <b class="period-text">Update Delay in ms (doesn't work - FIXME)</b>
         <input
           v-model="updateTimeMs"
           class="period-input"
@@ -145,10 +145,6 @@ function getMoteusStateProxy(
         </GenericMotorTelemetry>
       </div>
     </div>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
@@ -156,6 +152,7 @@ function getMoteusStateProxy(
 .page {
   display: flex;
   flex-wrap: wrap;
+  overflow: scroll;
 }
 .period-input-container {
   display: flex;

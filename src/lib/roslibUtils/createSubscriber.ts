@@ -1,6 +1,6 @@
 import ROSLIB from 'roslib';
 import type { TopicType, TopicTypeMap } from './rosTypes';
-import { type Ref, ref } from 'vue';
+import { onActivated, onDeactivated, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { useRoslibStore } from '@/store/roslibStore';
 
 // The CB type is there to ensure that we can't access both msg and callback at the same time.
@@ -21,7 +21,7 @@ export interface Subscriber<T extends TopicType, CB extends boolean> {
    * @param options - are the options used during the duration of this startup.
    * @param options.callback - is a callback that will be ran when data is received, containing the data itself.
    * @param options.defaultValue - is an optional value to set `msg` to after subscribing.
-   * @param options.isDebugging - should we show debug output?
+   * @param options.isDebugging - prints out message when subscriber receives message.
    */
   start: (options?: {
     callback?: CB extends true ? (message: TopicTypeMap[T]) => void : never;
@@ -32,6 +32,62 @@ export interface Subscriber<T extends TopicType, CB extends boolean> {
   stop: () => void;
   /** Is the subscriber currently running? */
   isOn: Ref<boolean>;
+}
+
+/**
+ * Creates a subscriber that listens for messages on a specific topic.
+ * This uses Vue lifecycle to automatically start and stop the subscriber
+ * when the component using it is activated/deactivated.
+ * Therefore, this MUST NOT be stored anywhere.
+ * @param options.topicName - should start with '/' along with topic name
+ * @param options.topicType - Ros Message Type
+ * @param options.startingDefaultValue - optional starting value
+ * @param options.isDebugging - optional prints to console for debugging
+ */
+export function useSubscriber<T extends TopicType, CB extends boolean>(options: {
+  topicName: string;
+  topicType: T;
+  startingDefaultValue?: CB extends false ? TopicTypeMap[T] : never;
+}): Subscriber<T, CB> {
+  const ros = useRoslibStore();
+
+  const sub = createSubscriberForRos(ros.getTopic, options);
+
+  // If null, the subscriber is stopped,
+  // otherwise it's started.
+  let startOptions: Parameters<Subscriber<T, CB>['start']>[0] | null = null;
+
+  const start: Subscriber<T, CB>['start'] = (options) => {
+    startOptions = options;
+    sub.start(options);
+  };
+
+  const stop: Subscriber<T, CB>['stop'] = () => {
+    startOptions = null;
+    sub.stop();
+  };
+
+  onActivated(() => {
+    if (startOptions) {
+      sub.start(startOptions);
+    }
+  });
+
+  onMounted(() => {
+    if (startOptions) {
+      sub.start(startOptions);
+    }
+  });
+
+  onDeactivated(() => {
+    sub.stop();
+  });
+
+  onUnmounted(() => {
+    sub.stop();
+  });
+
+  return { ...sub, start, stop };
 }
 
 /**
