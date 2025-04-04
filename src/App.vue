@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue';
 import { useRoslibStore } from '@/store/roslibStore';
-import { onBeforeUnmount, onMounted } from 'vue';
-import { gamepadInit } from '@/lib/controller/gamepad';
+import { inputInit } from '@/lib/input/input';
 import { useFavicon } from '@vueuse/core';
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted } from 'vue';
 const rosjs = useRoslibStore();
 
 // All global subscribers & publishers that do not belong in a component put in here.
@@ -15,7 +14,7 @@ onMounted(() => {
     rosjs.$reset();
   }
 
-  gamepadInit();
+  inputInit();
 });
 
 onBeforeUnmount(() => {

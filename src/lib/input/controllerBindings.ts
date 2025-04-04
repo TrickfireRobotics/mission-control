@@ -1,9 +1,9 @@
 export type inputType = 'digitalButton' | 'analogButton' | 'joystick';
 type controllerIndexMap = {
   [index: number]: {
-    name: string
-    type: inputType
-  }
+    name: string;
+    type: inputType;
+  };
 };
 
 export const controllerIndexButtonMap: controllerIndexMap = {
@@ -22,13 +22,12 @@ export const controllerIndexButtonMap: controllerIndexMap = {
   12: { name: 'dpadUPButton', type: 'digitalButton' },
   13: { name: 'dpadDOWNButton', type: 'digitalButton' },
   14: { name: 'dpadLEFTButton', type: 'digitalButton' },
-  15: { name: 'dpadRIGHTButton', type: 'digitalButton' }
+  15: { name: 'dpadRIGHTButton', type: 'digitalButton' },
 };
 
 export const controllerIndexJoystickMap: controllerIndexMap = {
   0: { name: 'leftJoyXAxis', type: 'joystick' },
   1: { name: 'leftJoyYAxis', type: 'joystick' },
   2: { name: 'rightJoyXAxis', type: 'joystick' },
-  3: { name: 'rightJoyYAxis', type: 'joystick' }
+  3: { name: 'rightJoyYAxis', type: 'joystick' },
 };
-
