@@ -6,11 +6,6 @@ import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 <template>
   <div class="two-by-three-grid-page">
     <ConnectionSettings />
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 

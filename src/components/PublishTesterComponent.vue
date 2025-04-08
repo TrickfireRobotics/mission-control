@@ -114,7 +114,7 @@ function publishTest() {
         <button type="submit">Publish</button>
       </div>
 
-      <div v-if="receivedMessage" class="subscriber-box">
+      <div v-if="receivedMessage" class="dialogue-box">
         <h2>Received Message:</h2>
         <pre>{{ receivedMessage }}</pre>
       </div>
@@ -176,17 +176,6 @@ button {
   background-color: var(--correct);
   // margin-left: auto;
   flex-shrink: 0;
-}
-
-.subscriber-box {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid var(--light-grey);
-  border-radius: 5px;
-  background-color: var(--dark-grey);
-  color: var(--white);
-  width: 300px;
-  max-height: 80px;
 }
 
 pre {

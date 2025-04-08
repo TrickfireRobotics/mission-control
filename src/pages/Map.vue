@@ -5,8 +5,6 @@ import InteractiveMap from '@/components/map/InteractiveMap.vue';
 <template>
   <div class="two-by-three-grid-page">
     <InteractiveMap />
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
   </div>
 </template>
 
