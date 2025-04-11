@@ -3,8 +3,10 @@ import Navbar from '@/components/Navbar.vue';
 import { useRoslibStore } from '@/store/roslibStore';
 import { onBeforeUnmount, onMounted } from 'vue';
 import { gamepadInit } from '@/lib/controller/gamepad';
-
+import { useFavicon } from '@vueuse/core';
+import { computed } from 'vue';
 const rosjs = useRoslibStore();
+
 // All global subscribers & publishers that do not belong in a component put in here.
 onMounted(() => {
   // Create a new connection if the current one is stopped.
@@ -20,6 +22,13 @@ onBeforeUnmount(() => {
   // Stop the websocket when the app unloads.
   rosjs.stop = true;
 });
+
+// changes favicon based on if web socket is connected or not
+const favicon = computed(() =>
+  rosjs.isWebSocketConnected ? 'connected-favicon.ico' : 'favicon.ico',
+);
+
+useFavicon(favicon);
 </script>
 
 <template>
