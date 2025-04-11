@@ -3,7 +3,7 @@ import App from './App.vue';
 import Home from './pages/Home.vue';
 import Map from './pages/Map.vue';
 import Cameras from './pages/Cameras.vue';
-import { createMemoryHistory, createRouter } from 'vue-router';
+import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
 import DevTab from './pages/DevTab.vue';
 import Arm from './pages/Arm.vue';
 import Science from './pages/Science.vue';
@@ -26,7 +26,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
 

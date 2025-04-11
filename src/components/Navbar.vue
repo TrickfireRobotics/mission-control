@@ -16,17 +16,25 @@ import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const roslib = useRoslibStore();
 const controller = useControllerStore();
 const operation = useOperationStateStore();
 const currentTab = ref(0);
+const router = useRouter();
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
+  sessionStorage.setItem('currentTab', newValue.toString());
+  router.push(pageIconArr[newValue].label);
 };
 
 onMounted(() => {
   operation.operationStateSub.start();
+  const savedTab = sessionStorage.getItem('currentTab');
+  if (savedTab !== null) {
+    currentTab.value = parseInt(savedTab, 10);
+  }
 });
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
