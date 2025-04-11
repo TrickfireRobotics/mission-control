@@ -1,31 +1,39 @@
 <!-- Should have " setup lang="ts" " in script tag for proper Composition and enforce typescript-->
 <script setup lang="ts">
   import RoverTelemetry from '@/assets/TransparentRoverVelocityModel.svg';
-  import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry';
-  import { mergeProps, ref, type Ref } from 'vue';
+  import { CanBusID, type MoteusMotorState, useTelemetryData } from '@/lib/roslibUtils/telemetry';
+  import { mergeProps, ref, type Ref, computed } from 'vue';
   import { onMounted } from 'vue';
-  import { GenericMotorTelemetryProps } from '../telemetry/moteus/GenericMotorTelemetry.vue';
+import GenericMotorTelemetry from '../telemetry/moteus/GenericMotorTelemetry.vue';
  
-  const frontLeftMotor:Ref<string> = ref("100000%");
-  const midLeftMotor:Ref<string> = ref("50%");
-  const backLeftMotor:Ref<string> = ref("75%");
-  const frontRightMotor:Ref<string> = ref("15%");
-  const midRightMotor:Ref<string> = ref("80%");
-  const backRightMotor:Ref<string> = ref("90%");
-  const telemetry = useTelemetry();
-  const props = defineProps<GenericMotorTelemetryProps>();
-
-  onMounted(() => { 
-    telemetry.start(dataCallback);
+  // Voltage: 0-36 for old drive motors (0-48 for new drive motors), 0-48 for arm motors.
+  const MAX_VOLTAGE = 36;
+  const telemetry = useTelemetryData([CanBusID.BackLeftDrive, CanBusID.BackRightDrive, CanBusID.FrontLeftDrive, CanBusID.FrontRightDrive, CanBusID.MidLeftDrive, CanBusID.MidRightDrive], (data) => data.input_voltage, 0);
+    
+  const frontLeftMotorVelocity = computed(() => {
+    return getPercentage(telemetry.frontLeftDrive.value);
+  });
+  const midLeftMotorVelocity = computed(() => {
+    return getPercentage(telemetry.midLeftDrive.value);
+  });
+  const backLeftMotorVelocity = computed(() => {
+    return getPercentage(telemetry.backLeftDrive.value);
+  });
+  const frontRightMotorVelocity = computed(() => {
+    return getPercentage(telemetry.frontRightDrive.value);
+  });
+  const midRightMotorVelocity = computed(() => {
+    return getPercentage(telemetry.midRightDrive.value);
+  });
+  const backRightMotorVelocity = computed(() => {
+    return getPercentage(telemetry.backRightDrive.value);
   });
 
-  function dataCallback(result: MoteusMotorState[]) {
-    
-  }
-
-  function updateMotor(can_id: number, percentageData: Ref<string>, result: MoteusMotorState[]) {
-    const motor = result.find((motor) => motor.can_id === props.dataSourceParameter);
-
+  function getPercentage(input: number | null | undefined) {
+    if(!input) {
+      return "0%";
+    }
+    return ((input / MAX_VOLTAGE) * 100) + "%";
   }
 
 </script>
@@ -37,17 +45,17 @@
           <div class="barcontainer">
             <div id="frontLeftMotorBar" class="bar"></div>
           </div>
-          <p id="frontLeftMotor">{{frontLeftMotor}}</p>
+          <p id="frontLeftMotor">{{ telemetry.frontLeftDrive.value }}</p>
 
           <div class="barcontainer">
             <div id="midLeftMotorBar" class="bar"></div>
           </div>
-          <p id="midLeftMotor">{{midLeftMotor}}</p>
+          <p id="midLeftMotor">{{ telemetry.midLeftDrive.value }}</p>
 
           <div class="barcontainer">
             <div id="backLeftMotorBar" class="bar"></div>
           </div>
-          <p id="backLeftMotor">{{backLeftMotor}}</p>
+          <p id="backLeftMotor">{{ telemetry.backLeftDrive.value }}</p>
         </th>
         <th>
           <img src="@/assets/TransparentRoverVelocityModel.svg" draggable="false">
@@ -56,17 +64,17 @@
           <div class="barcontainer">
             <div id="frontRightMotorBar" class="bar"></div>
           </div>
-          <p id="frontRightMotor">{{frontRightMotor}}</p>
+          <p id="frontRightMotor">{{ telemetry.frontRightDrive.value }}</p>
 
           <div class="barcontainer">
             <div id="midRightMotorBar" class="bar"></div>
           </div>
-          <p id="midRightMotor">{{midRightMotor}}</p>
+          <p id="midRightMotor">{{ telemetry.midRightDrive.value }}</p>
 
           <div class="barcontainer">
             <div id="backRightMotorBar" class="bar"></div>
           </div>
-          <p id="backRightMotor">{{backRightMotor}}</p>
+          <p id="backRightMotor">{{ telemetry.backRightDrive.value }}</p>
         </th>
       </tr>
     </table>
@@ -75,7 +83,7 @@
 
 <!-- Should have lang="scss" and "scoped" to enable superpower of SCSS and make styles do not accidentally interact with other components styles-->
 <style lang="scss" scoped>
-  div img {
+  div img { 
     display: block;
     margin-right: auto;
     margin-left: auto; 
@@ -95,7 +103,8 @@
     margin-left: 50px;
     max-width: 18px;
     width: 18px;
-    height: 55px;
+    // height: 55px;
+    height: 56px;
     border-radius: 5px;
     margin-top: 15px;
     margin-right: auto;
@@ -113,22 +122,22 @@
     border-radius: 5px;
 
     &#frontLeftMotorBar {
-      height: v-bind(frontLeftMotor);
+      height: v-bind(frontLeftMotorVelocity);
     }
     &#midLeftMotorBar {
-      height: v-bind(midLeftMotor);
+      height: v-bind(midLeftMotorVelocity);
     }
     &#backLeftMotorBar {
-      height: v-bind(backLeftMotor);
+      height: v-bind(backLeftMotorVelocity);
     }
     &#frontRightMotorBar {
-      height: v-bind(frontRightMotor);
+      height: v-bind(frontRightMotorVelocity);
     }
     &#midRightMotorBar {
-      height: v-bind(midRightMotor);
+      height: v-bind(midRightMotorVelocity);
     }
     &#backRightMotorBar {
-      height: v-bind(backRightMotor);
+      height: v-bind(backRightMotorVelocity);
     }
   }
   @keyframes grow {
