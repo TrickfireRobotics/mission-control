@@ -3,7 +3,7 @@ import App from './App.vue';
 import Home from './pages/Home.vue';
 import Map from './pages/Map.vue';
 import Cameras from './pages/Cameras.vue';
-import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import DevTab from './pages/DevTab.vue';
 import Arm from './pages/Arm.vue';
 import Science from './pages/Science.vue';
