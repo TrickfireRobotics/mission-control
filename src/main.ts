@@ -13,16 +13,16 @@ import Help from './pages/Help.vue';
 import { createPinia } from 'pinia';
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/Home', component: Home },
-  { path: '/Cameras', component: Cameras },
-  { path: '/Arm', component: Arm },
-  { path: '/Science', component: Science },
-  { path: '/Help', component: Help },
-  { path: '/Telemetry', component: Telemetry },
-  { path: '/Map', component: Map },
-  { path: '/Settings', component: Settings },
-  { path: '/Dev-tab', component: DevTab },
+  { path: '/', name: 'Home', component: Home },
+  { path: '/Home', name: 'Home', component: Home },
+  { path: '/Cameras', name: 'Cameras', component: Cameras },
+  { path: '/Arm', name: 'Arm', component: Arm },
+  { path: '/Science', name: 'Science', component: Science },
+  { path: '/Help', name: 'Help', component: Help },
+  { path: '/Telemetry', name: 'Telemetry', component: Telemetry },
+  { path: '/Map', name: 'Map', component: Map },
+  { path: '/Settings', name: 'Settings', component: Settings },
+  { path: '/Dev-tab', name: 'DevTab', component: DevTab },
 ];
 
 const router = createRouter({

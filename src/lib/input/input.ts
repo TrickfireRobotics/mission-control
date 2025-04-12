@@ -4,11 +4,12 @@ import { useControllerStore } from '@/store/controllerStore';
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { onKeyDown, onKeyUp } from '@vueuse/core';
 
+import { KeyboardBindings, ControllerBindings} from './InputBindings';
+
 const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;
 
 const CONTROLLER_BINDING_JSON = 'src\\lib\\input\\ControllerBindings.json';
-const KEYBOARD_BINDING_JSON = 'src\\lib\\input\\KeyboardBindings.json';
 
 const indexToControllerName = new Map();
 const indexToControllerState = new Map();
@@ -17,29 +18,42 @@ export function inputInit() {
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
 
-  fetch(KEYBOARD_BINDING_JSON)
-    .then((response) => response.json())
-    .then((json) => keyboardInit(json));
-
-  function keyboardInit(jsonInput: JSON) {
-    const json: { [friendlyName: string]: string } = JSON.parse(JSON.stringify(jsonInput));
-
-    for (const friendlyName in json) {
-      const topicName = json[friendlyName];
-
-      if (topicName) {
-        const publisher = createPublisher({
-          topicName,
-          topicType: 'std_msgs/Float32',
-        });
-
-        onKeyDown(friendlyName, () => {
-          publisher.publish({ data: 1 }, { isDebugging: true });
-        });
-        onKeyUp(friendlyName, () => {
-          publisher.publish({ data: 0 }, { isDebugging: true });
-        });
-      }
+  for (const [eventName, action] of Object.entries(KeyboardBindings))
+  {
+    if (action)
+    {
+      if (typeof action === "string")
+        {
+          const publisher = createPublisher({
+            topicName: action,
+            topicType: 'std_msgs/Float32',
+          });
+    
+          onKeyDown(eventName, () => {
+            publisher.publish({ data: 1 }, { isDebugging: true });
+          });
+          onKeyUp(eventName, () => {
+            publisher.publish({ data: 0 }, { isDebugging: true });
+          });
+        }
+        else if (typeof action === "function")
+        {
+          onKeyDown(eventName, () => action());
+        }
+        else if (typeof action === "object")
+        {
+          if ("args" in action)
+          {
+            if (Array.isArray(action.args))
+            {
+              onKeyDown(eventName, () => action.function(...action.args))
+            }
+          }
+          else
+          {
+            onKeyDown(eventName, () => action.function())
+          }
+        }
     }
   }
 
