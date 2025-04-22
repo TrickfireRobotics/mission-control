@@ -1,91 +1,96 @@
-function Say(str: string, times: Number)
-{
-    console.log(str.repeat(times));
+function Say(str: string, times: number) {
+  console.log(str.repeat(times));
 }
 
-function SayStuff()
-{
-    console.log("Stuff!")
+function SayStuff() {
+  console.log('Stuff!');
 }
 
-export type bind = {
-    [friendlyName: string]: string | Function | {
-        function: Function,
-        args?: [],
-    }
-}
+export type keyboardBind =
+  | string
+  | Function
+  | {
+      function: Function;
+      args?: any[];
+    };
 
-export const KeyboardBindings: bind = {
-  "a": "gripRotOpen",
-  "b": "",
-  "c": "",
-  "d": "",
-  "e": "",
-  "f": "",
-  "g": "",
-  "h": "",
-  "i": "",
-  "j": "",
-  "k": "",
-  "l": "",
-  "m": "",
-  "n": "",
-  "o": "",
-  "p": "",
-  "q": "",
-  "r": "",
-  "s": "",
-  "t": "",
-  "u": "",
-  "v": "",
-  "w": "",
-  "x": "",
-  "y": "",
-  "z": "",
-  "0": SayStuff,
-  "1": SayStuff,
-  "2": {function: SayStuff},
-  "3": {function: Say, args: ["Hello", 3]},
-  "4": {function: SayStuff},
-  "5": "",
-  "6": "",
-  "7": "",
-  "8": "",
-  "9": "",
-  "Enter": "",
-  "Escape": "",
-  "Backspace": "",
-  "Tab": "",
-  "Shift": "",
-  "Control": "",
-  "Alt": "",
-  "CapsLock": "",
-  "ArrowUp": "",
-  "ArrowDown": "",
-  "ArrowLeft": "move_left_drivebase_side_message",
-  "ArrowRight": "move_right_drivebase_side_message",
-  " ": "",
-}
+export type controllerBind =
+  | keyboardBind
+  | { publisher: string; deltaSensitivity?: number }
+  | { function: Function; deltaSensitivity?: number }
+  | { function: Function; args?: any[]; deltaSensitivity?: number };
 
-export const ControllerBindings = {
-  "aButton": "gripRotOpen",
-  "bButton": "gripRotClose",
-  "xButton": "gripLinearOpen",
-  "yButton": "gripLinearClose",
-  "leftBumperButton": "left_wrist_ccw",
-  "rightBumperButton": "right_wrist_ccw",
-  "leftTriggerButton": "left_wrist_cw",
-  "rightTriggerButton": "right_wrist_cw",
-  "backButton": "turntable_ccw",
-  "startButton": "turntable_cw",
-  "leftJoystickButton": "",
-  "rightJoystickButton": "",
-  "dpadUPButton": "elbow_up",
-  "dpadDOWNButton": "elbow_down",
-  "dpadLEFTButton": "shoulder_down",
-  "dpadRIGHTButton": "shoulder_up",
-  "leftJoyXAxis": "",
-  "leftJoyYAxis": "move_left_drivebase_side_message",
-  "rightJoyXAxis": "",
-  "rightJoyYAxis": "move_right_drivebase_side_message"
-}
+export const KeyboardBindings: { [friendlyName: string]: keyboardBind } = {
+  a: 'gripRotOpen',
+  b: '',
+  c: '',
+  d: '',
+  e: '',
+  f: '',
+  g: '',
+  h: '',
+  i: '',
+  j: '',
+  k: '',
+  l: '',
+  m: '',
+  n: '',
+  o: '',
+  p: '',
+  q: '',
+  r: '',
+  s: '',
+  t: '',
+  u: '',
+  v: '',
+  w: '',
+  x: '',
+  y: '',
+  z: '',
+  '0': SayStuff,
+  '1': SayStuff,
+  '2': { function: SayStuff },
+  '3': { function: Say, args: ['Hello', 3] },
+  '4': '',
+  '5': '',
+  '6': '',
+  '7': '',
+  '8': '',
+  '9': '',
+  Enter: '',
+  Escape: '',
+  Backspace: '',
+  Tab: '',
+  Shift: '',
+  Control: '',
+  Alt: '',
+  CapsLock: '',
+  ArrowUp: '',
+  ArrowDown: '',
+  ArrowLeft: 'move_left_drivebase_side_message',
+  ArrowRight: 'move_right_drivebase_side_message',
+  ' ': '',
+};
+
+export const ControllerBindings: { [friendlyName: string]: controllerBind } = {
+  aButton: 'gripRotOpen',
+  bButton: 'gripRotClose',
+  xButton: 'gripLinearOpen',
+  yButton: 'gripLinearClose',
+  leftBumperButton: 'left_wrist_ccw',
+  rightBumperButton: 'right_wrist_ccw',
+  leftTriggerButton: 'left_wrist_cw',
+  rightTriggerButton: 'right_wrist_cw',
+  backButton: 'turntable_ccw',
+  startButton: 'turntable_cw',
+  leftJoystickButton: '',
+  rightJoystickButton: '',
+  dpadUPButton: 'elbow_up',
+  dpadDOWNButton: 'elbow_down',
+  dpadLEFTButton: 'shoulder_down',
+  dpadRIGHTButton: 'shoulder_up',
+  leftJoyXAxis: '',
+  leftJoyYAxis: 'move_left_drivebase_side_message',
+  rightJoyXAxis: '',
+  rightJoyYAxis: 'move_right_drivebase_side_message',
+};

@@ -1,6 +1,11 @@
 import { createPublisher, type Publisher } from '../roslibUtils/createPublisher';
-import { type inputType, controllerIndexButtonMap, controllerIndexJoystickMap } from './controllerBindings';
-import { onKeyDown, onKeyPressed } from '@vueuse/core'
+import {
+  type inputType,
+  controllerIndexButtonMap,
+  controllerIndexJoystickMap,
+} from './controllerBindings';
+import { onKeyDown, onKeyPressed } from '@vueuse/core';
+import { type controllerBind } from './InputBindings';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -17,7 +22,7 @@ export class ControllerState {
   //Key bindings
   inputStore: {
     [input: string]: {
-      publisher: Publisher<'std_msgs/Float32'>;
+      action: Publisher<'std_msgs/Float32'> | Function;
       type: inputType;
       currentValue: number;
       deltaValue: number;
@@ -26,41 +31,68 @@ export class ControllerState {
   } = {};
 
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
-  constructor(jsonControllerBinding: string, deltaSensitivity: number) {
+  constructor(
+    controllerBindings: { [friendlyName: string]: controllerBind },
+    deltaSensitivity: number,
+  ) {
     this.deltaSensitivity = deltaSensitivity;
 
-    fetch(jsonControllerBinding)
-      .then((response) => response.json())
-      .then((json) => this.readJSONFile(json));
-  }
+    for (const [eventName, action] of Object.entries(controllerBindings)) {
+      switch (typeof action) {
+        // If a publisher name is supplied
+        case 'string': {
+          if (action === '') break;
 
-  readJSONFile(jsonInput: JSON) {
-    // Convert the JSON to be read
-    // Use glob import or static import in https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1827239874
-    // Look at comment on how to cast it https://github.com/TrickfireRobotics/mission-control/pull/28#discussion_r1834908954
+          const publisher = createPublisher({
+            topicName: action,
+            topicType: 'std_msgs/Float32',
+          });
 
-    const stringJson = JSON.stringify(jsonInput);
-    const json: {
-      [friendlyInput: string]: string | { name: string; deltaSensitivity: number };
-    } = JSON.parse(stringJson);
+          this.inputStore[eventName] = {
+            action: publisher,
+            type: 'digitalButton',
+            currentValue: 0,
+            deltaValue: 0,
+          };
 
-    // Fill bindingEntryToPublisher with entry and values.
-    for (const [inputName, inputEntry] of Object.entries(json)) {
-      const publisher = createPublisher({
-        topicName: inputName,
-        topicType: 'std_msgs/Float32',
-      });
+          break;
+        }
+        // If a function is supplied
+        case 'function': {
+          this.inputStore[eventName] = {
+            action,
+            type: 'digitalButton',
+            currentValue: 0,
+            deltaValue: 0,
+          };
+          break;
+        }
+        // If arguments are supplied with a function or publisher
+        case 'object': {
+          this.inputStore[eventName] = {
+            action: () => {},
+            type: 'digitalButton',
+            currentValue: 0,
+            deltaValue: 0,
+          };
 
-      this.inputStore[inputName] = {
-        publisher: publisher,
-        type: 'digitalButton',
-        currentValue: 0,
-        deltaValue: 0,
-      };
+          if ('function' in action) {
+            this.inputStore[eventName].action = action.function;
+          } else if ('publisher' in action) {
+            const publisher = createPublisher({
+              topicName: action.publisher,
+              topicType: 'std_msgs/Float32',
+            });
 
-      if (typeof inputEntry === 'object') {
-        this.inputStore[inputName].deltaSensitivity = inputEntry.deltaSensitivity;
+            this.inputStore[eventName].action = publisher;
+          }
+          break;
+        }
+        default: {
+          console.log(`Error: Invalid action "${action}" supplied for event "${eventName}"`);
+        }
       }
+      console.log(this.inputStore);
     }
   }
 
@@ -90,8 +122,8 @@ export class ControllerState {
     }
 
     for (const inputEntry of Object.values(this.inputStore)) {
-      if (inputEntry.deltaValue > (this.deltaSensitivity)) {
-        inputEntry.publisher.publish({ data: inputEntry.currentValue }, { isDebugging: true });
+      if (inputEntry.deltaValue > this.deltaSensitivity) {
+        // inputEntry.action.publish({ data: inputEntry.currentValue }, { isDebugging: true });
       }
     }
   }
