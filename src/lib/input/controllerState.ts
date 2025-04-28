@@ -4,7 +4,6 @@ import {
   controllerIndexButtonMap,
   controllerIndexJoystickMap,
 } from './controllerBindings';
-import { onKeyDown, onKeyPressed } from '@vueuse/core';
 import { type controllerBind } from './InputBindings';
 
 /* This stores controller data for each controller connected to the system.
@@ -22,7 +21,7 @@ export class ControllerState {
   //Key bindings
   inputStore: {
     [input: string]: {
-      action: Publisher<'std_msgs/Float32'> | Function;
+      action: Publisher<'std_msgs/Float32'> | Function | {function: Function, args?: any[]};
       type: inputType;
       currentValue: number;
       deltaValue: number;
@@ -38,61 +37,50 @@ export class ControllerState {
     this.deltaSensitivity = deltaSensitivity;
 
     for (const [eventName, action] of Object.entries(controllerBindings)) {
+      if (action === '') continue;
+      
+      const baseInput = {
+        type: 'digitalButton' as inputType,
+        currentValue: 0,
+        deltaValue: 0,
+      }
+    
       switch (typeof action) {
         // If a publisher name is supplied
         case 'string': {
-          if (action === '') break;
-
           const publisher = createPublisher({
             topicName: action,
             topicType: 'std_msgs/Float32',
           });
-
-          this.inputStore[eventName] = {
-            action: publisher,
-            type: 'digitalButton',
-            currentValue: 0,
-            deltaValue: 0,
-          };
-
+    
+          this.inputStore[eventName] = {...baseInput, action: publisher};
           break;
         }
         // If a function is supplied
         case 'function': {
-          this.inputStore[eventName] = {
-            action,
-            type: 'digitalButton',
-            currentValue: 0,
-            deltaValue: 0,
-          };
-          break;
+          this.inputStore[eventName] = {...baseInput, action};
         }
-        // If arguments are supplied with a function or publisher
+        // If arguments or delta sensitivity are supplied with a function or publisher
         case 'object': {
-          this.inputStore[eventName] = {
-            action: () => {},
-            type: 'digitalButton',
-            currentValue: 0,
-            deltaValue: 0,
-          };
-
           if ('function' in action) {
-            this.inputStore[eventName].action = action.function;
+            this.inputStore[eventName] = {...baseInput, action: {function: action.function, args: action.args || []}};
           } else if ('publisher' in action) {
             const publisher = createPublisher({
               topicName: action.publisher,
               topicType: 'std_msgs/Float32',
             });
-
-            this.inputStore[eventName].action = publisher;
+    
+            this.inputStore[eventName] = {...baseInput, action: publisher}
           }
+    
+          if ('deltaSensitivity' in action) this.inputStore[eventName].deltaSensitivity = action.deltaSensitivity;
+          
           break;
         }
         default: {
           console.log(`Error: Invalid action "${action}" supplied for event "${eventName}"`);
         }
       }
-      console.log(this.inputStore);
     }
   }
 
@@ -123,7 +111,19 @@ export class ControllerState {
 
     for (const inputEntry of Object.values(this.inputStore)) {
       if (inputEntry.deltaValue > this.deltaSensitivity) {
-        // inputEntry.action.publish({ data: inputEntry.currentValue }, { isDebugging: true });
+        const action = inputEntry.action;
+        if ('publish' in action)
+        {
+          action.publish({ data: inputEntry.currentValue }, { isDebugging: true });
+        }
+        else if (typeof action === 'function')
+        {
+          action();
+        }
+        else 
+        {
+          action.function(...(action.args || []));
+        }
       }
     }
   }

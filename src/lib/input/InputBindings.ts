@@ -17,8 +17,7 @@ export type keyboardBind =
 export type controllerBind =
   | keyboardBind
   | { publisher: string; deltaSensitivity?: number }
-  | { function: Function; deltaSensitivity?: number }
-  | { function: Function; args?: any[]; deltaSensitivity?: number };
+  | { function: Function; args?: any[]; deltaSensitivity?: number};
 
 export const KeyboardBindings: { [friendlyName: string]: keyboardBind } = {
   a: 'gripRotOpen',
@@ -73,8 +72,8 @@ export const KeyboardBindings: { [friendlyName: string]: keyboardBind } = {
 };
 
 export const ControllerBindings: { [friendlyName: string]: controllerBind } = {
-  aButton: 'gripRotOpen',
-  bButton: 'gripRotClose',
+  aButton: SayStuff,
+  bButton: {function: Say, args: ['Controller', 3]},
   xButton: 'gripLinearOpen',
   yButton: 'gripLinearClose',
   leftBumperButton: 'left_wrist_ccw',
