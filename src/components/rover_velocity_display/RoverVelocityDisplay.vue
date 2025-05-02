@@ -96,15 +96,19 @@ import GenericMotorTelemetry from '../telemetry/moteus/GenericMotorTelemetry.vue
     align-items: center;
     overflow-y: auto;
     overflow-x: auto;
+    background-color: var(--component-background);
+    /*border-radius: 5%;*/
+    border-radius: 1em;
+    margin: 10px;
   }
   .barcontainer {
     background-color: var(--light-grey);
     position: relative;
-    margin-left: 50px;
+    margin-left: 20px; // Was 50px
     max-width: 18px;
     width: 18px;
     // height: 55px;
-    height: 56px;
+    height: 50px; // Was 56px
     border-radius: 5px;
     margin-top: 15px;
     margin-right: auto;
