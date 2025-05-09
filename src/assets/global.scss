@@ -80,6 +80,7 @@ button {
   height: calc(100vh - var(--nav-bar-size));
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
+  border-radius: 2em;
   // ensures grid item are the same size
   // Can toggle off for debugging
   > * {
