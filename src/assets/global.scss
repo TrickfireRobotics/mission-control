@@ -97,10 +97,11 @@ button {
   // Can toggle off for debugging
   > * {
     overflow: hidden;
-    background-color: var(--accent-color);
+    background-color: var(--component-background);
     padding: 5px;
-    border: var(--white) 1px solid;
-    border-radius: 1%;
-    margin: 0px 2px;
+    border: var(--dark-grey) 0.35em solid;
+    border-radius: .75em;
+    margin: 0.15em;
+    padding: 0.5em;
   }
 }
