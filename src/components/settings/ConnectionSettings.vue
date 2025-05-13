@@ -68,16 +68,3 @@ function updateCustomWebsocket(newAddress: string) {
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.container {
-  /*width: 100%;
-    height: 100%;*/
-  width: 90%;
-  height: 90%;
-  background-color: var(--component-background);
-  border-radius: 1em;
-  margin: 10px;
-  padding: 10px;
-}
-</style>

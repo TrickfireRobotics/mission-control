@@ -10,9 +10,7 @@ import InteractiveMap from '@/components/map/InteractiveMap.vue';
 
 <style lang="scss" scoped>
 #map {
-  height: 100%;
-  width: 100%;
-  grid-column: 1 / span 2;
+    grid-column: 1 / span 2;
   grid-row: 1 / span 2;
 }
 </style>

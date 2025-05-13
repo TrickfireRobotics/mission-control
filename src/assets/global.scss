@@ -1,5 +1,5 @@
 :root {
-  --nav-bar-size: 4rem;
+  --nav-bar-size: 4.5rem;
   --black: #000000;
   --dark-grey: #212121;
   --accent-color: hsl(240, 20%, 20%);
@@ -9,8 +9,8 @@
   --correct: #30b630;
   --white: #fafafa;
   --purple: #29293d;
-  --component-background: #262626;
-  --app-background: #141414;
+  --component-background: #252527;
+  --app-background: #141415;
 }
 *,
 ::before,
@@ -93,14 +93,15 @@ button {
   height: calc(100vh - var(--nav-bar-size));
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  border-radius: 2em;
   padding: 0.5rem;
   > * {
     overflow: hidden;
     background-color: var(--component-background);
     padding: 5px;
     border-radius: 0.25em;
-    margin: 0.5rem;
+    margin: 0.6rem;
     padding: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 0.1vw solid var(--light-grey);
   }
 }
