@@ -4,7 +4,7 @@ import { useControllerStore } from '@/store/controllerStore';
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { onKeyDown, onKeyUp } from '@vueuse/core';
 
-import { Bindings, KeyboardBindings, ControllerBindings } from './InputBindings';
+import { KeyboardBindings, ControllerBindings } from './InputBindings';
 
 
 const DELTA_SENSITIVITY = 0.01;

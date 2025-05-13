@@ -1,9 +1,15 @@
+import 
+
 function Say(str: string, times: number) {
   console.log(str.repeat(times));
 }
 
 function SayStuff() {
   console.log('Stuff!');
+}
+
+function shiftBinding() {
+  
 }
 
 export type keyboardBind =
@@ -18,6 +24,8 @@ export type controllerBind =
   | keyboardBind
   | { publisher: string; deltaSensitivity?: number }
   | { function: Function; args?: any[]; deltaSensitivity?: number};
+
+
 export const Bindings = [
   {
     keyboardBindings: {
