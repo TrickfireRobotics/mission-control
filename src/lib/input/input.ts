@@ -4,7 +4,8 @@ import { useControllerStore } from '@/store/controllerStore';
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { onKeyDown, onKeyUp } from '@vueuse/core';
 
-import { KeyboardBindings, ControllerBindings } from './InputBindings';
+import { Bindings, KeyboardBindings, ControllerBindings } from './InputBindings';
+
 
 const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;

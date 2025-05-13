@@ -36,6 +36,10 @@ export class ControllerState {
   ) {
     this.deltaSensitivity = deltaSensitivity;
 
+    this.initControllerInput(controllerBindings);
+  }
+
+  initControllerInput(controllerBindings: { [friendlyName: string]: controllerBind }) {
     for (const [eventName, action] of Object.entries(controllerBindings)) {
       if (action === '') continue;
       
