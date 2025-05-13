@@ -78,7 +78,7 @@ onMounted(() => {
   robotInfo = new RobotInfo(roslib.ros);
 
   isFinishedLoading.value = true;
-})
+});
 
 watch(updateTimeMs, (newValue) => {
   updateTimeMs.value = newValue < 4 ? 4 : newValue;
@@ -127,19 +127,19 @@ function getMoteusStateProxy(
     </div>
 
     <div class="page" v-if="isFinishedLoading">
-        <GenericMotorTelemetry
-          v-for="item in moteusMotors"
-          :key="item.displayName"
-          ref="myChild"
-          class="telemetry-motor"
-          :display-name="item.displayName"
-          :show-all-features="true"
-          :update-ms="updateTimeMs"
-          :motor-type="item.controller"
-          :data-source-method="getMoteusStateProxy"
-          :data-source-parameter="item.canfdID"
-        >
-        </GenericMotorTelemetry>
+      <GenericMotorTelemetry
+        v-for="item in moteusMotors"
+        :key="item.displayName"
+        ref="myChild"
+        class="telemetry-motor"
+        :display-name="item.displayName"
+        :show-all-features="true"
+        :update-ms="updateTimeMs"
+        :motor-type="item.controller"
+        :data-source-method="getMoteusStateProxy"
+        :data-source-parameter="item.canfdID"
+      >
+      </GenericMotorTelemetry>
     </div>
   </div>
 </template>
