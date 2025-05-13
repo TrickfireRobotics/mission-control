@@ -10,7 +10,7 @@
   --white: #fafafa;
   --purple: #29293d;
   --component-background: #262626;
-  --app-background: #1a1a1a;
+  --app-background: #141414;
 }
 *,
 ::before,
@@ -88,20 +88,19 @@ button {
 // Page Styles
 .two-by-three-grid-page {
   display: grid;
-  width: 100vw;
+  box-sizing: border-box;
+  width: calc(100vw);
   height: calc(100vh - var(--nav-bar-size));
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
   border-radius: 2em;
-  // ensures grid item are the same size
-  // Can toggle off for debugging
+  padding: 0.5rem;
   > * {
     overflow: hidden;
     background-color: var(--component-background);
     padding: 5px;
-    border: var(--dark-grey) 0.35em solid;
-    border-radius: .75em;
-    margin: 0.15em;
-    padding: 0.5em;
+    border-radius: .25em;
+    margin: 0.5rem;
+    padding: 1rem;
   }
 }
