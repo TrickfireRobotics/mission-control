@@ -123,18 +123,6 @@ function publishTest() {
 </template>
 
 <style lang="scss" scoped>
-// .container {
-//   display: flex;
-//   flex-direction: column;
-// }
-
-.container {
-  background-color: var(--component-background);
-  border-radius: 1em;
-  margin: 10px;
-  padding: 15px;
-}
-
 .content {
   display: flex;
   flex-direction: column;

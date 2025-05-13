@@ -107,9 +107,6 @@ div {
   overflow-y: auto;
   overflow-x: auto;
   background-color: var(--component-background);
-  /*border-radius: 5%;*/
-  border-radius: 1em;
-  margin: 10px;
 }
 .barcontainer {
   background-color: var(--light-grey);

@@ -178,7 +178,7 @@ const pageIconArr: PageIcon = [
         />
       </div>
       <div id="ping_container" class="container">
-        <h4 id="status">Ping</h4>
+        <h4 id="status">PING</h4>
         <h5>
           {{ roslib.latency ? Math.round(roslib.latency) + 'ms' : 'N/A' }}
         </h5>
@@ -193,6 +193,7 @@ nav {
   display: flex;
   height: var(--nav-bar-size);
   background-color: var(--black);
+  //box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   h1,
   h2,
   h3,
@@ -207,7 +208,7 @@ nav {
     background-color: var(--light-grey);
   }
   .navbar-tab {
-    padding: 0 0.3rem;
+    padding: 0 0.5rem;
     min-width: 4.5rem;
     .page-icon {
       transform: scale(1.25);
@@ -218,15 +219,18 @@ nav {
   }
   .container {
     height: var(--nav-bar-size);
+    margin-top: 0.1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     &#ping_container {
-      justify-content: start;
-      margin: 0.2rem;
       max-width: 2rem;
+
+      h5 {
+        height: 30px;
+      }
     }
   }
   #logo-section {
@@ -234,16 +238,16 @@ nav {
     align-items: center;
     flex-shrink: 0;
     background-color: var(--purple);
-    padding: 0 1rem;
+    padding: 0 1.25rem;
+    gap: 1rem;
     height: 100%;
 
     #logo {
       max-width: 100%;
       max-height: 3rem;
-      margin: 0 0 0 1rem;
     }
     #logo-text {
-      margin: 0 0 0 0.75rem;
+      font-size: 1.75rem;
     }
   }
   #page-section {
@@ -259,8 +263,8 @@ nav {
     display: flex;
     gap: 1.75rem;
     height: var(--nav-bar-size);
-    padding: 0 2rem 0 1.5rem;
-    background-color: var(--space-purple);
+    padding: 0 1.5rem;
+    background-color: var(--purple);
 
     #operation-selector {
       margin: auto 0;
