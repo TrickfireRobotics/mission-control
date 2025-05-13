@@ -279,7 +279,6 @@ defineExpose({ recordButtonPressed });
   background-color: rgb(109, 109, 109);
   border-radius: 20px;
   padding: 10px;
-  width: 100%;
   height: fit-content;
 }
 

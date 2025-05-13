@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+
 // Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
@@ -12,21 +13,35 @@ import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
+
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
-import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const roslib = useRoslibStore();
 const controller = useControllerStore();
 const operation = useOperationStateStore();
 const currentTab = ref(0);
+const router = useRouter();
+
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
+  sessionStorage.setItem('currentTab', newValue.toString());
+  router.push(pageIconArr[newValue].label);
 };
 
 onMounted(() => {
   operation.operationStateSub.start();
+
+  const savedTab = sessionStorage.getItem('currentTab');
+  if (savedTab != null) {
+    currentTab.value = parseInt(savedTab, 10);
+  }
+});
+
+onUnmounted(() => {
+  operation.operationStateSub.stop();
 });
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
