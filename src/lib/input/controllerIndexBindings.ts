@@ -6,10 +6,10 @@ type ControllerIndexMap = {
   };
 };
 
-/* 
-* This map is used to identify buttons by their index
-* given by the controller API and associate them with a name and type.
-*/
+/*
+ * This map is used to identify buttons by their index
+ * given by the controller API and associate them with a name and type.
+ */
 export const controllerIndexButtonMap: ControllerIndexMap = {
   0: { name: 'aButton', type: 'digitalButton' },
   1: { name: 'bButton', type: 'digitalButton' },
@@ -29,13 +29,13 @@ export const controllerIndexButtonMap: ControllerIndexMap = {
   15: { name: 'dpadRIGHTButton', type: 'digitalButton' },
 };
 
-/* 
-* This map is used to identify joystick axes by their index
-* given by the controller API and associate them with a name and type.
-*/
+/*
+ * This map is used to identify joystick axes by their index
+ * given by the controller API and associate them with a name and type.
+ */
 export const controllerIndexJoystickMap: ControllerIndexMap = {
   0: { name: 'leftJoyXAxis', type: 'joystick' },
   1: { name: 'leftJoyYAxis', type: 'joystick' },
   2: { name: 'rightJoyXAxis', type: 'joystick' },
   3: { name: 'rightJoyYAxis', type: 'joystick' },
-};  
+};

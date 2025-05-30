@@ -126,7 +126,7 @@ function getMoteusStateProxy(
       </div>
     </div>
 
-    <div class="page" v-if="isFinishedLoading">
+    <div v-if="isFinishedLoading" class="page">
       <GenericMotorTelemetry
         v-for="item in moteusMotors"
         :key="item.displayName"

@@ -9,4 +9,4 @@ export type KeyboardBind =
 export type ControllerBind =
   | KeyboardBind
   | { publisher: string; deltaSensitivity?: number }
-  | { function: Function; args?: any[]; deltaSensitivity?: number};
+  | { function: Function; args?: any[]; deltaSensitivity?: number };
