@@ -13,6 +13,8 @@ import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
+import MenuRightIcon from 'vue-material-design-icons/MenuRight.vue';
+import MenuLeftIcon from 'vue-material-design-icons/MenuLeft.vue';
 
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
@@ -97,6 +99,7 @@ const pageIconArr: PageIcon = [
     helperText: 'Experimental page to test modules',
   },
 ];
+
 </script>
 <template>
   <nav>
@@ -104,6 +107,7 @@ const pageIconArr: PageIcon = [
       <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
       <h1 id="logo-text">Mission Control</h1>
     </section>
+      <component :is=MenuLeftIcon class="arrow-icon" id="arrow-left" alt="Arrow left" />
     <section id="page-section">
       <RouterLink
         v-for="(pageIcon, index) in pageIconArr"
@@ -117,6 +121,7 @@ const pageIconArr: PageIcon = [
         <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
       </RouterLink>
     </section>
+    <component :is=MenuRightIcon class="arrow-icon" id="arrow-right" alt="Arrow right" />
     <section id="states-section">
       <div id="operation-selector" class="container">
         <button
@@ -213,7 +218,18 @@ nav {
     .page-icon {
       transform: scale(1.25);
     }
-  }
+  } 
+    .arrow-icon {
+      font-size: 250%;
+      background-color: var(--grey);
+      
+    }
+    #arrow-left {
+      border-left: 2px solid var(--white);
+    }
+    #arrow-right {
+      border-right: 2px solid var(--white);
+    }
   .navbar-tab:not(.current-page):hover {
     background-color: hsl(0, 0%, 16%);
   }
@@ -256,8 +272,6 @@ nav {
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 2px solid var(--white);
-    border-left: 2px solid var(--white);
   }
   #states-section {
     display: flex;
