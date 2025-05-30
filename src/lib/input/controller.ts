@@ -18,7 +18,7 @@ import type { ControllerBind } from './input_bindings/bindingTypes';
 export default class Controller {
   deltaSensitivity = 0;
   apiIndex: number = 0;
-  activeProfileIndex: number =  0;
+  activeProfileIndex: number = 0;
   controllerProfiles: { [friendlyName: string]: ControllerBind }[] = [];
 
   //Key bindings
@@ -34,9 +34,9 @@ export default class Controller {
 
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
   constructor(
-    controllerProfiles: {[inputName: string]: ControllerBind}[],
+    controllerProfiles: { [inputName: string]: ControllerBind }[],
     deltaSensitivity: number,
-    apiIndex: number
+    apiIndex: number,
   ) {
     this.deltaSensitivity = deltaSensitivity;
     this.controllerProfiles = controllerProfiles;
@@ -49,7 +49,9 @@ export default class Controller {
     let controllerProfile = this.controllerProfiles[0];
     if (index != undefined) {
       if (index > this.controllerProfiles.length) {
-        console.warn(`Index ${index} is out of bounds for controller bindings. Using default binding.`);
+        console.warn(
+          `Index ${index} is out of bounds for controller bindings. Using default binding.`,
+        );
       } else if (index < 0) {
         console.warn(`Index ${index} is negative. Using default binding.`);
       } else {
