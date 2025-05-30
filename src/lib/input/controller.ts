@@ -15,7 +15,7 @@ import type { ControllerBind } from './input_bindings/bindingTypes';
  * and determine if it is fast enough to send data.
  */
 
-export default class Controller {
+export class Controller {
   deltaSensitivity = 0;
   apiIndex: number = 0;
   activeProfileIndex: number = 0;
@@ -24,7 +24,13 @@ export default class Controller {
   //Key bindings
   inputStore: {
     [input: string]: {
-      action: Publisher<'std_msgs/Float32'> | Function | { function: Function; args?: any[] };
+      action:
+        | Publisher<'std_msgs/Float32'>
+        | (() => void)
+        | {
+            function: (...args: unknown[]) => void;
+            args?: unknown[];
+          };
       type: InputType;
       currentValue: number;
       deltaValue: number;
@@ -84,6 +90,7 @@ export default class Controller {
         // If a function is supplied
         case 'function': {
           this.inputStore[eventName] = { ...baseInput, action };
+          break;
         }
         // If arguments or delta sensitivity are supplied with a function or publisher
         case 'object': {

@@ -172,13 +172,13 @@ const pageIconArr: PageIcon = [
       </div>
       <div
         class="container"
-        :title="`Controller: ${input.controllers.size > 0 ? `Connected` : `Disconnected`}`"
+        :title="`Controller: ${input.controllers.length > 0 ? `Connected` : `Disconnected`}`"
       >
         <h4 id="status">CTRL</h4>
         <component
           :is="ControllerIcon"
           class="page-icon"
-          :class="{ green: input.controllers.size > 0, red: input.controllers.size == 0 }"
+          :class="{ green: input.controllers.length > 0, red: input.controllers.length == 0 }"
         />
       </div>
       <div id="ping_container" class="container">

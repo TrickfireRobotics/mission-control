@@ -1,4 +1,4 @@
-import type { ControllerBind } from './bindingTypes';
+import { type ControllerBind, makeFunction } from './bindingTypes';
 
 let intervalId: ReturnType<typeof setInterval> | null = null;
 
@@ -34,11 +34,14 @@ function SayStuff() {
  * - An object with a function and optional arguments
  *       The input system will call the function with the provided arguments when the button is pressed and released.
  */
-const ControllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
+export const controllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
   [
     {
-      aButton: { function: toggleInterval, args: [() => console.log('Interval running'), 1000] },
-      bButton: { function: Say, args: ['Controller', 3] },
+      aButton: makeFunction({
+        function: toggleInterval,
+        args: [() => console.log('Interval running'), 1000],
+      }),
+      bButton: makeFunction({ function: Say, args: ['Controller', 3] }),
       xButton: 'gripLinearOpen',
       yButton: 'gripLinearClose',
       leftBumperButton: 'left_wrist_ccw',
@@ -62,7 +65,7 @@ const ControllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
   [
     {
       aButton: SayStuff,
-      bButton: { function: Say, args: ['Controller', 6] },
+      bButton: makeFunction({ function: Say, args: ['Controller', 6] }),
       xButton: 'gripLinearOpen',
       yButton: 'gripLinearClose',
       leftBumperButton: 'left_wrist_ccw',
@@ -84,5 +87,3 @@ const ControllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
     },
   ],
 ];
-
-export default ControllerInstanceProfiles;

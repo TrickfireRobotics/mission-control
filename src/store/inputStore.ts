@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import Keyboard from '@/lib/input/keyboard';
-import Controller from '@/lib/input/controller';
+import { Keyboard } from '@/lib/input/keyboard';
+import { Controller } from '@/lib/input/controller';
 
 type GamePadMode = 'tankControl' | 'standard' | 'arm';
 
