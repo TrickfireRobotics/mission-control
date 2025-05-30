@@ -1,17 +1,7 @@
+import { createPublisher } from '@/lib/roslibUtils/createPublisher';
 import { type ControllerBind, makeFunction } from './bindingTypes';
 
 let intervalId: ReturnType<typeof setInterval> | null = null;
-
-function toggleInterval(callback: () => void, intervalMs: number): void {
-  if (intervalId === null) {
-    intervalId = setInterval(callback, intervalMs);
-    console.log('Interval started');
-  } else {
-    clearInterval(intervalId);
-    intervalId = null;
-    console.log('Interval cleared');
-  }
-}
 
 function Say(str: string, times: number) {
   console.log(str.repeat(times));
@@ -34,56 +24,77 @@ function SayStuff() {
  * - An object with a function and optional arguments
  *       The input system will call the function with the provided arguments when the button is pressed and released.
  */
-export const controllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
-  [
-    {
-      aButton: makeFunction({
-        function: toggleInterval,
-        args: [() => console.log('Interval running'), 1000],
-      }),
-      bButton: makeFunction({ function: Say, args: ['Controller', 3] }),
-      xButton: 'gripLinearOpen',
-      yButton: 'gripLinearClose',
-      leftBumperButton: 'left_wrist_ccw',
-      rightBumperButton: 'right_wrist_ccw',
-      leftTriggerButton: 'left_wrist_cw',
-      rightTriggerButton: 'right_wrist_cw',
-      backButton: 'turntable_ccw',
-      startButton: 'turntable_cw',
-      leftJoystickButton: '',
-      rightJoystickButton: '',
-      dpadUPButton: 'elbow_up',
-      dpadDOWNButton: 'elbow_down',
-      dpadLEFTButton: 'shoulder_down',
-      dpadRIGHTButton: 'shoulder_up',
-      leftJoyXAxis: '',
-      leftJoyYAxis: 'move_left_drivebase_side_message',
-      rightJoyXAxis: '',
-      rightJoyYAxis: 'move_right_drivebase_side_message',
-    },
-  ],
-  [
-    {
-      aButton: SayStuff,
-      bButton: makeFunction({ function: Say, args: ['Controller', 6] }),
-      xButton: 'gripLinearOpen',
-      yButton: 'gripLinearClose',
-      leftBumperButton: 'left_wrist_ccw',
-      rightBumperButton: 'right_wrist_ccw',
-      leftTriggerButton: 'left_wrist_cw',
-      rightTriggerButton: 'right_wrist_cw',
-      backButton: 'turntable_ccw',
-      startButton: 'turntable_cw',
-      leftJoystickButton: '',
-      rightJoystickButton: '',
-      dpadUPButton: 'elbow_up',
-      dpadDOWNButton: 'elbow_down',
-      dpadLEFTButton: 'shoulder_down',
-      dpadRIGHTButton: 'shoulder_up',
-      leftJoyXAxis: '',
-      leftJoyYAxis: 'move_left_drivebase_side_message',
-      rightJoyXAxis: '',
-      rightJoyYAxis: 'move_right_drivebase_side_message',
-    },
-  ],
+const ControllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
+    [
+        {
+            aButton: holdDown('gripRotOpen', 500),
+            bButton: holdDown('gripRotClose', 500),
+            xButton: holdDown('gripLinearOpen', 500),
+            yButton: holdDown('gripLinearClose', 500),
+            leftBumperButton: holdDown('left_wrist_ccw', 500),
+            rightBumperButton: holdDown('right_wrist_ccw', 500),
+            leftTriggerButton: holdDown('left_wrist_cw', 500),
+            rightTriggerButton: holdDown('right_wrist_cw', 500),
+            backButton: holdDown('turntable_ccw', 500),
+            startButton: holdDown('turntable_cw', 500),
+            leftJoystickButton: '',
+            rightJoystickButton: '',
+            dpadUPButton: holdDown('elbow_up', 500),
+            dpadDOWNButton: holdDown('elbow_down', 500),
+            dpadLEFTButton: holdDown('shoulder_down', 500),
+            dpadRIGHTButton: holdDown('shoulder_up', 500),
+            leftJoyXAxis: '',
+            leftJoyYAxis: holdDown('move_left_drivebase_side_message', 500),
+            rightJoyXAxis: '',
+            rightJoyYAxis: holdDown('move_right_drivebase_side_message', 500),
+        },
+    ],
+    [
+        {
+            aButton: SayStuff,
+            bButton: { function: Say, args: ['Controller', 6] },
+            xButton: holdDown('gripLinearOpen', 500),
+            yButton: holdDown('gripLinearClose', 500),
+            leftBumperButton: holdDown('left_wrist_ccw', 500),
+            rightBumperButton: holdDown('right_wrist_ccw', 500),
+            leftTriggerButton: holdDown('left_wrist_cw', 500),
+            rightTriggerButton: holdDown('right_wrist_cw', 500),
+            backButton: holdDown('turntable_ccw', 500),
+            startButton: holdDown('turntable_cw', 500),
+            leftJoystickButton: '',
+            rightJoystickButton: '',
+            dpadUPButton: holdDown('elbow_up', 500),
+            dpadDOWNButton: holdDown('elbow_down', 500),
+            dpadLEFTButton: holdDown('shoulder_down', 500),
+            dpadRIGHTButton: holdDown('shoulder_up', 500),
+            leftJoyXAxis: '',
+            leftJoyYAxis: holdDown('move_left_drivebase_side_message', 500),
+            rightJoyXAxis: '',
+            rightJoyYAxis: holdDown('move_right_drivebase_side_message', 500),
+        },
+    ],
 ];
+
+export default ControllerInstanceProfiles;
+
+
+function holdDown(publisherName: string, interval: number) {
+  let intervalId: ReturnType<typeof setInterval> | null = null;
+
+  return function toggle() {
+    const publisher = createPublisher({
+        topicName: publisherName,
+        topicType: 'std_msgs/Float32', 
+        });
+    
+    if (intervalId === null) {
+      intervalId = setInterval(() => {
+        publisher.publish({ data: 1 }, {isDebugging: true});
+        }, interval);
+    } else {
+      publisher.publish({ data: 0 }, {isDebugging: true});
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+}
