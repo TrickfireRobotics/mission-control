@@ -8,6 +8,19 @@ function SayStuff() {
   console.log('Stuff!');
 }
 
+/*
+* This file contains the keyboard bindings for the input system.
+* Each keyboard instance has its own set of profiles that set the bindings for the keys.
+* The outermost array corresponds to the keyboard index, and each inner array contains the binding profiles for that keyboard.
+* 
+* The keys in each binding object correspond to the key names, and the values can be:
+* - A string representing a publisher name:
+*       The input system will create a publisher for that topic and publish the key state.
+* - A function to be called
+*       The input system will call this function when the key is pressed.
+* - An object with a function and optional arguments
+*       The input system will call the function with the provided arguments when the key is pressed.
+*/
 const keyboardBindings: {[input: string]: KeyboardBind}[] = [
     {
         a: 'gripRotOpen',

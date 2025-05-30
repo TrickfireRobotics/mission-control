@@ -15,11 +15,11 @@ import type { ControllerBind } from './input_bindings/bindingTypes';
  * and determine if it is fast enough to send data.
  */
 
-export class Controller {
+export default class Controller {
   deltaSensitivity = 0;
-  index: number = 0;
-  profile: number = 0;
-  controllerBindings: { [friendlyName: string]: ControllerBind }[] = [];
+  apiIndex: number = 0;
+  activeProfileIndex: number =  0;
+  controllerProfiles: { [friendlyName: string]: ControllerBind }[] = [];
 
   //Key bindings
   inputStore: {
@@ -34,28 +34,32 @@ export class Controller {
 
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
   constructor(
-    controllerBindings: {[inputName: string]: ControllerBind}[],
+    controllerProfiles: {[inputName: string]: ControllerBind}[],
     deltaSensitivity: number,
-    index?: number
+    apiIndex: number
   ) {
     this.deltaSensitivity = deltaSensitivity;
-    this.controllerBindings = controllerBindings;
+    this.controllerProfiles = controllerProfiles;
+    this.apiIndex = apiIndex;
 
     this.initControllerInput();
   }
 
   initControllerInput(index?: number) {
-
-    let controllerBinding = this.controllerBindings[0];
+    let controllerProfile = this.controllerProfiles[0];
     if (index != undefined) {
-      if (index >= 0 && index < this.controllerBindings.length) {
-        controllerBinding = this.controllerBindings[index];
-      } else {
+      if (index > this.controllerProfiles.length) {
         console.warn(`Index ${index} is out of bounds for controller bindings. Using default binding.`);
+      } else if (index < 0) {
+        console.warn(`Index ${index} is negative. Using default binding.`);
+      } else {
+        this.activeProfileIndex = index;
       }
     }
 
-    for (const [eventName, action] of Object.entries(controllerBinding)) {
+    controllerProfile = this.controllerProfiles[this.activeProfileIndex];
+
+    for (const [eventName, action] of Object.entries(controllerProfile)) {
       if (action === '') continue;
 
       const baseInput = {

@@ -1,37 +1,42 @@
-import { Controller } from './controller';
+import Controller from './controller';
 import Keyboard from './keyboard';
-import { useControllerStore } from '@/store/controllerStore';
+import { useInputStore } from '@/store/inputStore';
 
-import ControllerBindings from './input_bindings/controllerBindings';
+import ControllerInstanceProfiles from './input_bindings/controllerBindings';
 
 const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;
 
-const indexToControllerName = new Map();
-const indexToControllerState = new Map();
-
-
 export function inputInit() {
+  const input = useInputStore();
+
   const keyboard = new Keyboard();
 
-  const controller = useControllerStore();
   window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
   function onGamePadConnectsHandler(e: GamepadEvent) {
-    const controller = useControllerStore();
     console.log('HELLO CONTROLLER CONNECTED');
-    console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
 
-    const state = new Controller(ControllerBindings[e.gamepad.index], DELTA_SENSITIVITY, e.gamepad.index);
-    indexToControllerName.set(e.gamepad.index, e.gamepad.id);
-    indexToControllerState.set(e.gamepad.index, state);
+    if (e.gamepad.index <= ControllerInstanceProfiles.length) {
+      const controller = new Controller(
+        ControllerInstanceProfiles[input.controllers.length],
+        DELTA_SENSITIVITY,
+        e.gamepad.index,
+      );
+      input.addController(controller);
 
-    if (indexToControllerName.size) {
-      controller.setGamepadConnectedStatus(true);
       setInterval(pollController, 1000 / POLLING_RATE_IN_HERTZ);
+    } else {
+      console.warn(
+        'The controller index %d exceeds the number of bindings available (%d). Please define additional ones',
+        e.gamepad.index,
+        ControllerInstanceProfiles.length,
+      );
     }
 
     function pollController() {
-      indexToControllerState.forEach(processInput);
+      for (const controller of input.controllers.values()) {
+        processInput(controller, controller.apiIndex);
+      }
     }
 
     function processInput(state: Controller, key: number) {
@@ -45,11 +50,18 @@ export function inputInit() {
 
   window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
   function onGamePadDisconnectsHandler(e: GamepadEvent) {
-    console.log('Removing controller with index %d\n' + e.gamepad.id, e.gamepad.index);
+    input.removeController(e.gamepad.index);
 
-    indexToControllerName.delete(e.gamepad.index);
-    indexToControllerState.delete(e.gamepad.index);
+    // Shift the controller instance profiles to ensure the next controller gets the correct profiles.
+    for (let i = 0; i < input.controllers.length; i++) {
+      const prevController = input.controllers.shift();
 
-    controller.setGamepadConnectedStatus(false);
+      const newController = new Controller(
+        ControllerInstanceProfiles[i],
+        DELTA_SENSITIVITY,
+        prevController?.apiIndex || 0,
+      );
+      input.controllers.push(newController);
+    }
   }
 }
