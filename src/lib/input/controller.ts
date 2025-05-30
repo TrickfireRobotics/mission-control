@@ -1,10 +1,11 @@
+import { control } from 'leaflet';
 import { createPublisher, type Publisher } from '../roslibUtils/createPublisher';
 import {
-  type inputType,
+  type InputType,
   controllerIndexButtonMap,
   controllerIndexJoystickMap,
-} from './controllerBindings';
-import { type controllerBind } from './InputBindings';
+} from './controllerIndexBindings';
+import type { ControllerBind } from './input_bindings/bindingTypes';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -14,15 +15,17 @@ import { type controllerBind } from './InputBindings';
  * and determine if it is fast enough to send data.
  */
 
-export class ControllerState {
-  // Same format as currentStateButtons
+export class Controller {
   deltaSensitivity = 0;
+  index: number = 0;
+  profile: number = 0;
+  controllerBindings: { [friendlyName: string]: ControllerBind }[] = [];
 
   //Key bindings
   inputStore: {
     [input: string]: {
-      action: Publisher<'std_msgs/Float32'> | Function | {function: Function, args?: any[]};
-      type: inputType;
+      action: Publisher<'std_msgs/Float32'> | Function | { function: Function; args?: any[] };
+      type: InputType;
       currentValue: number;
       deltaValue: number;
       deltaSensitivity?: number;
@@ -31,24 +34,36 @@ export class ControllerState {
 
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
   constructor(
-    controllerBindings: { [friendlyName: string]: controllerBind },
+    controllerBindings: {[inputName: string]: ControllerBind}[],
     deltaSensitivity: number,
+    index?: number
   ) {
     this.deltaSensitivity = deltaSensitivity;
+    this.controllerBindings = controllerBindings;
 
-    this.initControllerInput(controllerBindings);
+    this.initControllerInput();
   }
 
-  initControllerInput(controllerBindings: { [friendlyName: string]: controllerBind }) {
-    for (const [eventName, action] of Object.entries(controllerBindings)) {
+  initControllerInput(index?: number) {
+
+    let controllerBinding = this.controllerBindings[0];
+    if (index != undefined) {
+      if (index >= 0 && index < this.controllerBindings.length) {
+        controllerBinding = this.controllerBindings[index];
+      } else {
+        console.warn(`Index ${index} is out of bounds for controller bindings. Using default binding.`);
+      }
+    }
+
+    for (const [eventName, action] of Object.entries(controllerBinding)) {
       if (action === '') continue;
-      
+
       const baseInput = {
-        type: 'digitalButton' as inputType,
+        type: 'digitalButton' as InputType,
         currentValue: 0,
         deltaValue: 0,
-      }
-    
+      };
+
       switch (typeof action) {
         // If a publisher name is supplied
         case 'string': {
@@ -56,29 +71,33 @@ export class ControllerState {
             topicName: action,
             topicType: 'std_msgs/Float32',
           });
-    
-          this.inputStore[eventName] = {...baseInput, action: publisher};
+
+          this.inputStore[eventName] = { ...baseInput, action: publisher };
           break;
         }
         // If a function is supplied
         case 'function': {
-          this.inputStore[eventName] = {...baseInput, action};
+          this.inputStore[eventName] = { ...baseInput, action };
         }
         // If arguments or delta sensitivity are supplied with a function or publisher
         case 'object': {
           if ('function' in action) {
-            this.inputStore[eventName] = {...baseInput, action: {function: action.function, args: action.args || []}};
+            this.inputStore[eventName] = {
+              ...baseInput,
+              action: { function: action.function, args: action.args || [] },
+            };
           } else if ('publisher' in action) {
             const publisher = createPublisher({
               topicName: action.publisher,
               topicType: 'std_msgs/Float32',
             });
-    
-            this.inputStore[eventName] = {...baseInput, action: publisher}
+
+            this.inputStore[eventName] = { ...baseInput, action: publisher };
           }
-    
-          if ('deltaSensitivity' in action) this.inputStore[eventName].deltaSensitivity = action.deltaSensitivity;
-          
+
+          if ('deltaSensitivity' in action)
+            this.inputStore[eventName].deltaSensitivity = action.deltaSensitivity;
+
           break;
         }
         default: {
@@ -116,16 +135,11 @@ export class ControllerState {
     for (const inputEntry of Object.values(this.inputStore)) {
       if (inputEntry.deltaValue > this.deltaSensitivity) {
         const action = inputEntry.action;
-        if ('publish' in action)
-        {
+        if ('publish' in action) {
           action.publish({ data: inputEntry.currentValue }, { isDebugging: true });
-        }
-        else if (typeof action === 'function')
-        {
+        } else if (typeof action === 'function') {
           action();
-        }
-        else 
-        {
+        } else {
           action.function(...(action.args || []));
         }
       }

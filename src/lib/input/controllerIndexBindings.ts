@@ -1,12 +1,16 @@
-export type inputType = 'digitalButton' | 'analogButton' | 'joystick';
-type controllerIndexMap = {
+export type InputType = 'digitalButton' | 'analogButton' | 'joystick';
+type ControllerIndexMap = {
   [index: number]: {
     name: string;
-    type: inputType;
+    type: InputType;
   };
 };
 
-export const controllerIndexButtonMap: controllerIndexMap = {
+/* 
+* This map is used to identify buttons by their index
+* given by the controller API and associate them with a name and type.
+*/
+export const controllerIndexButtonMap: ControllerIndexMap = {
   0: { name: 'aButton', type: 'digitalButton' },
   1: { name: 'bButton', type: 'digitalButton' },
   2: { name: 'xButton', type: 'digitalButton' },
@@ -25,9 +29,13 @@ export const controllerIndexButtonMap: controllerIndexMap = {
   15: { name: 'dpadRIGHTButton', type: 'digitalButton' },
 };
 
-export const controllerIndexJoystickMap: controllerIndexMap = {
+/* 
+* This map is used to identify joystick axes by their index
+* given by the controller API and associate them with a name and type.
+*/
+export const controllerIndexJoystickMap: ControllerIndexMap = {
   0: { name: 'leftJoyXAxis', type: 'joystick' },
   1: { name: 'leftJoyYAxis', type: 'joystick' },
   2: { name: 'rightJoyXAxis', type: 'joystick' },
   3: { name: 'rightJoyYAxis', type: 'joystick' },
-};
+};  

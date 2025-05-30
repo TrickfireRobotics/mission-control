@@ -1,5 +1,3 @@
-import 
-
 function Say(str: string, times: number) {
   console.log(str.repeat(times));
 }
@@ -8,9 +6,7 @@ function SayStuff() {
   console.log('Stuff!');
 }
 
-function shiftBinding() {
-  
-}
+function shiftBinding() {}
 
 export type keyboardBind =
   | string
@@ -23,8 +19,7 @@ export type keyboardBind =
 export type controllerBind =
   | keyboardBind
   | { publisher: string; deltaSensitivity?: number }
-  | { function: Function; args?: any[]; deltaSensitivity?: number};
-
+  | { function: Function; args?: any[]; deltaSensitivity?: number };
 
 export const Bindings = [
   {
@@ -100,7 +95,7 @@ export const Bindings = [
       leftJoyYAxis: 'move_left_drivebase_side_message',
       rightJoyXAxis: '',
       rightJoyYAxis: 'move_right_drivebase_side_message',
-    }
+    },
   },
   {
     keyboardBindings: {
@@ -175,9 +170,9 @@ export const Bindings = [
       leftJoyYAxis: '',
       rightJoyXAxis: '',
       rightJoyYAxis: '',
-    }
+    },
   },
-]
+];
 export const KeyboardBindings: { [friendlyName: string]: keyboardBind } = {
   a: 'gripRotOpen',
   b: '',
@@ -232,7 +227,7 @@ export const KeyboardBindings: { [friendlyName: string]: keyboardBind } = {
 
 export const ControllerBindings: { [friendlyName: string]: controllerBind } = {
   aButton: SayStuff,
-  bButton: {function: Say, args: ['Controller', 3]},
+  bButton: { function: Say, args: ['Controller', 3] },
   xButton: 'gripLinearOpen',
   yButton: 'gripLinearClose',
   leftBumperButton: 'left_wrist_ccw',
