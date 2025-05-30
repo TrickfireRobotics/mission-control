@@ -25,8 +25,8 @@ function SayStuff() {
 const ControllerInstanceProfiles: { [input: string]: ControllerBind }[][] = [
     [
         {
-            aButton: { function: Say, args: ['Controller', 1] },
-            bButton: { function: Say, args: ['Controller', 3] },
+            aButton: holdDown('gripRotOpen', 500),
+            bButton: holdDown('gripRotClose', 500),
             xButton: holdDown('gripLinearOpen', 500),
             yButton: holdDown('gripLinearClose', 500),
             leftBumperButton: holdDown('left_wrist_ccw', 500),
