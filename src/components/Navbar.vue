@@ -15,12 +15,12 @@ import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 
 import { useRoslibStore } from '@/store/roslibStore';
-import { useControllerStore } from '@/store/controllerStore';
+import { useInputStore } from '@/store/inputStore';
 import { useOperationStateStore } from '../store/operationStateStore';
 import { useRouter } from 'vue-router';
 
 const roslib = useRoslibStore();
-const controller = useControllerStore();
+const input = useInputStore();
 const operation = useOperationStateStore();
 const currentTab = ref(0);
 const router = useRouter();
@@ -168,13 +168,13 @@ const pageIconArr: PageIcon = [
       </div>
       <div
         class="container"
-        :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`"
+        :title="`Controller: ${input.controllers.size > 0 ? `Connected` : `Disconnected`}`"
       >
         <h4 id="status">CTRL</h4>
         <component
           :is="ControllerIcon"
           class="page-icon"
-          :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
+          :class="{ green: input.controllers.size > 0, red: input.controllers.size == 0 }"
         />
       </div>
       <div id="ping_container" class="container">
@@ -312,3 +312,4 @@ nav {
   }
 }
 </style>
+@/store/inputStore
