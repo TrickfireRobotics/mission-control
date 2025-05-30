@@ -21,6 +21,10 @@ const shoulderDefault = degreesToRadians(-72.88);
 const elbowDefault = degreesToRadians(153.65);
 const turntableDefault = degreesToRadians(-37.76);
 
+shoulder.rotation.x = shoulderDefault;
+elbow.rotation.x = elbowDefault;
+turntable.rotation.y = turntableDefault;
+
 useTelemetryData(
   [CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable],
   (data) => data.position,
@@ -41,7 +45,7 @@ useTelemetryData(
     armTurntable: (position) => {
       const additionalTurntableRotation = position * 2 * Math.PI;
       const turntableRotation = turntableDefault + additionalTurntableRotation;
-      turntable.rotation.x = turntableRotation;
+      turntable.rotation.y = turntableRotation;
     },
   },
 );
