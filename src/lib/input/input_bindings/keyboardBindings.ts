@@ -1,4 +1,4 @@
-import type { KeyboardBind } from './bindingTypes';
+import { type KeyboardBind, makeFunction } from './bindingTypes';
 
 function Say(str: string, times: number) {
   console.log(str.repeat(times));
@@ -21,7 +21,7 @@ function SayStuff() {
  * - An object with a function and optional arguments
  *       The input system will call the function with the provided arguments when the key is pressed.
  */
-const keyboardBindings: { [input: string]: KeyboardBind }[] = [
+export const keyboardBindings: { [input: string]: KeyboardBind }[] = [
   {
     a: 'gripRotOpen',
     b: '',
@@ -51,8 +51,8 @@ const keyboardBindings: { [input: string]: KeyboardBind }[] = [
     z: '',
     '0': SayStuff,
     '1': SayStuff,
-    '2': { function: SayStuff },
-    '3': { function: Say, args: ['Hello', 3] },
+    '2': makeFunction({ function: SayStuff }),
+    '3': makeFunction({ function: Say, args: ['Hello', 3] }),
     '4': '',
     '5': '',
     '6': '',
@@ -125,5 +125,3 @@ const keyboardBindings: { [input: string]: KeyboardBind }[] = [
     ' ': '',
   },
 ];
-
-export default keyboardBindings;

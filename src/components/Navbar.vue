@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+
 // Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
@@ -12,21 +13,37 @@ import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
+import MenuRightIcon from 'vue-material-design-icons/MenuRight.vue';
+import MenuLeftIcon from 'vue-material-design-icons/MenuLeft.vue';
+
 import { useRoslibStore } from '@/store/roslibStore';
 import { useInputStore } from '@/store/inputStore';
 import { useOperationStateStore } from '../store/operationStateStore';
-import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const roslib = useRoslibStore();
 const input = useInputStore();
 const operation = useOperationStateStore();
 const currentTab = ref(0);
+const router = useRouter();
+
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
+  sessionStorage.setItem('currentTab', newValue.toString());
+  router.push(pageIconArr[newValue].label);
 };
 
 onMounted(() => {
   operation.operationStateSub.start();
+
+  const savedTab = sessionStorage.getItem('currentTab');
+  if (savedTab != null) {
+    currentTab.value = parseInt(savedTab, 10);
+  }
+});
+
+onUnmounted(() => {
+  operation.operationStateSub.stop();
 });
 
 type PageIcon = { icon: object; label: string; helperText: string }[];
@@ -89,6 +106,7 @@ const pageIconArr: PageIcon = [
       <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
       <h1 id="logo-text">Mission Control</h1>
     </section>
+    <component :is="MenuLeftIcon" id="arrow-left" class="arrow-icon" alt="Arrow left" />
     <section id="page-section">
       <RouterLink
         v-for="(pageIcon, index) in pageIconArr"
@@ -102,6 +120,7 @@ const pageIconArr: PageIcon = [
         <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
       </RouterLink>
     </section>
+    <component :is="MenuRightIcon" id="arrow-right" class="arrow-icon" alt="Arrow right" />
     <section id="states-section">
       <div id="operation-selector" class="container">
         <button
@@ -163,7 +182,7 @@ const pageIconArr: PageIcon = [
         />
       </div>
       <div id="ping_container" class="container">
-        <h4 id="status">Ping</h4>
+        <h4 id="status">PING</h4>
         <h5>
           {{ roslib.latency ? Math.round(roslib.latency) + 'ms' : 'N/A' }}
         </h5>
@@ -178,6 +197,7 @@ nav {
   display: flex;
   height: var(--nav-bar-size);
   background-color: var(--black);
+  //box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   h1,
   h2,
   h3,
@@ -192,42 +212,56 @@ nav {
     background-color: var(--light-grey);
   }
   .navbar-tab {
-    padding: 0 0.3rem;
+    padding: 0 0.5rem;
     min-width: 4.5rem;
     .page-icon {
       transform: scale(1.25);
     }
+  }
+  .arrow-icon {
+    font-size: 250%;
+    background-color: var(--grey);
+  }
+  #arrow-left {
+    border-left: 2px solid var(--white);
+  }
+  #arrow-right {
+    border-right: 2px solid var(--white);
   }
   .navbar-tab:not(.current-page):hover {
     background-color: hsl(0, 0%, 16%);
   }
   .container {
     height: var(--nav-bar-size);
+    margin-top: 0.1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     &#ping_container {
-      justify-content: start;
-      margin: 0.2rem;
       max-width: 2rem;
+
+      h5 {
+        height: 30px;
+      }
     }
   }
   #logo-section {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    background-color: var(--space-purple);
+    background-color: var(--purple);
+    padding: 0 1.25rem;
+    gap: 1rem;
+    height: 100%;
 
     #logo {
       max-width: 100%;
       max-height: 3rem;
-      margin: 0 0 0 1rem;
     }
     #logo-text {
-      margin: 0 1rem 0 0.8rem;
-      font-size: 1.5rem;
+      font-size: 1.75rem;
     }
   }
   #page-section {
@@ -236,15 +270,13 @@ nav {
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 2px solid var(--white);
-    border-left: 2px solid var(--white);
   }
   #states-section {
     display: flex;
     gap: 1.75rem;
     height: var(--nav-bar-size);
-    padding: 0 2rem 0 1.5rem;
-    background-color: var(--space-purple);
+    padding: 0 1.5rem;
+    background-color: var(--purple);
 
     #operation-selector {
       margin: auto 0;

@@ -1,10 +1,10 @@
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { onKeyDown, onKeyUp } from '@vueuse/core';
 
-import KeyboardBindings from './input_bindings/keyboardBindings';
+import { keyboardBindings } from './input_bindings/keyboardBindings';
 import type { KeyboardBind } from './input_bindings/bindingTypes';
 
-export default class Keyboard {
+export class Keyboard {
   activeProfileIndex: number = 0;
   activeProfileObject: { [inputName: string]: KeyboardBind } = {};
 
@@ -15,8 +15,8 @@ export default class Keyboard {
   setKeyboardProfile(profileIndex?: number) {
     // If the profileIndex is not provided or is invalid, default to the first profile
     this.activeProfileIndex = 0;
-    if (profileIndex != undefined && profileIndex >= 0 && profileIndex < KeyboardBindings.length) {
-      if (profileIndex >= 0 && profileIndex < KeyboardBindings.length) {
+    if (profileIndex != undefined && profileIndex >= 0 && profileIndex < keyboardBindings.length) {
+      if (profileIndex >= 0 && profileIndex < keyboardBindings.length) {
         this.activeProfileIndex = profileIndex;
       } else {
         console.warn(
@@ -24,7 +24,7 @@ export default class Keyboard {
         );
       }
     }
-    this.activeProfileObject = KeyboardBindings[this.activeProfileIndex];
+    this.activeProfileObject = keyboardBindings[this.activeProfileIndex];
 
     for (const [eventName, action] of Object.entries(this.activeProfileObject)) {
       switch (typeof action) {

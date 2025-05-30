@@ -1,5 +1,7 @@
 import { createPublisher } from '@/lib/roslibUtils/createPublisher';
-import type { ControllerBind } from './bindingTypes';
+import { type ControllerBind, makeFunction } from './bindingTypes';
+
+let intervalId: ReturnType<typeof setInterval> | null = null;
 
 function Say(str: string, times: number) {
   console.log(str.repeat(times));

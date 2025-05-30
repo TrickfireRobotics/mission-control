@@ -72,15 +72,13 @@ const myChild = useTemplateRef<(typeof GenericMotorTelemetry)[]>('myChild');
 
 let robotInfo: RobotInfo;
 
-onMounted(() => initialize());
-
 const roslib = useRoslibStore();
 
-function initialize() {
+onMounted(() => {
   robotInfo = new RobotInfo(roslib.ros);
 
   isFinishedLoading.value = true;
-}
+});
 
 watch(updateTimeMs, (newValue) => {
   updateTimeMs.value = newValue < 4 ? 4 : newValue;
@@ -128,32 +126,36 @@ function getMoteusStateProxy(
       </div>
     </div>
 
-    <div class="page">
-      <div v-if="isFinishedLoading">
-        <GenericMotorTelemetry
-          v-for="item in moteusMotors"
-          :key="item.displayName"
-          ref="myChild"
-          class="telemetry-motor"
-          :display-name="item.displayName"
-          :show-all-features="true"
-          :update-ms="updateTimeMs"
-          :motor-type="item.controller"
-          :data-source-method="getMoteusStateProxy"
-          :data-source-parameter="item.canfdID"
-        >
-        </GenericMotorTelemetry>
-      </div>
+    <div v-if="isFinishedLoading" class="page">
+      <GenericMotorTelemetry
+        v-for="item in moteusMotors"
+        :key="item.displayName"
+        ref="myChild"
+        class="telemetry-motor"
+        :display-name="item.displayName"
+        :show-all-features="true"
+        :update-ms="updateTimeMs"
+        :motor-type="item.controller"
+        :data-source-method="getMoteusStateProxy"
+        :data-source-parameter="item.canfdID"
+      >
+      </GenericMotorTelemetry>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .page {
-  display: flex;
-  flex-wrap: wrap;
-  overflow: scroll;
+  display: grid;
+  grid-column: 2 / span 2;
+  grid-row: 1 / span 2;
+  grid-template: auto / 1fr 1fr;
+  gap: 0.75em;
+  padding: 0.75em;
+  box-sizing: border-box;
+  overflow-y: scroll;
 }
+
 .period-input-container {
   display: flex;
   justify-content: center;
@@ -169,6 +171,5 @@ function getMoteusStateProxy(
 }
 
 .telemetry-motor {
-  margin: 5px;
 }
 </style>
