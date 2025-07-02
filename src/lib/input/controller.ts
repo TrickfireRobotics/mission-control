@@ -1,4 +1,3 @@
-import { control } from 'leaflet';
 import { createPublisher, type Publisher } from '../roslibUtils/createPublisher';
 import {
   type InputType,
