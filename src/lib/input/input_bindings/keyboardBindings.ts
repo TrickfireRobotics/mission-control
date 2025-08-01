@@ -1,16 +1,17 @@
-import { type KeyboardProfile, type KeyboardBind } from './bindingTypes';
+import { type KeyboardProfile, type InputBind } from './bindingTypes';
 import { Keyboard } from '../keyboard';
 
 /**
  * An array of keyboard binding profiles, each mapping key names to their respective actions and input modes.
  * The first profile is active by default and profiles can be swapped using {@link Keyboard.setProfile}.
  *
- * Each key in a profile maps to a {@link KeyboardBind} object, which can specify the following parameters:
- *  - `function`: a function to call when the key is activated. Receives an optional output signal (0 or 1).
+ * Each key in a profile maps to a {@link InputBind} object, which can specify the following parameters:
+ *  - `function`: a function to call when the key is activated. Receives an optional output signal (0 or 1) and key name.
  *  - `publisher`: a topic name publish to when the key is activated. Publishes an output signal (0 or 1).
  *  - `isDebugging`: (optional, with publisher) if true, logs output to the console.
  *  - `inputMode`: determines when the action is triggered and with what output. Possible values:
  *     - `'Press'`: triggers the action once with output 1 when the key is pressed (default).
+ *     - `'Release'`: triggers the action with output 0 when the key is released.
  *     - `'PressRelease'`: triggers the action with output 1 when pressed, and again with output 0 when released.
  *     - `'Hold'`: triggers the action continuously with output 1 while held, and with output 0 when released.
  *  - `delay`: (optional, with inputMode: 'Hold') time in ms between repeated actions, 1000 by default.
@@ -25,18 +26,18 @@ import { Keyboard } from '../keyboard';
  * @example
  * // Example: Add a key that logs output to the console when held with a delay of 500 ms.
  * {
- *    b: {inputMode: 'Hold', function: (output) => console.log(output), delay: 500}
+ *    b: {inputMode: 'Hold', function: (output, keyname) => console.log(output, keyname), delay: 500}
  * }
  *
- * @see {@link KeyboardBind}
+ * @see {@link InputBind}
  * @see {@link KeyboardProfile}
  * @see {@link Keyboard}
  * @see {@link Keyboard.setProfile}
  */
 export const keyboardBindings: KeyboardProfile[] = [
   {
-    a: { inputMode: 'PressRelease', function: (x) => console.log(`Getting ${x}`) },
-    b: { inputMode: 'Hold', publisher: 'Hello' },
+    a: { inputMode: 'Hold', function: (x) => console.log(`Getting ${x}`) },
+    b: { inputMode: 'Hold', publisher: 'Hello', isDebugging: true },
     c: { inputMode: 'Hold' },
     d: {},
     e: {},

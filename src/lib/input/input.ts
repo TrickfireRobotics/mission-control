@@ -2,7 +2,7 @@ import { Controller } from './controller';
 import { Keyboard } from './keyboard';
 import { useInputStore } from '@/store/inputStore';
 
-import { ControllerInstanceProfiles } from './input_bindings/controllerBindings';
+import { controllerInstanceProfiles } from './input_bindings/controllerBindings';
 
 const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;
@@ -19,11 +19,11 @@ export function inputInit() {
   function onGamePadConnectsHandler(e: GamepadEvent) {
     console.log('HELLO CONTROLLER CONNECTED');
 
-    if (e.gamepad.index <= ControllerInstanceProfiles.length) {
+    if (e.gamepad.index <= controllerInstanceProfiles.length) {
       const controller = new Controller(
-        ControllerInstanceProfiles[input.controllers.length],
-        DELTA_SENSITIVITY,
+        controllerInstanceProfiles[input.controllers.length],
         e.gamepad.index,
+        DELTA_SENSITIVITY,
       );
       input.addController(controller);
 
@@ -32,13 +32,13 @@ export function inputInit() {
       console.warn(
         'The controller index %d exceeds the number of bindings available (%d). Please define additional ones',
         e.gamepad.index,
-        ControllerInstanceProfiles.length,
+        controllerInstanceProfiles.length,
       );
     }
 
     function pollController() {
       for (const controller of input.controllers.values()) {
-        processInput(controller, controller.apiIndex);
+        processInput(controller, controller.apiControllerIndex);
       }
     }
 
@@ -60,9 +60,9 @@ export function inputInit() {
       const prevController = input.controllers.shift();
 
       const newController = new Controller(
-        ControllerInstanceProfiles[i],
+        controllerInstanceProfiles[i],
         DELTA_SENSITIVITY,
-        prevController?.apiIndex || 0,
+        prevController?.apiControllerIndex || 0,
       );
       input.controllers.push(newController);
     }

@@ -5,7 +5,6 @@ import { Controller } from '@/lib/input/controller';
 
 type GamePadMode = 'tankControl' | 'standard' | 'arm';
 
-// Should handle global states of all types of controllers including xbox controller and
 export const useInputStore = defineStore('input', () => {
   // TODO: Add support for other controllers and different driving modes
   const isGamepadConnected = ref(false);
@@ -23,9 +22,9 @@ export const useInputStore = defineStore('input', () => {
     console.log(`Initializing controller ${controllers.value.length}`);
     controllers.value.push(controller);
   }
-  function removeController(apiIndex: number) {
+  function removeController(apiControllerIndex: number) {
     controllers.value = controllers.value.filter((controller, index) => {
-      if (controller.apiIndex === apiIndex) {
+      if (controller.apiControllerIndex === apiControllerIndex) {
         console.log(`Removing controller ${index}`);
         return false;
       }

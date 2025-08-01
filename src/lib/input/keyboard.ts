@@ -1,12 +1,22 @@
 import { createPublisher } from '../roslibUtils/createPublisher';
-import { onKeyDown, onKeyPressed, onKeyUp } from '@vueuse/core';
+import { onKeyDown, onKeyUp } from '@vueuse/core';
 
 import { keyboardBindings } from './input_bindings/keyboardBindings';
 import type { KeyboardProfile } from './input_bindings/bindingTypes';
 
+/**
+ * Represents an instance of the keyboard input system.
+ * 
+ * Sets up VueUse keyboard event listeners based on the active keyboard profile from {@link keyboardBindings}.
+ * Profiles can be switched at runtime, and keyboard input can be activated or deactivated.
+ * 
+ * @class
+ * @see {@link keyboardBindings}
+ * @see {@link KeyboardProfile}
+ */
 export class Keyboard {
   activeProfileIndex: number = 0;
-  activeProfileObject: KeyboardProfile = {};
+  activeProfile: KeyboardProfile = {};
   active: boolean = true;
 
   constructor() {
@@ -26,11 +36,7 @@ export class Keyboard {
     if (profileObj == null) {
       // If the profileIndex is not provided or is invalid, default to the first profile
       this.activeProfileIndex = 0;
-      if (
-        profileIndex != undefined &&
-        profileIndex >= 0 &&
-        profileIndex < keyboardBindings.length
-      ) {
+      if (profileIndex != undefined) {
         if (profileIndex >= 0 && profileIndex < keyboardBindings.length) {
           this.activeProfileIndex = profileIndex;
         } else {
@@ -40,16 +46,16 @@ export class Keyboard {
         }
       }
 
-      this.activeProfileObject = keyboardBindings[this.activeProfileIndex];
+      this.activeProfile = keyboardBindings[this.activeProfileIndex];
     } else {
-      this.activeProfileObject = profileObj;
+      this.activeProfile = profileObj;
     }
 
-    for (const [eventName, bind] of Object.entries(this.activeProfileObject)) {
+    for (const [eventName, bind] of Object.entries(this.activeProfile)) {
       let activateFunction;
       let deactivateFunction;
 
-      // Create acivate and deactivate functions that trigger with on and off input respectively.
+      // Create activate and deactivate functions that trigger with on and off input respectively.
       if (bind.publisher) {
         const publisher = createPublisher({
           topicName: bind.publisher,
@@ -69,45 +75,53 @@ export class Keyboard {
       } else if (bind.function) {
         activateFunction = () => {
           if (this.active) {
-            bind.function(1);
+            bind.function(1, eventName);
           }
         };
         deactivateFunction = () => {
           if (this.active) {
-            bind.function(0);
+            bind.function(0, eventName);
           }
         };
       } else {
-        onKeyPressed(eventName, () => {
-          console.warn(`${eventName} does not have a publisher or function specified`);
-        });
-        continue;
+        activateFunction = () => {
+          if (this.active) {
+            console.warn(`${eventName} does not have a publisher or function specified`);
+          }
+        };
+        deactivateFunction = () => {};
       }
 
       // Set up event listeners for the specified inputMode.
-      if (bind.inputMode == null || bind.inputMode == 'Press') {
-        onKeyDown(eventName, () => activateFunction(), { dedupe: true });
-      } else if (bind.inputMode == 'PressRelease') {
-        onKeyDown(eventName, () => activateFunction(), { dedupe: true });
+      switch (bind.inputMode) {
+        case 'Release':
+          onKeyUp(eventName, () => deactivateFunction());
+          break;
+        case 'PressRelease':
+          onKeyDown(eventName, () => activateFunction(), {dedupe: true});
 
-        onKeyUp(eventName, () => deactivateFunction());
-      } else {
-        let intervalID: number | null = null;
+          onKeyUp(eventName, () => deactivateFunction());
+          break;
+        case 'Hold':
+          let intervalID: number | null = null;
 
-        onKeyDown(eventName, () => {
-          if (!intervalID) {
-            intervalID = setInterval(() => activateFunction(), bind.delay || 1000);
-            activateFunction();
-          }
-        });
+          onKeyDown(eventName, () => {
+            if (!intervalID) {
+              intervalID = setInterval(() => activateFunction(), bind.delay || 1000);
+              activateFunction();
+            }
+          });
 
-        onKeyUp(eventName, () => {
-          if (intervalID) {
-            clearInterval(intervalID);
-            deactivateFunction();
-            intervalID = null;
-          }
-        });
+          onKeyUp(eventName, () => {
+            if (intervalID) {
+              clearInterval(intervalID);
+              deactivateFunction();
+              intervalID = null;
+            }
+          });
+          break;
+        default: // Default to 'press' if inputMode is not specified.
+          onKeyDown(eventName, () => activateFunction(), {dedupe: true})
       }
     }
   }
