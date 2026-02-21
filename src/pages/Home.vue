@@ -3,7 +3,6 @@ Show a couple of cameras, basic telemetry, auto/teleop button, reconnect canfd b
 -->
 <script setup lang="ts">
 import RoverVelocityDisplay from '@/components/rover_velocity_display/RoverVelocityDisplay.vue';
-import Co_emissions from '@/components/co_emissions/co_emissions.vue';
 </script>
 <template>
   <div class="two-by-three-grid-page">

@@ -1,6 +1,6 @@
 <!-- Anything related to life detection, science stuff should be here -->
 <script setup lang="ts">
-import Co_emissions from '@/components/co_emissions/co_emissions.vue';
+import Co_emissions from '@/components/co2_emissions_graph/CO2EmissionsGraph.vue';
 </script>
 <template>
   <div class="two-by-three-grid-page">
