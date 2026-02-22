@@ -9,67 +9,25 @@ const chart = ref(null);
 const running = ref(false);
 
 const data: number[] = [];
+const times: Float32Array = [];
 const maxWindowWidth: number = 10;
 
 // Inititalize the graph and start the subscriber
 onActivated(() => {
-  Plotly.newPlot(
-    chart.value,
-    [
-      {
-        y: data,
-        mode: 'lines',
-        line: { color: '#30b630' },
-      },
-    ],
-    {
-      title: {
-        text: 'CO2_EMISSIONS',
-        font: { color: 'white', weight: 'bold' },
-      },
-      paper_bgcolor: '#252527',
-      plot_bgcolor: '#252527',
-      font: { color: 'white' },
-      xaxis: {
-        title: { text: 'Seconds' },
-        dtick: 1,
-        range: [0, maxWindowWidth],
-      },
-      yaxis: {
-        title: { text: 'CO2 Emissions' },
-        range: [0, 10],
-        gridcolor: 'rgba(255,255,255,0.25)',
-        gridwidth: 1.5,
-        zerolinecolor: 'rgba(255,255,255,0.9)',
-        dtick: 1,
-      },
-    },
-    { responsive: true },
-  );
-
-  start();
-});
-
-// Stop the subscriber
-onDeactivated(stop);
-
-/**
- * Starts the subscriber with a callback function to update the data
- * and the graph.
- */
-function start() {
   if (running.value) return;
   running.value = true;
 
   CO2.CO2Sub.start({
     callback: (message) => {
       data.push(message);
+      times.push(new Date());
 
       const data_update = {
         y: [data],
+        x: [times],
       };
 
-      Plotly.update(
+      Plotly.react(
         chart.value,
         data_update,
         {
@@ -95,17 +53,15 @@ function start() {
       ]);
     },
   });
-}
+});
 
-/**
- * Stop the subscriber
- */
-function stop() {
+// Stop the subscriber
+onDeactivated(() => {
   if (!running.value) return;
   running.value = false;
 
   CO2.CO2Sub.stop();
-}
+});
 </script>
 <template>
   <div class="co_emissions">
