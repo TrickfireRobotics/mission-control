@@ -59,7 +59,6 @@ div {
   flex-direction: column;
   justify-content: center;
   position: relative;
-  height: 100%;
   box-sizing: border-box;
 
   .camera-name {

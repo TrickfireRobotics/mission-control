@@ -12,6 +12,7 @@ export type TopicTypeMap = {
   'std_msgs/Time': StdMsg<number>;
   'sensor_msgs/msg/CompressedImage': CompressedImage;
   'sensor_msgs/msg/NavSatFix': NavSatFix;
+  'sensor_msgs/PointCloud2': PointCloud2;
 };
 
 export type TopicType = keyof TopicTypeMap;
@@ -49,3 +50,25 @@ export type NavSatFix = {
   position_covariance: number[];
   position_covariance_type: number;
 };
+
+export interface PointField {
+  name: string;
+  offset: number;
+  datatype: number;
+  count: number;
+}
+
+export interface PointCloud2 {
+  header: {
+    stamp: { sec: number; nanosec: number };
+    frame_id: string;
+  };
+  height: number;
+  width: number;
+  fields: PointField[];
+  is_bigendian: boolean;
+  point_step: number;
+  row_step: number;
+  data: number[];
+  is_dense: boolean;
+}
