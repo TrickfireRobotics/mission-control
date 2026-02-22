@@ -2,22 +2,19 @@
 <script setup lang="ts">
 import { useOccGraphStore } from '@/store/occGraphStore';
 import { onActivated, onDeactivated, ref } from 'vue';
-import ROSLIB from 'roslib';
 import Plotly from 'plotly.js-dist-min';
 
 const occGraph = useOccGraphStore();
 const occGraphDiv = ref<HTMLElement | null>(null);
-let subscriber: ROSLIB.Topic | null = null;
-
 function decodePointCloud2(msg) {
   const dv = new DataView(msg.data.buffer);
   const xField = msg.fields.find((f) => f.name === 'x');
   const yField = msg.fields.find((f) => f.name === 'y');
   const zField = msg.fields.find((f) => f.name === 'z');
 
-  const xs = [],
-    ys = [],
-    zs = [];
+  const xs = [];
+  const ys = [];
+  const zs = [];
 
   for (let i = 0; i < msg.width; i++) {
     const base = i * msg.point_step;
@@ -31,6 +28,8 @@ function decodePointCloud2(msg) {
 
 onActivated(() => {
   occGraph.occSub.start((msg) => {
+    const { xs, ys, zs } = decodePointCloud2(msg);
+
     Plotly.react(
       occGraphDiv.value,
       [
@@ -63,7 +62,7 @@ onDeactivated(() => {
 });
 </script>
 <template>
-  <div class="occGraphDiv" ref="occGraphDiv"></div>
+  <div ref="occGraphDiv" class="occGraphDiv"></div>
 </template>
 
 <!-- Should have lang="scss" and "scoped" to enable superpower of SCSS and make styles do not accidentally interact with other components styles-->
