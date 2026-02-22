@@ -8,7 +8,7 @@ const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
 
 const connectionTypes: Record<string, string> = {
   'Rover Production': 'ws://10.0.0.10:9090',
-  'Rover Local': 'ws://192.168.0.145:9090',
+  'Rover Local': 'ws://192.168.0.146:9090',
   'Local Development': 'ws://localhost:9090',
 };
 

@@ -138,6 +138,7 @@ export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
     if (defaultValue) {
       msg.value = defaultValue;
     }
+    console.log(topic);
 
     // Save the old callback so we can unsubscribe from it.
     // We aren't unsubscribing here because it might lead

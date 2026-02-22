@@ -12,52 +12,91 @@ function decodePointCloud2(msg) {
   const yField = msg.fields.find((f) => f.name === 'y');
   const zField = msg.fields.find((f) => f.name === 'z');
 
+  const total = msg.width * msg.height;
+
   const xs = [];
   const ys = [];
   const zs = [];
 
-  for (let i = 0; i < msg.width; i++) {
+  for (let i = 0; i < total; i++) {
     const base = i * msg.point_step;
-    xs.push(dv.getFloat32(base + xField.offset, true));
-    ys.push(dv.getFloat32(base + yField.offset, true));
-    zs.push(dv.getFloat32(base + zField.offset, true));
+
+    const x = dv.getFloat32(base + xField.offset, true);
+    const y = dv.getFloat32(base + yField.offset, true);
+    const z = dv.getFloat32(base + zField.offset, true);
+
+    // Filter invalid points
+    if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+      continue;
+    }
+
+    // Filter near-camera noise (VERY important for stereo cameras)
+    if (z < 0.1) {
+      continue;
+    }
+
+    xs.push(x);
+    ys.push(y);
+    zs.push(z);
   }
 
   return { xs, ys, zs };
 }
 
 onActivated(() => {
-  occGraph.occSub.start((msg) => {
-    const { xs, ys, zs } = decodePointCloud2(msg);
+  console.log('ACTIVATED');
 
-    Plotly.react(
-      occGraphDiv.value,
-      [
-        {
-          x: xs,
-          y: ys,
-          z: zs,
-          mode: 'markers',
-          type: 'scatter3d',
-          marker: { size: 2 },
-        },
-      ],
+  Plotly.newPlot(
+    occGraphDiv.value,
+    [
       {
-        margin: { l: 0, r: 0, t: 0, b: 0 },
-        paper_bgcolor: '#252527',
-        plot_bgcolor: '#252527',
-        scene: {
-          bgcolor: '#252527',
-          xaxis: { color: 'white' },
-          yaxis: { color: 'white' },
-          zaxis: { color: 'white' },
-        },
+        x: [],
+        y: [],
+        z: [],
+        mode: 'markers',
+        type: 'scatter3d',
+        marker: { size: 2 },
       },
-    );
+    ],
+    {
+      margin: { l: 0, r: 0, t: 0, b: 0 },
+      paper_bgcolor: '#252527',
+      plot_bgcolor: '#252527',
+      scene: {
+        bgcolor: '#252527',
+        xaxis: { color: 'white' },
+        yaxis: { color: 'white' },
+        zaxis: { color: 'white' },
+      },
+    },
+  );
+  occGraph.occSub.start({
+    callback: (msg) => {
+      const div = occGraphDiv.value;
+      if (!div) return;
+
+      console.log('SIZE:', div.clientWidth, div.clientHeight);
+      console.log('DIV:', occGraphDiv.value);
+
+      const camera = div._fullLayout?.scene?.camera;
+
+      const { xs, ys, zs } = decodePointCloud2(msg);
+
+      Plotly.update(
+        div,
+        {
+          x: [xs],
+          y: [ys],
+          z: [zs],
+        },
+        [0],
+      );
+    },
   });
 });
 
 onDeactivated(() => {
+  console.log('DEACTIVATED');
   occGraph.occSub.stop();
 });
 </script>

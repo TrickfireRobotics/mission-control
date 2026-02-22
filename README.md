@@ -34,7 +34,7 @@ To develop code for the mission control, please follow the setup below:
 TABLE 1: Connection
 | Value | Rover Production | Rover Local | Local Development |
 | ---- | ---- | ---- | ---- |
-| IP address | `192.168.0.145` | `10.0.0.10` | `localhost` |
+| IP address | `192.168.0.146` | `10.0.0.10` | `localhost` |
 | Router Color | White | Grey | N/A |
 | Wi-Fi Name | `trickfirerouter` | `viator` | N/A |
 

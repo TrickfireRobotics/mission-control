@@ -7,7 +7,7 @@ export interface Settings {
 
 function defaultSettings(): Settings {
   return {
-    websocketAddress: 'ws://192.168.0.145:9090',
+    websocketAddress: 'ws://192.168.0.146:9090',
   };
 }
 
