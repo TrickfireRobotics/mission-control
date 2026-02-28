@@ -3,15 +3,20 @@ Show a couple of cameras, basic telemetry, auto/teleop button, reconnect canfd b
 -->
 <script setup lang="ts">
 import RoverVelocityDisplay from '@/components/rover_velocity_display/RoverVelocityDisplay.vue';
+import ArmModel from '@/components/arm/ArmModel.vue';
+import ArmModeSelection from '@/components/arm/ArmModeSelection.vue';
+import InteractiveMap from '@/components/map/InteractiveMap.vue';
+import CameraModule from '@/components/camera/CameraModule.vue';
 </script>
 <template>
   <div class="two-by-three-grid-page">
-    <RoverVelocityDisplay />
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
-    <h1>Not yet Implemented</h1>
+    <CameraModule />
+    <CameraModule />
+    <Suspense>
+      <ArmModel />
+    </Suspense>
+    <InteractiveMap />
+    <ArmModeSelection />
   </div>
 </template>
 
