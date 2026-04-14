@@ -3,6 +3,10 @@ import { useControllerStore } from '@/store/controllerStore';
 
 const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;
+// Cap how fast motor commands are published to the network.
+// Matches the robot's 10 Hz polling rate and prevents burst flooding
+// on high-latency routers when multiple axes change in the same poll tick.
+const MOTOR_COMMAND_MAX_RATE_HZ = 10;
 
 const indexToControllerName = new Map();
 const indexToControllerState = new Map();
@@ -17,6 +21,7 @@ export function gamepadInit() {
     const state = new ControllerState(
       'src\\lib\\controller\\drivebaseAndArmBinding.json',
       DELTA_SENSITIVITY,
+      MOTOR_COMMAND_MAX_RATE_HZ,
     );
     indexToControllerState.set(e.gamepad.index, state);
 

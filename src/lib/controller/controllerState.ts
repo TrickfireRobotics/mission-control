@@ -19,9 +19,12 @@ export class ControllerState {
   friendlyNameToCurrentValue: Map<string, number> = new Map();
   friendlyNameToDelta: Map<string, number> = new Map();
 
+  maxPublishRateHz: number | undefined = undefined;
+
   // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
-  constructor(jsonControllerBinding: string, deltaSensitivity: number) {
+  constructor(jsonControllerBinding: string, deltaSensitivity: number, maxPublishRateHz?: number) {
     this.deltaSensitivity = deltaSensitivity;
+    this.maxPublishRateHz = maxPublishRateHz;
 
     // Set up the current value and delta value maps with friendly names of inputs
     for (const friendlyName of Object.values(gamepadNames).concat(Object.values(joystickNames))) {
@@ -54,6 +57,7 @@ export class ControllerState {
       const publisher = createPublisher({
         topicName: entry.publisher,
         topicType: 'std_msgs/Float32',
+        maxRateHz: this.maxPublishRateHz,
       });
 
       this.bindingEntryToPublisher.set(entry, publisher);

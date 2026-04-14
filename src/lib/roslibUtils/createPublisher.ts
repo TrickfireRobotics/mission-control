@@ -19,11 +19,12 @@ export interface Publisher<T extends TopicType> {
  * Creates a publisher that can send out messages to a certain topic.
  * @param options.topicName - should start with '/' along with topic name
  * @param options.topicType - TopicType Ros Message Type
- * @param options.isDebugging - optional prints to console for debugging
+ * @param options.maxRateHz - optional maximum publish rate in Hz; excess calls are dropped
  */
 export function createPublisher<T extends TopicType>(options: {
   topicName: string;
   topicType: T;
+  maxRateHz?: number;
 }): Publisher<T> {
   const ros = useRoslibStore();
   return createPublisherForRos(ros.getTopic, options);
@@ -38,12 +39,22 @@ export function createPublisherForRos<T extends TopicType>(
   options: {
     topicName: string;
     topicType: T;
+    maxRateHz?: number;
   },
 ): Publisher<T> {
-  const { topicName, topicType } = options;
+  const { topicName, topicType, maxRateHz } = options;
   const topic = getTopic<TopicTypeMap[T]>(topicName, topicType);
+  const minIntervalMs = maxRateHz != null ? 1000 / maxRateHz : 0;
+  let lastPublishTime = 0;
 
   const publish: Publisher<T>['publish'] = (data, options) => {
+    if (minIntervalMs > 0) {
+      const now = Date.now();
+      if (now - lastPublishTime < minIntervalMs) {
+        return;
+      }
+      lastPublishTime = now;
+    }
     const { isDebugging } = options || {};
     topic.publish(data);
     if (isDebugging) {
