@@ -1,21 +1,26 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "package"],
   "compilerOptions": {
-    "importsNotUsedAsValues": "remove",
-    "isolatedModules": false,
-    "noImplicitAny": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "useDefineForClassFields": true,
+    "allowJs": false,
+    "skipLibCheck": true,
     "strict": true,
+    "noImplicitAny": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    // Added to allow Object.hasOwn(). We are targeting the latest versions of javascript.
-    "target": "ES2022",
-    // Added "DOM" to tell Typescript that we have access to window
-    "lib": ["ES2022", "DOM"]
+    "jsx": "preserve",
+    "verbatimModuleSyntax": true
   },
-
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "references": [
     {
       "path": "./tsconfig.node.json"
