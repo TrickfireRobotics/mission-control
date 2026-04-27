@@ -115,7 +115,7 @@ function getMoteusStateProxy(
         </button>
       </div>
       <div class="period-input-container">
-        <b class="period-text">Update Delay in ms (doesn't work - FIXME)</b>
+        <b class="period-text">Poll Interval (ms)</b>
         <input
           v-model="updateTimeMs"
           class="period-input"
