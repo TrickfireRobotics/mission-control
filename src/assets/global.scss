@@ -1,17 +1,33 @@
 :root {
   --nav-bar-size: 4.5rem;
+
+  // ── TrickFire Brand Colors ──────────────────────────────
+  --tf-green: #00fe00;
+  --tf-green-dim: rgba(0, 254, 0, 0.1);
+  --tf-green-mid: rgba(0, 254, 0, 0.35);
+  --accent-pink: #e93cac;
+  --eerie-black: #222222;
+  --white: #ffffff;
+  --dark-white: #cccccc;
+  --pure-black: #000000;
+
+  // ── UI Surface Colors ───────────────────────────────────
+  --app-background: #191919;
+  --component-background: #232323;
   --black: #000000;
-  --dark-grey: #212121;
-  --accent-color: hsl(240, 20%, 20%);
-  --grey: #303030;
-  --light-grey: #424242;
+  --dark-grey: #222222;
+  --grey: #2c2c2c;
+  --light-grey: #3a3a3a;
+  --purple: #1e1e2e; // kept for legacy use
+
+  // ── Status Colors ───────────────────────────────────────
   --error: #e50000;
-  --correct: #30b630;
-  --white: #fafafa;
-  --purple: #29293d;
-  --component-background: #252527;
-  --app-background: #141415;
+  --correct: #00fe00;
+
+  // ── Legacy ──────────────────────────────────────────────
+  --accent-color: var(--tf-green);
 }
+
 *,
 ::before,
 ::after {
@@ -29,17 +45,19 @@
     color: inherit;
   }
 }
+
 a {
   color: inherit;
 }
+
 html,
 body {
   min-height: 100vh;
-  color: var(--white);
+  color: var(--dark-white);
   background: var(--app-background);
-  transition: color 0.5s, background-color 0.5s;
+  transition: color 0.3s, background-color 0.3s;
   line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+  font-family: 'Overpass', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
@@ -47,31 +65,64 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
 }
+
+// Brand font for all headings
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Barlow Condensed', 'Overpass', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--white);
+}
+
 button {
-  background-color: var(--white);
-  padding: 8px;
-  font-size: 16px;
+  background-color: var(--tf-green);
+  padding: 7px 14px;
+  font-size: 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   border: none;
-  border-radius: 10px;
-  color: var(--black);
+  border-radius: 4px;
+  color: var(--pure-black);
+
   &:hover {
-    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    background-color: #00d400;
     cursor: pointer;
   }
+
   &:active {
-    color: var(--white);
-    background-color: var(--black);
+    background-color: #009900;
+    color: var(--pure-black);
     cursor: default;
   }
 }
+
 .button {
+  &-secondary {
+    background-color: transparent;
+    border: 1px solid var(--tf-green);
+    color: var(--tf-green);
+
+    &:hover {
+      background-color: var(--tf-green-dim);
+    }
+  }
+
   &-toggle {
-    // double -- because it is a modifier
     &--on {
       background-color: var(--correct);
+      color: var(--pure-black);
     }
     &--off {
       background-color: var(--error);
+      color: var(--white);
     }
   }
 }
@@ -79,10 +130,35 @@ button {
 .dialogue-box {
   padding: 10px;
   border: 1px solid var(--light-grey);
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: var(--dark-grey);
-  color: var(--white);
+  color: var(--dark-white);
   width: 100%;
+  font-family: 'Overpass', sans-serif;
+}
+
+select,
+input[type='text'],
+input[type='number'],
+input[type='url'] {
+  background-color: var(--dark-grey);
+  border: 1px solid var(--light-grey);
+  border-radius: 4px;
+  color: var(--dark-white);
+  padding: 6px 10px;
+  font-family: 'Overpass', sans-serif;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--tf-green);
+    box-shadow: 0 0 0 2px var(--tf-green-dim);
+  }
+
+  option {
+    background-color: var(--dark-grey);
+    color: var(--dark-white);
+  }
 }
 
 // Page Styles
@@ -94,14 +170,49 @@ button {
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
   padding: 0.5rem;
+
   > * {
     overflow: hidden;
     background-color: var(--component-background);
-    padding: 5px;
-    border-radius: 0.25em;
-    margin: 0.6rem;
     padding: 1rem;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    border: 0.1vw solid var(--light-grey);
+    border-radius: 4px;
+    margin: 0.4rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--light-grey);
+    border-top: 2px solid var(--tf-green-mid);
+  }
+}
+
+// Shared placeholder panel used across pages for unbuilt sections
+.placeholder-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 100%;
+  opacity: 0.55;
+  user-select: none;
+
+  .placeholder-icon {
+    color: var(--tf-green);
+    transform: scale(2.4);
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    color: var(--tf-green);
+    font-size: 1.1rem;
+  }
+
+  .placeholder-desc {
+    color: var(--dark-white);
+    text-align: center;
+    max-width: 75%;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-transform: none;
+    font-family: 'Overpass', sans-serif;
+    font-weight: 400;
   }
 }
