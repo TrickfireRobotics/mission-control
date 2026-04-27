@@ -187,7 +187,8 @@ nav {
   flex-shrink: 0;
   gap: 0.85rem;
   padding: 0 1.25rem;
-  border-right: 2px solid var(--tf-green);
+  // Subtle neutral divider — no green border
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 
   #logo {
     height: 2.4rem;
@@ -210,8 +211,8 @@ nav {
   display: flex;
   flex: 1;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0 0.6rem;
+  gap: 0.55rem;
+  padding: 0 0.75rem;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -224,46 +225,49 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  // Pill height: about 78% of navbar so there's visible breathing room above/below
-  height: 3.2rem;
-  padding: 0 1.05rem;
-  min-width: 5rem;
+  // Increase vertical breathing room and keep the icon/label visually centered
+  gap: 0.25rem;
+  padding: 0.42rem 0.85rem;
+  min-width: 4.9rem;
+  height: 3rem;
   flex-shrink: 0;
   border-radius: 10px;
-  // Inactive chips have a faint surface so they look like buttons, not dead text
   background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color 0.12s, border-color 0.12s;
   cursor: pointer;
 
   &__icon {
+    display: grid;
+    place-items: center;
     color: var(--dark-white);
-    opacity: 0.7;
+    opacity: 0.65;
     transition: color 0.12s, opacity 0.12s;
 
     :deep(svg) {
-      width: 1.35rem;
-      height: 1.35rem;
+      // Slightly smaller icon gives label more visual weight
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 
   &__label {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 600;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.07em;
+    line-height: 1;
     color: var(--dark-white);
-    opacity: 0.7;
+    opacity: 0.65;
     white-space: nowrap;
     transition: color 0.12s, opacity 0.12s;
   }
 
-  // Hover — brighter, border becomes visible
+  // Hover — brighter chip
   &:not(.nav-tab--active):hover {
-    background-color: rgba(255, 255, 255, 0.11);
-    border-color: rgba(255, 255, 255, 0.18);
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
 
     .nav-tab__icon,
     .nav-tab__label {
@@ -272,7 +276,7 @@ nav {
     }
   }
 
-  // Active — solid TF green chip, black text (style-guide-recommended contrast)
+  // Active — solid TF green, black text (highest contrast per style guide)
   &--active {
     background-color: var(--tf-green);
     border-color: var(--tf-green);
@@ -292,7 +296,7 @@ nav {
   gap: 0;
   flex-shrink: 0;
   padding: 0 0.75rem;
-  border-left: 2px solid var(--tf-green);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .status-divider {
