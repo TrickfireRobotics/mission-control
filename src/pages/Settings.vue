@@ -1,8 +1,6 @@
-<!-- Rover connection, input device configuration, and controller bindings -->
+<!-- Rover connection and app configuration -->
 <script setup lang="ts">
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
-import ControllerConfig from '@/components/settings/ControllerConfig.vue';
-import ControllerMonitor from '@/components/settings/ControllerMonitor.vue';
 </script>
 
 <template>
@@ -11,17 +9,8 @@ import ControllerMonitor from '@/components/settings/ControllerMonitor.vue';
       <h1>Settings</h1>
     </header>
 
-    <div class="top-row">
-      <section class="settings-card settings-card--connection">
-        <ConnectionSettings />
-      </section>
-      <section class="settings-card">
-        <ControllerConfig />
-      </section>
-    </div>
-
-    <section class="settings-card settings-card--monitor">
-      <ControllerMonitor />
+    <section class="settings-card settings-card--connection">
+      <ConnectionSettings />
     </section>
   </div>
 </template>
@@ -32,22 +21,15 @@ import ControllerMonitor from '@/components/settings/ControllerMonitor.vue';
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   gap: 0.75rem;
 }
 
 .settings-header {
   h1 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: var(--white);
   }
-}
-
-.top-row {
-  display: grid;
-  grid-template-columns: 22rem 1fr;
-  gap: 0.75rem;
-  align-items: start;
 }
 
 .settings-card {
@@ -59,12 +41,6 @@ import ControllerMonitor from '@/components/settings/ControllerMonitor.vue';
 
   &--connection {
     border-top-color: var(--tf-green);
-  }
-
-  &--monitor {
-    flex: 1; // take remaining vertical space
-    min-height: 0;
-    overflow-y: auto;
   }
 }
 </style>

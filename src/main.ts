@@ -8,6 +8,7 @@ import DevTab from './pages/DevTab.vue';
 import Arm from './pages/Arm.vue';
 import Science from './pages/Science.vue';
 import Telemetry from './pages/Telemetry.vue';
+import Controller from './pages/Controller.vue';
 import Settings from './pages/Settings.vue';
 import Help from './pages/Help.vue';
 import { createPinia } from 'pinia';
@@ -20,6 +21,7 @@ const routes = [
   { path: '/Science', component: Science },
   { path: '/Help', component: Help },
   { path: '/Telemetry', component: Telemetry },
+  { path: '/Controller', component: Controller },
   { path: '/Map', component: Map },
   { path: '/Settings', component: Settings },
   { path: '/Dev-tab', component: DevTab },

@@ -83,9 +83,14 @@ const pageIconArr: PageIcon = [
     helperText: 'Motor speeds, positions, temperatures — record and export to CSV',
   },
   {
+    icon: ControllerIcon,
+    label: 'Controller',
+    helperText: 'Live gamepad input, axis visualiser, and controller bindings',
+  },
+  {
     icon: TuneIcon,
     label: 'Settings',
-    helperText: 'Rover connection, input device, and controller bindings',
+    helperText: 'Rover connection and app configuration',
   },
   {
     icon: BugIcon,
