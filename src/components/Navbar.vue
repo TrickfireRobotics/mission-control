@@ -51,15 +51,47 @@ onUnmounted(() => {
 type PageIcon = { icon: object; label: string; helperText: string }[];
 
 const pageIconArr: PageIcon = [
-  { icon: HomeIcon,            label: 'Home',     helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map' },
-  { icon: CameraIcon,          label: 'Cameras',  helperText: 'All camera feeds — select which cameras to display' },
-  { icon: MapIcon,             label: 'Map',      helperText: 'Interactive map — rover GPS position, target waypoint, and planned path' },
-  { icon: RobotIndustrialIcon, label: 'Arm',      helperText: '3D arm model, camera arms, and all arm-related controls' },
-  { icon: FlaskIcon,           label: 'Science',  helperText: 'Life detection instruments, soil sample analysis, and spectroscopy data' },
-  { icon: HelpCircleIcon,      label: 'Help',     helperText: 'Controls layout and keybindings reference' },
-  { icon: InformationIcon,     label: 'Telemetry',helperText: 'Motor speeds, positions, temperatures — record and export to CSV' },
-  { icon: TuneIcon,            label: 'Settings', helperText: 'Rover connection, input device, and controller bindings' },
-  { icon: BugIcon,             label: 'Dev-Tab',  helperText: 'Experimental module testing and developer tools' },
+  {
+    icon: HomeIcon,
+    label: 'Home',
+    helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map',
+  },
+  {
+    icon: CameraIcon,
+    label: 'Cameras',
+    helperText: 'All camera feeds — select which cameras to display',
+  },
+  {
+    icon: MapIcon,
+    label: 'Map',
+    helperText: 'Interactive map — rover GPS position, target waypoint, and planned path',
+  },
+  {
+    icon: RobotIndustrialIcon,
+    label: 'Arm',
+    helperText: '3D arm model, camera arms, and all arm-related controls',
+  },
+  {
+    icon: FlaskIcon,
+    label: 'Science',
+    helperText: 'Life detection instruments, soil sample analysis, and spectroscopy data',
+  },
+  { icon: HelpCircleIcon, label: 'Help', helperText: 'Controls layout and keybindings reference' },
+  {
+    icon: InformationIcon,
+    label: 'Telemetry',
+    helperText: 'Motor speeds, positions, temperatures — record and export to CSV',
+  },
+  {
+    icon: TuneIcon,
+    label: 'Settings',
+    helperText: 'Rover connection, input device, and controller bindings',
+  },
+  {
+    icon: BugIcon,
+    label: 'Dev-Tab',
+    helperText: 'Experimental module testing and developer tools',
+  },
 ];
 </script>
 
@@ -96,19 +128,25 @@ const pageIconArr: PageIcon = [
           title="Disable all rover motion"
           :class="{ 'op-btn--active': operation.getOperationState() === 'disabled' }"
           @click="operation.setOperationState({ data: 'disabled' })"
-        >Disable</button>
+        >
+          Disable
+        </button>
         <button
           id="btn-teleop"
           title="Enable manual teleoperation via gamepad"
           :class="{ 'op-btn--active': operation.getOperationState() === 'teleoperation' }"
           @click="operation.setOperationState({ data: 'teleoperation' })"
-        >TeleOp</button>
+        >
+          TeleOp
+        </button>
         <button
           id="btn-auto"
           title="Enable autonomous navigation"
           :class="{ 'op-btn--active': operation.getOperationState() === 'autonomous' }"
           @click="operation.setOperationState({ data: 'autonomous' })"
-        >Auto</button>
+        >
+          Auto
+        </button>
       </div>
 
       <div class="status-divider" />
@@ -117,7 +155,9 @@ const pageIconArr: PageIcon = [
       <RouterLink
         to="/Settings"
         class="status-pill"
-        :title="`Rover ROS bridge — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'} (${roverHostDisplay})\nClick to open Settings`"
+        :title="`Rover ROS bridge — ${
+          roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'
+        } (${roverHostDisplay})\nClick to open Settings`"
       >
         <span class="status-pill__label">ROVER</span>
         <component
@@ -128,7 +168,8 @@ const pageIconArr: PageIcon = [
         <span
           class="status-pill__sub"
           :class="roslib.isWebSocketConnected ? 'text--green' : 'text--red'"
-        >{{ roverHostDisplay }}</span>
+          >{{ roverHostDisplay }}</span
+        >
       </RouterLink>
 
       <!-- Camera -->
@@ -217,7 +258,9 @@ nav {
   overflow-y: hidden;
   scrollbar-width: none;
 
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .nav-tab {
@@ -335,9 +378,18 @@ nav {
     }
   }
 
-  #btn-disable.op-btn--active  { background-color: hsl(0,   80%, 26%); color: #ffaaaa; }
-  #btn-teleop.op-btn--active   { background-color: hsl(120, 80%, 16%); color: var(--tf-green); }
-  #btn-auto.op-btn--active     { background-color: #6b0059;             color: #f9aaee; }
+  #btn-disable.op-btn--active {
+    background-color: hsl(0, 80%, 26%);
+    color: #ffaaaa;
+  }
+  #btn-teleop.op-btn--active {
+    background-color: hsl(120, 80%, 16%);
+    color: var(--tf-green);
+  }
+  #btn-auto.op-btn--active {
+    background-color: #6b0059;
+    color: #f9aaee;
+  }
 }
 
 // Individual status indicator
@@ -390,8 +442,16 @@ nav {
 }
 
 // ── Colour utilities ─────────────────────────────────────────────────────────
-.icon--green { color: var(--tf-green); }
-.icon--red   { color: var(--error); }
-.text--green { color: var(--tf-green); }
-.text--red   { color: var(--error); }
+.icon--green {
+  color: var(--tf-green);
+}
+.icon--red {
+  color: var(--error);
+}
+.text--green {
+  color: var(--tf-green);
+}
+.text--red {
+  color: var(--error);
+}
 </style>

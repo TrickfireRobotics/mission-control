@@ -10,8 +10,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint --fix .",
-    "format": "prettier --write src/",
-    "lint-check": "prettier --check src/ && eslint ."
+    "format": "prettier --write .",
+    "lint-check": "prettier --check . && eslint ."
   },
   "dependencies": {
     "@maptiler/sdk": "^2.4.1",

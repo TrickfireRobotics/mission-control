@@ -69,7 +69,9 @@ function tryConnect(url: string, timeoutMs: number): Promise<boolean> {
         settled = true;
         try {
           ws.close();
-        } catch {}
+        } catch (error) {
+          void error;
+        }
         resolve(false);
       }
     }, timeoutMs);
@@ -80,7 +82,9 @@ function tryConnect(url: string, timeoutMs: number): Promise<boolean> {
         clearTimeout(timer);
         try {
           ws.close();
-        } catch {}
+        } catch (error) {
+          void error;
+        }
         resolve(true);
       }
     };
@@ -156,7 +160,11 @@ async function scanForRover() {
 
     <div class="field-group">
       <label class="field-label" for="ws-host">Network Preset</label>
-      <select id="ws-host" ref="ws-host" @change="updateSelectedIdx(connectionInput!.selectedIndex)">
+      <select
+        id="ws-host"
+        ref="ws-host"
+        @change="updateSelectedIdx(connectionInput!.selectedIndex)"
+      >
         <option
           v-for="(presetName, idx) in presetNames"
           :key="presetName"
@@ -199,12 +207,14 @@ async function scanForRover() {
       <p
         v-if="scanStatus"
         class="scan-status"
-        :class="{ 'scan-success': scanSuccess, 'scan-fail': !scanSuccess && !isScanning && scanStatus }"
+        :class="{
+          'scan-success': scanSuccess,
+          'scan-fail': !scanSuccess && !isScanning && scanStatus,
+        }"
       >
         {{ scanStatus }}
       </p>
     </div>
-
   </div>
 </template>
 

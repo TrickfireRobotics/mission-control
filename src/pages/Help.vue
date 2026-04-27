@@ -90,9 +90,14 @@
       <section class="help-card">
         <h2>Navigation Tips</h2>
         <ul class="help-list">
-          <li>The <strong>Home</strong> page shows velocity, system status, and rover connection at a glance.</li>
+          <li>
+            The <strong>Home</strong> page shows velocity, system status, and rover connection at a
+            glance.
+          </li>
           <li>Use <strong>Cameras</strong> to monitor all live video feeds.</li>
-          <li>The <strong>Map</strong> page lets you place GPS waypoints for autonomous navigation.</li>
+          <li>
+            The <strong>Map</strong> page lets you place GPS waypoints for autonomous navigation.
+          </li>
           <li>
             <strong>Telemetry</strong> shows per-motor data — use the record function to export a
             CSV for post-run analysis.
@@ -135,7 +140,9 @@
         <ul class="help-list">
           <li>
             <strong>ROVER indicator red</strong> — check that the rover is powered on and the
-            rosbridge server is running (<code>ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code>).
+            rosbridge server is running (<code
+              >ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code
+            >).
           </li>
           <li>
             <strong>High ping / timeouts</strong> — ensure you're on the same network segment as the
@@ -146,8 +153,8 @@
             check the CTRL indicator in the navbar.
           </li>
           <li>
-            <strong>Camera feed blank</strong> — verify the camera topics are being published
-            on the rover.
+            <strong>Camera feed blank</strong> — verify the camera topics are being published on the
+            rover.
           </li>
         </ul>
       </section>
