@@ -1,4 +1,11 @@
 {
+    // SETTINGS
+    "files.exclude": {
+        "dist/": true,
+        "node_modules/": true,
+    },
+
+    // FORMATTING
     "[vue]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode"
