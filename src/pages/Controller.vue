@@ -108,15 +108,11 @@ const bindingRows = computed(() =>
   <div class="ctrl-page">
     <!-- ── Left column ──────────────────────────────────────────────────────── -->
     <div class="left-col">
-
       <!-- Box 1: Device info -->
       <section class="card">
         <div class="section-header">
           <h2>Input Device</h2>
-          <span
-            class="badge"
-            :class="controller.isGamepadConnected ? 'badge--on' : 'badge--off'"
-          >
+          <span class="badge" :class="controller.isGamepadConnected ? 'badge--on' : 'badge--off'">
             {{ controller.isGamepadConnected ? 'Connected' : 'Not Connected' }}
           </span>
         </div>
@@ -124,15 +120,12 @@ const bindingRows = computed(() =>
           <span class="device-label">Gamepad</span>
           <span class="device-value">{{ snapshot.id }}</span>
         </div>
-        <p v-else class="hint-text">
-          No gamepad detected. Press any button to wake it up.
-        </p>
+        <p v-else class="hint-text">No gamepad detected. Press any button to wake it up.</p>
       </section>
 
       <!-- Box 2: Controller visualiser -->
       <section class="card card--viz">
         <div v-if="snapshot" class="ctrl-viz">
-
           <!-- Row 1: Triggers + Bumpers + Centre buttons -->
           <div class="top-row">
             <!-- LT -->
@@ -172,8 +165,12 @@ const bindingRows = computed(() =>
                 <div class="stick-dot" :style="stickDotStyle(0, 1)" />
               </div>
               <div class="stick-vals">
-                <span>X <em>{{ fmt(axisValue(0)) }}</em></span>
-                <span>Y <em>{{ fmt(axisValue(1)) }}</em></span>
+                <span
+                  >X <em>{{ fmt(axisValue(0)) }}</em></span
+                >
+                <span
+                  >Y <em>{{ fmt(axisValue(1)) }}</em></span
+                >
               </div>
             </div>
 
@@ -204,28 +201,52 @@ const bindingRows = computed(() =>
                 <div
                   class="face-btn"
                   :class="{ active: btnPressed(3) }"
-                  :style="btnPressed(3) ? { background: '#f5d142', color: '#000', borderColor: '#f5d142' } : {}"
-                >Y</div>
+                  :style="
+                    btnPressed(3)
+                      ? { background: '#f5d142', color: '#000', borderColor: '#f5d142' }
+                      : {}
+                  "
+                >
+                  Y
+                </div>
               </div>
               <div class="face-row">
                 <div
                   class="face-btn"
                   :class="{ active: btnPressed(2) }"
-                  :style="btnPressed(2) ? { background: '#5b9bd5', color: '#000', borderColor: '#5b9bd5' } : {}"
-                >X</div>
+                  :style="
+                    btnPressed(2)
+                      ? { background: '#5b9bd5', color: '#000', borderColor: '#5b9bd5' }
+                      : {}
+                  "
+                >
+                  X
+                </div>
                 <div class="face-gap" />
                 <div
                   class="face-btn"
                   :class="{ active: btnPressed(1) }"
-                  :style="btnPressed(1) ? { background: '#e8514a', color: '#fff', borderColor: '#e8514a' } : {}"
-                >B</div>
+                  :style="
+                    btnPressed(1)
+                      ? { background: '#e8514a', color: '#fff', borderColor: '#e8514a' }
+                      : {}
+                  "
+                >
+                  B
+                </div>
               </div>
               <div class="face-row">
                 <div
                   class="face-btn"
                   :class="{ active: btnPressed(0) }"
-                  :style="btnPressed(0) ? { background: '#4cce6e', color: '#000', borderColor: '#4cce6e' } : {}"
-                >A</div>
+                  :style="
+                    btnPressed(0)
+                      ? { background: '#4cce6e', color: '#000', borderColor: '#4cce6e' }
+                      : {}
+                  "
+                >
+                  A
+                </div>
               </div>
             </div>
 
@@ -237,16 +258,18 @@ const bindingRows = computed(() =>
                 <div class="stick-dot" :style="stickDotStyle(2, 3)" />
               </div>
               <div class="stick-vals">
-                <span>X <em>{{ fmt(axisValue(2)) }}</em></span>
-                <span>Y <em>{{ fmt(axisValue(3)) }}</em></span>
+                <span
+                  >X <em>{{ fmt(axisValue(2)) }}</em></span
+                >
+                <span
+                  >Y <em>{{ fmt(axisValue(3)) }}</em></span
+                >
               </div>
             </div>
           </div>
         </div>
 
-        <p v-else class="hint-text">
-          Press any button on your controller to activate it.
-        </p>
+        <p v-else class="hint-text">Press any button on your controller to activate it.</p>
       </section>
 
       <!-- Box 3: Drive settings -->
@@ -362,7 +385,9 @@ const bindingRows = computed(() =>
   }
 
   &--viz {
-    h2 { margin-bottom: 0.5rem; }
+    h2 {
+      margin-bottom: 0.5rem;
+    }
     overflow: hidden;
   }
 
@@ -382,7 +407,9 @@ const bindingRows = computed(() =>
   gap: 0.6rem;
   margin-bottom: 0.6rem;
 
-  h2 { margin-bottom: 0; }
+  h2 {
+    margin-bottom: 0;
+  }
 }
 
 .badge {
@@ -455,10 +482,7 @@ const bindingRows = computed(() =>
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:
-    background-color 0.05s,
-    color 0.05s,
-    border-color 0.05s;
+  transition: background-color 0.05s, color 0.05s, border-color 0.05s;
   user-select: none;
 
   &.active {
@@ -480,6 +504,7 @@ const bindingRows = computed(() =>
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  position: relative;
 }
 
 .trigger-group {
@@ -542,6 +567,10 @@ const bindingRows = computed(() =>
   display: flex;
   gap: 0.25rem;
   flex-shrink: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .centre-btn {
@@ -619,6 +648,10 @@ const bindingRows = computed(() =>
   font-size: 0.6rem;
   color: var(--dark-white);
   opacity: 0.55;
+
+  span {
+    white-space: nowrap;
+  }
 
   em {
     font-style: normal;

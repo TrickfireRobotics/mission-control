@@ -154,6 +154,8 @@ export function roslibManager(): RoslibManager {
    * @param address - is the new address to connect to.
    */
   function connect(address: string) {
+    // reset latency while (re)connecting so UI doesn't show stale value
+    latency.value = 0;
     // Give the reconnection extra time so that it doesn't
     // immediately get killed.
     heartbeatTime = Date.now() + RECONNECTION_GRACE_SECONDS * SECONDS_TO_TIMESTAMP;
@@ -198,11 +200,13 @@ export function roslibManager(): RoslibManager {
 
   ros.on('error', (error) => {
     isWebSocketConnected.value = false;
+    latency.value = 0;
     console.error(error);
   });
 
   ros.on('close', () => {
     isWebSocketConnected.value = false;
+    latency.value = 0;
   });
 
   // Reconnect if the websocket address changes.

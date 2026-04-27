@@ -170,11 +170,6 @@ const pageIconArr: PageIcon = [
           class="status-pill__icon"
           :class="roslib.isWebSocketConnected ? 'icon--green' : 'icon--red'"
         />
-        <span
-          class="status-pill__sub"
-          :class="roslib.isWebSocketConnected ? 'text--green' : 'text--red'"
-          >{{ roverHostDisplay }}</span
-        >
       </RouterLink>
 
       <!-- Camera -->
@@ -443,6 +438,13 @@ nav {
     font-weight: 400;
     color: var(--dark-white);
     white-space: nowrap;
+    /* occupy same vertical space as icon and avoid width-driven reflow */
+    height: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3rem;
+    text-align: right;
   }
 }
 
