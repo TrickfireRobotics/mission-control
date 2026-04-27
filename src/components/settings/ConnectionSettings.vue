@@ -205,7 +205,6 @@ async function scanForRover() {
       </p>
     </div>
 
-    <p class="persist-note">Connection address is saved automatically and restored on next launch.</p>
   </div>
 </template>
 
@@ -360,14 +359,5 @@ input[type='url'] {
   &.scan-fail {
     color: var(--error);
   }
-}
-
-.persist-note {
-  font-size: 0.75rem;
-  color: var(--dark-white);
-  opacity: 0.5;
-  font-style: italic;
-  margin-top: auto;
-  font-family: 'Overpass', sans-serif;
 }
 </style>

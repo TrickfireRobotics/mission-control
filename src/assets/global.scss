@@ -165,21 +165,22 @@ input[type='url'] {
 .two-by-three-grid-page {
   display: grid;
   box-sizing: border-box;
-  width: calc(100vw);
+  width: 100vw;
   height: calc(100vh - var(--nav-bar-size));
   grid-template-rows: 1fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 0.5rem;
+  padding: 0.6rem;
+  gap: 0.6rem;
 
   > * {
     overflow: hidden;
     background-color: var(--component-background);
     padding: 1rem;
     border-radius: 4px;
-    margin: 0.4rem;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
     border: 1px solid var(--light-grey);
     border-top: 2px solid var(--tf-green-mid);
+    min-height: 0; // prevents grid blowout
   }
 }
 
@@ -196,8 +197,13 @@ input[type='url'] {
 
   .placeholder-icon {
     color: var(--tf-green);
-    transform: scale(2.4);
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+
+    // MDI icons render a <span><svg>. Override the fixed SVG dimensions globally.
+    svg {
+      width: 2.8rem;
+      height: 2.8rem;
+    }
   }
 
   h2 {

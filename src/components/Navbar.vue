@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 
-// Icons are from https://fonts.google.com/
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
 import RobotIndustrialIcon from 'vue-material-design-icons/RobotIndustrial.vue';
@@ -28,11 +27,10 @@ const settings = useSettingsStore();
 const currentTab = ref(0);
 const router = useRouter();
 
-/** Extracts host:port from a WebSocket URL for compact display. */
-const roverHostDisplay = computed(() => {
-  const addr = settings.settings.websocketAddress;
-  return addr.replace(/^wss?:\/\//, '').replace(/\/.*$/, '');
-});
+/** Strip ws:// prefix and any path — show just host:port. */
+const roverHostDisplay = computed(() =>
+  settings.settings.websocketAddress.replace(/^wss?:\/\//, '').replace(/\/.*$/, ''),
+);
 
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
@@ -42,11 +40,8 @@ const setCurrentTab = (newValue: number) => {
 
 onMounted(() => {
   operation.operationStateSub.start();
-
   const savedTab = sessionStorage.getItem('currentTab');
-  if (savedTab != null) {
-    currentTab.value = parseInt(savedTab, 10);
-  }
+  if (savedTab != null) currentTab.value = parseInt(savedTab, 10);
 });
 
 onUnmounted(() => {
@@ -56,155 +51,119 @@ onUnmounted(() => {
 type PageIcon = { icon: object; label: string; helperText: string }[];
 
 const pageIconArr: PageIcon = [
-  {
-    icon: HomeIcon,
-    label: 'Home',
-    helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map',
-  },
-  {
-    icon: CameraIcon,
-    label: 'Cameras',
-    helperText: 'All camera feeds — select which cameras to display',
-  },
-  {
-    icon: MapIcon,
-    label: 'Map',
-    helperText: 'Interactive map — rover GPS position, target waypoint, and planned path',
-  },
-  {
-    icon: RobotIndustrialIcon,
-    label: 'Arm',
-    helperText: '3D arm model, camera arms, and all arm-related controls',
-  },
-  {
-    icon: FlaskIcon,
-    label: 'Science',
-    helperText: 'Life detection instruments, soil sample analysis, and spectroscopy data',
-  },
-  {
-    icon: HelpCircleIcon,
-    label: 'Help',
-    helperText: 'Controls layout and keybindings reference',
-  },
-  {
-    icon: InformationIcon,
-    label: 'Telemetry',
-    helperText: 'Motor speeds, positions, temperatures — record and export to CSV',
-  },
-  {
-    icon: TuneIcon,
-    label: 'Settings',
-    helperText: 'Rover connection, input device, and controller bindings',
-  },
-  {
-    icon: BugIcon,
-    label: 'Dev-Tab',
-    helperText: 'Experimental module testing and developer tools',
-  },
+  { icon: HomeIcon,            label: 'Home',     helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map' },
+  { icon: CameraIcon,          label: 'Cameras',  helperText: 'All camera feeds — select which cameras to display' },
+  { icon: MapIcon,             label: 'Map',      helperText: 'Interactive map — rover GPS position, target waypoint, and planned path' },
+  { icon: RobotIndustrialIcon, label: 'Arm',      helperText: '3D arm model, camera arms, and all arm-related controls' },
+  { icon: FlaskIcon,           label: 'Science',  helperText: 'Life detection instruments, soil sample analysis, and spectroscopy data' },
+  { icon: HelpCircleIcon,      label: 'Help',     helperText: 'Controls layout and keybindings reference' },
+  { icon: InformationIcon,     label: 'Telemetry',helperText: 'Motor speeds, positions, temperatures — record and export to CSV' },
+  { icon: TuneIcon,            label: 'Settings', helperText: 'Rover connection, input device, and controller bindings' },
+  { icon: BugIcon,             label: 'Dev-Tab',  helperText: 'Experimental module testing and developer tools' },
 ];
 </script>
 
 <template>
   <nav>
+    <!-- Logo / brand -->
     <section id="logo-section">
-      <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="TrickFire Robotics logo" />
-      <h1 id="logo-text">Mission Control</h1>
+      <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="TrickFire Robotics" />
+      <span id="logo-text">Mission Control</span>
     </section>
 
+    <!-- Page tabs -->
     <section id="page-section">
       <RouterLink
         v-for="(pageIcon, index) in pageIconArr"
         :key="index"
         :to="pageIcon.label"
-        class="container navbar-tab"
-        :class="{ 'current-page': currentTab === index }"
+        class="nav-tab"
+        :class="{ 'nav-tab--active': currentTab === index }"
+        :title="pageIcon.helperText"
         @click="setCurrentTab(index)"
       >
-        <h4>{{ pageIcon.label }}</h4>
-        <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
+        <component :is="pageIcon.icon" class="nav-tab__icon" />
+        <span class="nav-tab__label">{{ pageIcon.label }}</span>
       </RouterLink>
     </section>
 
+    <!-- Right-side status & controls -->
     <section id="states-section">
-      <!-- Operation mode selector -->
-      <div id="operation-selector" class="container">
+      <!-- Operation mode -->
+      <div id="op-selector">
         <button
-          id="disable-button"
+          id="btn-disable"
           title="Disable all rover motion"
-          :class="{ checked: operation.getOperationState() === 'disabled' }"
+          :class="{ 'op-btn--active': operation.getOperationState() === 'disabled' }"
           @click="operation.setOperationState({ data: 'disabled' })"
-        >
-          Disable
-        </button>
+        >Disable</button>
         <button
-          id="teleoperation-button"
+          id="btn-teleop"
           title="Enable manual teleoperation via gamepad"
-          :class="{ checked: operation.getOperationState() === 'teleoperation' }"
+          :class="{ 'op-btn--active': operation.getOperationState() === 'teleoperation' }"
           @click="operation.setOperationState({ data: 'teleoperation' })"
-        >
-          TeleOp
-        </button>
+        >TeleOp</button>
         <button
-          id="autonomous-button"
+          id="btn-auto"
           title="Enable autonomous navigation"
-          :class="{ checked: operation.getOperationState() === 'autonomous' }"
+          :class="{ 'op-btn--active': operation.getOperationState() === 'autonomous' }"
           @click="operation.setOperationState({ data: 'autonomous' })"
-        >
-          Auto
-        </button>
+        >Auto</button>
       </div>
 
-      <!-- Rover ROS bridge connection -->
+      <div class="status-divider" />
+
+      <!-- Rover ROS bridge -->
       <RouterLink
         to="/Settings"
-        class="container status-indicator"
-        :title="`Rover ROS Bridge — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'} (${roverHostDisplay})\nClick to open Settings`"
+        class="status-pill"
+        :title="`Rover ROS bridge — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'} (${roverHostDisplay})\nClick to open Settings`"
       >
-        <h4 class="status-label">ROVER</h4>
-        <span class="host-badge" :class="{ connected: roslib.isWebSocketConnected }">
-          {{ roverHostDisplay }}
-        </span>
+        <span class="status-pill__label">ROVER</span>
         <component
           :is="roslib.isWebSocketConnected ? PowerPlugIcon : PowerPlugOffIcon"
-          class="page-icon"
-          :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+          class="status-pill__icon"
+          :class="roslib.isWebSocketConnected ? 'icon--green' : 'icon--red'"
         />
+        <span
+          class="status-pill__sub"
+          :class="roslib.isWebSocketConnected ? 'text--green' : 'text--red'"
+        >{{ roverHostDisplay }}</span>
       </RouterLink>
 
-      <!-- Camera feed connection -->
+      <!-- Camera -->
       <div
-        class="container status-indicator"
-        :title="`Camera Stream — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
+        class="status-pill"
+        :title="`Camera stream — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
       >
-        <h4 class="status-label">CAM</h4>
+        <span class="status-pill__label">CAM</span>
         <component
           :is="CameraIcon"
-          class="page-icon"
-          :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+          class="status-pill__icon"
+          :class="roslib.isWebSocketConnected ? 'icon--green' : 'icon--red'"
         />
       </div>
 
-      <!-- Gamepad / controller -->
+      <!-- Gamepad -->
       <div
-        class="container status-indicator"
+        class="status-pill"
         :title="`Gamepad — ${controller.isGamepadConnected ? 'Connected' : 'Not detected'}`"
       >
-        <h4 class="status-label">CTRL</h4>
+        <span class="status-pill__label">CTRL</span>
         <component
           :is="ControllerIcon"
-          class="page-icon"
-          :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
+          class="status-pill__icon"
+          :class="controller.isGamepadConnected ? 'icon--green' : 'icon--red'"
         />
       </div>
 
-      <!-- Round-trip latency -->
-      <div
-        id="ping_container"
-        class="container status-indicator"
-        :title="`Round-trip latency to rover ROS bridge`"
-      >
-        <h4 class="status-label">PING</h4>
-        <span class="ping-value" :class="{ 'ping-ok': roslib.latency && roslib.latency < 100 }">
+      <!-- Ping -->
+      <div class="status-pill" title="Round-trip latency to rover ROS bridge">
+        <span class="status-pill__label">PING</span>
+        <span
+          class="status-pill__ping"
+          :class="{ 'text--green': roslib.latency && roslib.latency < 100 }"
+        >
           {{ roslib.latency ? Math.round(roslib.latency) + ' ms' : '— ms' }}
         </span>
       </div>
@@ -213,190 +172,213 @@ const pageIconArr: PageIcon = [
 </template>
 
 <style lang="scss" scoped>
+// ── Nav shell ────────────────────────────────────────────────────────────────
 nav {
-  grid-area: nav;
   display: flex;
   height: var(--nav-bar-size);
   background-color: var(--pure-black);
+  overflow: hidden;
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  p,
-  select {
+// ── Logo ─────────────────────────────────────────────────────────────────────
+#logo-section {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.85rem;
+  padding: 0 1.25rem;
+  border-right: 2px solid var(--tf-green);
+
+  #logo {
+    height: 2.4rem;
+    width: auto;
+  }
+
+  #logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--white);
     white-space: nowrap;
-    overflow: hidden;
   }
+}
 
-  // Active tab: subtle green tint + green bottom border
-  .current-page {
-    background-color: var(--tf-green-dim);
-    border-bottom: 3px solid var(--tf-green);
+// ── Page-tab strip ───────────────────────────────────────────────────────────
+#page-section {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
+}
 
-  .navbar-tab {
-    padding: 0 0.5rem;
-    min-width: 4.5rem;
-    border-bottom: 3px solid transparent;
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  padding: 0 1rem;
+  min-width: 5rem;
+  flex-shrink: 0;
+  border-bottom: 3px solid transparent;
+  transition: background-color 0.12s;
+  cursor: pointer;
 
-    .page-icon {
-      transform: scale(1.25);
+  &__icon {
+    color: var(--dark-white);
+    transition: color 0.12s;
+
+    // Override fixed SVG dimensions from vue-material-design-icons
+    :deep(svg) {
+      width: 1.45rem;
+      height: 1.45rem;
     }
   }
 
-  .navbar-tab:not(.current-page):hover {
+  &__label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--dark-white);
+    white-space: nowrap;
+    transition: color 0.12s;
+  }
+
+  // Hover (non-active)
+  &:not(.nav-tab--active):hover {
     background-color: rgba(255, 255, 255, 0.06);
-  }
 
-  .container {
-    height: var(--nav-bar-size);
-    margin-top: 0.1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  // Status indicators on the right (ROVER, CAM, CTRL, PING)
-  .status-indicator {
-    gap: 2px;
-    padding: 0 0.4rem;
-
-    .status-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--dark-white);
-      opacity: 0.8;
-    }
-
-    .host-badge {
-      font-family: 'Overpass', monospace;
-      font-size: 0.6rem;
-      color: var(--error);
-      letter-spacing: 0;
-      max-width: 7rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-transform: none;
-
-      &.connected {
-        color: var(--tf-green);
-      }
-    }
-
-    .ping-value {
-      font-family: 'Overpass', monospace;
-      font-size: 0.75rem;
-      color: var(--dark-white);
-
-      &.ping-ok {
-        color: var(--tf-green);
-      }
-    }
-  }
-
-  #ping_container {
-    min-width: 3.5rem;
-  }
-
-  #logo-section {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    background-color: var(--pure-black);
-    border-right: 2px solid var(--tf-green);
-    padding: 0 1.25rem;
-    gap: 1rem;
-    height: 100%;
-
-    #logo {
-      max-width: 100%;
-      max-height: 2.8rem;
-    }
-
-    #logo-text {
-      font-size: 1.5rem;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .nav-tab__icon,
+    .nav-tab__label {
       color: var(--white);
     }
   }
 
-  #page-section {
-    display: flex;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    flex-grow: 1;
+  // Active
+  &--active {
+    border-bottom-color: var(--tf-green);
+    background-color: var(--tf-green-dim);
+
+    .nav-tab__icon,
+    .nav-tab__label {
+      color: var(--tf-green);
+    }
   }
+}
 
-  #states-section {
-    display: flex;
-    gap: 0.5rem;
-    height: var(--nav-bar-size);
-    padding: 0 1rem;
-    background-color: var(--pure-black);
-    border-left: 2px solid var(--tf-green);
-    align-items: center;
+// ── Right-side status section ────────────────────────────────────────────────
+#states-section {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  padding: 0 0.75rem;
+  border-left: 2px solid var(--tf-green);
+}
 
-    #operation-selector {
-      display: flex;
-      flex-direction: row;
-      padding: 0 0.4rem;
-      background-color: #111111;
-      border: 1px solid var(--light-grey);
-      border-radius: 4px;
-      height: 72%;
-      gap: 0.2rem;
-      align-items: center;
+.status-divider {
+  width: 1px;
+  height: 60%;
+  background-color: var(--light-grey);
+  margin: 0 0.5rem;
+}
 
-      button {
-        height: 78%;
-        cursor: pointer;
-        padding: 0 0.85rem;
-        border-radius: 4px;
-        background-color: transparent;
-        color: var(--dark-white);
-        font-size: 0.8rem;
+// Operation mode pill-group
+#op-selector {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background-color: #111;
+  border: 1px solid var(--light-grey);
+  border-radius: 6px;
 
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.08);
-          color: var(--white);
-        }
+  button {
+    background-color: transparent;
+    color: var(--dark-white);
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: background-color 0.1s, color 0.1s;
 
-        &.checked {
-          background-image: none;
-          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-          color: var(--white);
-        }
-
-        &#disable-button.checked {
-          background-color: hsl(0, 90%, 28%);
-        }
-
-        &#autonomous-button.checked {
-          background-color: #8b0075;
-        }
-
-        &#teleoperation-button.checked {
-          background-color: hsl(120, 90%, 18%);
-          color: var(--tf-green);
-        }
-      }
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      cursor: pointer;
     }
   }
 
-  .red {
-    color: var(--error);
+  #btn-disable.op-btn--active  { background-color: hsl(0,   80%, 26%); color: #ffaaaa; }
+  #btn-teleop.op-btn--active   { background-color: hsl(120, 80%, 16%); color: var(--tf-green); }
+  #btn-auto.op-btn--active     { background-color: #6b0059;             color: #f9aaee; }
+}
+
+// Individual status indicator
+.status-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 0.65rem;
+  height: 100%;
+  text-decoration: none;
+
+  &__label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dark-white);
+    opacity: 0.6;
   }
 
-  .green {
-    color: var(--tf-green);
+  &__icon {
+    :deep(svg) {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+
+  &__sub {
+    font-family: 'Overpass', monospace;
+    font-size: 0.55rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    max-width: 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: none;
+  }
+
+  &__ping {
+    font-family: 'Overpass', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--dark-white);
+    white-space: nowrap;
   }
 }
+
+// ── Colour utilities ─────────────────────────────────────────────────────────
+.icon--green { color: var(--tf-green); }
+.icon--red   { color: var(--error); }
+.text--green { color: var(--tf-green); }
+.text--red   { color: var(--error); }
 </style>
