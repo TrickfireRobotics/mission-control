@@ -1,45 +1,28 @@
 <!-- Rover connection, input device configuration, and controller bindings -->
 <script setup lang="ts">
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
-import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
-import KeyboardIcon from 'vue-material-design-icons/Keyboard.vue';
+import ControllerConfig from '@/components/settings/ControllerConfig.vue';
+import ControllerMonitor from '@/components/settings/ControllerMonitor.vue';
 </script>
 
 <template>
   <div class="settings-page">
     <header class="settings-header">
       <h1>Settings</h1>
-      <p>Configure rover connection, input devices, and controller bindings.</p>
     </header>
 
-    <div class="settings-grid">
-      <!-- Rover Connection — primary setting -->
-      <section class="settings-card settings-card--primary">
+    <div class="top-row">
+      <section class="settings-card settings-card--connection">
         <ConnectionSettings />
       </section>
-
-      <!-- Input Device -->
       <section class="settings-card">
-        <div class="placeholder-panel">
-          <component :is="ControllerIcon" class="placeholder-icon" />
-          <h2>Input Device</h2>
-          <p class="placeholder-desc">
-            Select and configure input devices — gamepad, keyboard, or custom bindings.
-          </p>
-        </div>
-      </section>
-
-      <!-- Key Bindings -->
-      <section class="settings-card">
-        <div class="placeholder-panel">
-          <component :is="KeyboardIcon" class="placeholder-icon" />
-          <h2>Controller Bindings</h2>
-          <p class="placeholder-desc">
-            Remap gamepad and keyboard bindings for driving, arm control, and camera actions.
-          </p>
-        </div>
+        <ControllerConfig />
       </section>
     </div>
+
+    <section class="settings-card settings-card--monitor">
+      <ControllerMonitor />
+    </section>
   </div>
 </template>
 
@@ -49,28 +32,21 @@ import KeyboardIcon from 'vue-material-design-icons/Keyboard.vue';
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 1.5rem 2rem;
-  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  gap: 0.75rem;
 }
 
 .settings-header {
   h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     color: var(--white);
-    margin-bottom: 0.25rem;
-  }
-
-  p {
-    color: var(--dark-white);
-    font-size: 0.95rem;
   }
 }
 
-.settings-grid {
+.top-row {
   display: grid;
-  grid-template-columns: 22rem 1fr 1fr;
-  grid-template-rows: auto;
-  gap: 1rem;
+  grid-template-columns: 22rem 1fr;
+  gap: 0.75rem;
   align-items: start;
 }
 
@@ -80,11 +56,15 @@ import KeyboardIcon from 'vue-material-design-icons/Keyboard.vue';
   border-top: 2px solid var(--tf-green-mid);
   border-radius: 4px;
   padding: 1.25rem 1.5rem;
-  min-height: 18rem;
 
-  &--primary {
-    // Connection card gets a slightly more prominent border
+  &--connection {
     border-top-color: var(--tf-green);
+  }
+
+  &--monitor {
+    flex: 1; // take remaining vertical space
+    min-height: 0;
+    overflow-y: auto;
   }
 }
 </style>
