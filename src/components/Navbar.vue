@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
-// Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
+// Icons are from https://fonts.google.com/
 import MapIcon from 'vue-material-design-icons/Map.vue';
 import InformationIcon from 'vue-material-design-icons/Information.vue';
 import RobotIndustrialIcon from 'vue-material-design-icons/RobotIndustrial.vue';
@@ -12,18 +12,27 @@ import CameraIcon from 'vue-material-design-icons/Camera.vue';
 import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
+import PowerPlugOffIcon from 'vue-material-design-icons/PowerPlugOff.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
 
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
 import { useOperationStateStore } from '../store/operationStateStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import { useRouter } from 'vue-router';
 
 const roslib = useRoslibStore();
 const controller = useControllerStore();
 const operation = useOperationStateStore();
+const settings = useSettingsStore();
 const currentTab = ref(0);
 const router = useRouter();
+
+/** Extracts host:port from a WebSocket URL for compact display. */
+const roverHostDisplay = computed(() => {
+  const addr = settings.settings.websocketAddress;
+  return addr.replace(/^wss?:\/\//, '').replace(/\/.*$/, '');
+});
 
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
@@ -50,60 +59,58 @@ const pageIconArr: PageIcon = [
   {
     icon: HomeIcon,
     label: 'Home',
-    helperText:
-      'Show a couple of cameras, basic telemetry, auto/teleop button, reconnect canfd bus button, allow basic info about motors (like power consumption?), battery power level, LATER- shows box of the map',
+    helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map',
   },
   {
     icon: CameraIcon,
     label: 'Cameras',
-    helperText: 'Shows all the cameras, can select which cameras to show ',
+    helperText: 'All camera feeds — select which cameras to display',
   },
   {
     icon: MapIcon,
     label: 'Map',
-    helperText: 'Display map where the rover is, the target and line the rover will take',
+    helperText: 'Interactive map — rover GPS position, target waypoint, and planned path',
   },
   {
     icon: RobotIndustrialIcon,
     label: 'Arm',
-    helperText:
-      '3D model of the arm, camera arms, Any information related to the arm should be here',
+    helperText: '3D arm model, camera arms, and all arm-related controls',
   },
   {
     icon: FlaskIcon,
     label: 'Science',
-    helperText: 'Anything related to life detection, science stuff should be here',
+    helperText: 'Life detection instruments, soil sample analysis, and spectroscopy data',
   },
   {
     icon: HelpCircleIcon,
     label: 'Help',
-    helperText: 'Layout of controls',
+    helperText: 'Controls layout and keybindings reference',
   },
   {
     icon: InformationIcon,
     label: 'Telemetry',
-    helperText:
-      'All information about rover like motor speed etc, position, potential record and export to csv',
+    helperText: 'Motor speeds, positions, temperatures — record and export to CSV',
   },
   {
     icon: TuneIcon,
     label: 'Settings',
-    helperText:
-      'any configuration like what input device (controller/keyboard) and change controller bindings',
+    helperText: 'Rover connection, input device, and controller bindings',
   },
   {
     icon: BugIcon,
     label: 'Dev-Tab',
-    helperText: 'Experimental page to test modules',
+    helperText: 'Experimental module testing and developer tools',
   },
 ];
 </script>
+
 <template>
   <nav>
     <section id="logo-section">
-      <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="Trickfire logo" />
+      <img id="logo" src="../assets/trickfire_logo_transparent.png" alt="TrickFire Robotics logo" />
       <h1 id="logo-text">Mission Control</h1>
     </section>
+
     <section id="page-section">
       <RouterLink
         v-for="(pageIcon, index) in pageIconArr"
@@ -117,11 +124,13 @@ const pageIconArr: PageIcon = [
         <component :is="pageIcon.icon" class="page-icon" :title="pageIcon.helperText" />
       </RouterLink>
     </section>
+
     <section id="states-section">
+      <!-- Operation mode selector -->
       <div id="operation-selector" class="container">
         <button
           id="disable-button"
-          title="Disabled"
+          title="Disable all rover motion"
           :class="{ checked: operation.getOperationState() === 'disabled' }"
           @click="operation.setOperationState({ data: 'disabled' })"
         >
@@ -129,7 +138,7 @@ const pageIconArr: PageIcon = [
         </button>
         <button
           id="teleoperation-button"
-          title="TeleOperation"
+          title="Enable manual teleoperation via gamepad"
           :class="{ checked: operation.getOperationState() === 'teleoperation' }"
           @click="operation.setOperationState({ data: 'teleoperation' })"
         >
@@ -137,51 +146,67 @@ const pageIconArr: PageIcon = [
         </button>
         <button
           id="autonomous-button"
-          title="Autonomous"
+          title="Enable autonomous navigation"
           :class="{ checked: operation.getOperationState() === 'autonomous' }"
           @click="operation.setOperationState({ data: 'autonomous' })"
         >
           Auto
         </button>
       </div>
-      <div
-        class="container"
-        :title="`Websocket: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
+
+      <!-- Rover ROS bridge connection -->
+      <RouterLink
+        to="/Settings"
+        class="container status-indicator"
+        :title="`Rover ROS Bridge — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'} (${roverHostDisplay})\nClick to open Settings`"
       >
-        <h4 id="status">WS</h4>
+        <h4 class="status-label">ROVER</h4>
+        <span class="host-badge" :class="{ connected: roslib.isWebSocketConnected }">
+          {{ roverHostDisplay }}
+        </span>
         <component
-          :is="PowerPlugIcon"
+          :is="roslib.isWebSocketConnected ? PowerPlugIcon : PowerPlugOffIcon"
           class="page-icon"
           :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
         />
-      </div>
+      </RouterLink>
+
+      <!-- Camera feed connection -->
       <div
-        class="container"
-        :title="`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
+        class="container status-indicator"
+        :title="`Camera Stream — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
       >
-        <h4 id="status">CAM</h4>
+        <h4 class="status-label">CAM</h4>
         <component
           :is="CameraIcon"
           class="page-icon"
           :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
         />
       </div>
+
+      <!-- Gamepad / controller -->
       <div
-        class="container"
-        :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`"
+        class="container status-indicator"
+        :title="`Gamepad — ${controller.isGamepadConnected ? 'Connected' : 'Not detected'}`"
       >
-        <h4 id="status">CTRL</h4>
+        <h4 class="status-label">CTRL</h4>
         <component
           :is="ControllerIcon"
           class="page-icon"
           :class="{ green: controller.isGamepadConnected, red: !controller.isGamepadConnected }"
         />
       </div>
-      <div id="ping_container" class="container">
-        <h4 id="status">PING</h4>
-        <h5>
-          {{ roslib.latency ? Math.round(roslib.latency) + 'ms' : 'N/A' }}
-        </h5>
+
+      <!-- Round-trip latency -->
+      <div
+        id="ping_container"
+        class="container status-indicator"
+        :title="`Round-trip latency to rover ROS bridge`"
+      >
+        <h4 class="status-label">PING</h4>
+        <span class="ping-value" :class="{ 'ping-ok': roslib.latency && roslib.latency < 100 }">
+          {{ roslib.latency ? Math.round(roslib.latency) + ' ms' : '— ms' }}
+        </span>
       </div>
     </section>
   </nav>
@@ -192,8 +217,8 @@ nav {
   grid-area: nav;
   display: flex;
   height: var(--nav-bar-size);
-  background-color: var(--black);
-  //box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: var(--pure-black);
+
   h1,
   h2,
   h3,
@@ -204,19 +229,27 @@ nav {
     white-space: nowrap;
     overflow: hidden;
   }
+
+  // Active tab: subtle green tint + green bottom border
   .current-page {
-    background-color: var(--light-grey);
+    background-color: var(--tf-green-dim);
+    border-bottom: 3px solid var(--tf-green);
   }
+
   .navbar-tab {
     padding: 0 0.5rem;
     min-width: 4.5rem;
+    border-bottom: 3px solid transparent;
+
     .page-icon {
       transform: scale(1.25);
     }
   }
+
   .navbar-tab:not(.current-page):hover {
-    background-color: hsl(0, 0%, 16%);
+    background-color: rgba(255, 255, 255, 0.06);
   }
+
   .container {
     height: var(--nav-bar-size);
     margin-top: 0.1rem;
@@ -224,91 +257,146 @@ nav {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+  }
 
-    &#ping_container {
-      max-width: 2rem;
+  // Status indicators on the right (ROVER, CAM, CTRL, PING)
+  .status-indicator {
+    gap: 2px;
+    padding: 0 0.4rem;
 
-      h5 {
-        height: 30px;
+    .status-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--dark-white);
+      opacity: 0.8;
+    }
+
+    .host-badge {
+      font-family: 'Overpass', monospace;
+      font-size: 0.6rem;
+      color: var(--error);
+      letter-spacing: 0;
+      max-width: 7rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-transform: none;
+
+      &.connected {
+        color: var(--tf-green);
+      }
+    }
+
+    .ping-value {
+      font-family: 'Overpass', monospace;
+      font-size: 0.75rem;
+      color: var(--dark-white);
+
+      &.ping-ok {
+        color: var(--tf-green);
       }
     }
   }
+
+  #ping_container {
+    min-width: 3.5rem;
+  }
+
   #logo-section {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    background-color: var(--purple);
+    background-color: var(--pure-black);
+    border-right: 2px solid var(--tf-green);
     padding: 0 1.25rem;
     gap: 1rem;
     height: 100%;
 
     #logo {
       max-width: 100%;
-      max-height: 3rem;
+      max-height: 2.8rem;
     }
+
     #logo-text {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--white);
     }
   }
+
   #page-section {
     display: flex;
     overflow-x: scroll;
     overflow-y: hidden;
     scrollbar-width: none;
     flex-grow: 1;
-    border-right: 2px solid var(--white);
-    border-left: 2px solid var(--white);
   }
+
   #states-section {
     display: flex;
-    gap: 1.75rem;
+    gap: 0.5rem;
     height: var(--nav-bar-size);
-    padding: 0 1.5rem;
-    background-color: var(--purple);
+    padding: 0 1rem;
+    background-color: var(--pure-black);
+    border-left: 2px solid var(--tf-green);
+    align-items: center;
 
     #operation-selector {
-      margin: auto 0;
       display: flex;
       flex-direction: row;
-      padding: 0 0.5rem;
-      background-color: hsl(240, 20%, 10%);
+      padding: 0 0.4rem;
+      background-color: #111111;
+      border: 1px solid var(--light-grey);
       border-radius: 4px;
-      height: 80%;
-      gap: 0.25rem;
+      height: 72%;
+      gap: 0.2rem;
+      align-items: center;
 
       button {
-        height: 80%;
+        height: 78%;
         cursor: pointer;
-        align-items: center;
-        padding: 0 1rem;
+        padding: 0 0.85rem;
         border-radius: 4px;
         background-color: transparent;
-        color: white;
+        color: var(--dark-white);
+        font-size: 0.8rem;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.08);
+          color: var(--white);
+        }
 
         &.checked {
           background-image: none;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+          color: var(--white);
         }
 
         &#disable-button.checked {
-          background-color: hsl(0, 100%, 27%);
+          background-color: hsl(0, 90%, 28%);
         }
 
         &#autonomous-button.checked {
-          background-color: hsl(300, 100%, 23%);
+          background-color: #8b0075;
         }
 
         &#teleoperation-button.checked {
-          background-color: hsl(120, 100%, 15%);
+          background-color: hsl(120, 90%, 18%);
+          color: var(--tf-green);
         }
       }
     }
   }
+
   .red {
     color: var(--error);
   }
+
   .green {
-    color: var(--correct);
+    color: var(--tf-green);
   }
 }
 </style>
