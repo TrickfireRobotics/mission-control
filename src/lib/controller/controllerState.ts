@@ -1,5 +1,6 @@
 import { createPublisher } from '../roslibUtils/createPublisher';
 import { gamepadNames, joystickNames } from './controllerBindings';
+import { useSettingsStore } from '@/store/settingsStore';
 
 /* This stores controller data for each controller connected to the system.
  * Button data are always sent, no matter what.
@@ -78,12 +79,18 @@ export class ControllerState {
       }
     }
 
+    const blockHorizontal =
+      useSettingsStore().settings.controller.tankDriveBlockHorizontal;
+
     for (let i: number = 0; i < joystickArray.length; i++) {
       const friendlyName = joystickNames[i];
       const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
       if (currentValue != null) {
-        this.friendlyNameToDelta.set(friendlyName, currentValue - joystickArray[i].valueOf());
-        this.friendlyNameToCurrentValue.set(friendlyName, joystickArray[i].valueOf());
+        // Axes 0 and 2 are the left/right stick X axes.
+        // When tank-drive blocking is on, treat them as always zero.
+        const rawValue = blockHorizontal && (i === 0 || i === 2) ? 0 : joystickArray[i].valueOf();
+        this.friendlyNameToDelta.set(friendlyName, currentValue - rawValue);
+        this.friendlyNameToCurrentValue.set(friendlyName, rawValue);
       }
     }
 
