@@ -363,6 +363,7 @@ const bindingRows = computed(() =>
 
   &--viz {
     h2 { margin-bottom: 0.5rem; }
+    overflow: hidden;
   }
 
   &--bindings {
@@ -562,7 +563,7 @@ const bindingRows = computed(() =>
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 // Stick
@@ -574,8 +575,8 @@ const bindingRows = computed(() =>
 }
 
 .stick-pad {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   background-color: #1a1a1a;
   border: 2px solid var(--light-grey);
@@ -602,8 +603,8 @@ const bindingRows = computed(() =>
 
   .stick-dot {
     position: absolute;
-    width: 1rem;
-    height: 1rem;
+    width: 0.85rem;
+    height: 0.85rem;
     border-radius: 50%;
     background-color: var(--tf-green);
     transform: translate(-50%, -50%);
@@ -642,15 +643,15 @@ const bindingRows = computed(() =>
 
 .dpad-btn {
   @extend %btn;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.3rem;
+  height: 1.3rem;
   border-radius: 3px;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
 }
 
 .dpad-gap {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.3rem;
+  height: 1.3rem;
 }
 
 // L3 / R3
@@ -684,15 +685,15 @@ const bindingRows = computed(() =>
 
 .face-btn {
   @extend %btn;
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.3rem;
+  height: 1.3rem;
   border-radius: 50%;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
 }
 
 .face-gap {
-  width: 1.55rem;
-  height: 1.55rem;
+  width: 1.3rem;
+  height: 1.3rem;
 }
 
 // ── Drive settings ─────────────────────────────────────────────────────────────
