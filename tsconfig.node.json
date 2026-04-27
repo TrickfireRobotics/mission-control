@@ -3,7 +3,7 @@
     "composite": true,
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "lib": ["ES2022"],
     "types": ["node"],
     "skipLibCheck": true,
