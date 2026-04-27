@@ -209,13 +209,14 @@ nav {
 #page-section {
   display: flex;
   flex: 1;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.6rem;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  &::-webkit-scrollbar { display: none; }
 }
 
 .nav-tab {
@@ -223,23 +224,27 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  height: 100%;
-  padding: 0 1rem;
+  gap: 4px;
+  // Pill height: about 78% of navbar so there's visible breathing room above/below
+  height: 3.2rem;
+  padding: 0 1.05rem;
   min-width: 5rem;
   flex-shrink: 0;
-  border-bottom: 3px solid transparent;
-  transition: background-color 0.12s;
+  border-radius: 10px;
+  // Inactive chips have a faint surface so they look like buttons, not dead text
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background-color 0.12s, border-color 0.12s;
   cursor: pointer;
 
   &__icon {
     color: var(--dark-white);
-    transition: color 0.12s;
+    opacity: 0.7;
+    transition: color 0.12s, opacity 0.12s;
 
-    // Override fixed SVG dimensions from vue-material-design-icons
     :deep(svg) {
-      width: 1.45rem;
-      height: 1.45rem;
+      width: 1.35rem;
+      height: 1.35rem;
     }
   }
 
@@ -250,28 +255,32 @@ nav {
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: var(--dark-white);
+    opacity: 0.7;
     white-space: nowrap;
-    transition: color 0.12s;
+    transition: color 0.12s, opacity 0.12s;
   }
 
-  // Hover (non-active)
+  // Hover — brighter, border becomes visible
   &:not(.nav-tab--active):hover {
-    background-color: rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.18);
 
     .nav-tab__icon,
     .nav-tab__label {
       color: var(--white);
+      opacity: 1;
     }
   }
 
-  // Active
+  // Active — solid TF green chip, black text (style-guide-recommended contrast)
   &--active {
-    border-bottom-color: var(--tf-green);
-    background-color: var(--tf-green-dim);
+    background-color: var(--tf-green);
+    border-color: var(--tf-green);
 
     .nav-tab__icon,
     .nav-tab__label {
-      color: var(--tf-green);
+      color: var(--pure-black);
+      opacity: 1;
     }
   }
 }
