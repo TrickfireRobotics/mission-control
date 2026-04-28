@@ -289,12 +289,7 @@ const bindingRows = computed(() =>
       <section class="card">
         <h2>Controller Options</h2>
         <label class="toggle-row">
-          <div class="toggle-info">
-            <span class="toggle-name">Block horizontal input</span>
-            <span class="toggle-desc">
-              Zeroes out both stick X axes in tank drive to prevent accidental lateral drift.
-            </span>
-          </div>
+          <span class="toggle-name">Block horizontal input</span>
           <div
             class="toggle-switch"
             :class="{ active: blockHorizontal }"
@@ -304,32 +299,14 @@ const bindingRows = computed(() =>
           </div>
         </label>
         <label class="toggle-row">
-          <div class="toggle-info">
-            <span class="toggle-name">Invert X axis</span>
-            <span class="toggle-desc">
-              Flips the left/right direction on both joysticks.
-            </span>
-          </div>
-          <div
-            class="toggle-switch"
-            :class="{ active: invertX }"
-            @click="invertX = !invertX"
-          >
+          <span class="toggle-name">Invert X axis</span>
+          <div class="toggle-switch" :class="{ active: invertX }" @click="invertX = !invertX">
             <div class="toggle-knob" />
           </div>
         </label>
         <label class="toggle-row">
-          <div class="toggle-info">
-            <span class="toggle-name">Invert Y axis</span>
-            <span class="toggle-desc">
-              Flips the forward/back direction on both joysticks.
-            </span>
-          </div>
-          <div
-            class="toggle-switch"
-            :class="{ active: invertY }"
-            @click="invertY = !invertY"
-          >
+          <span class="toggle-name">Invert Y axis</span>
+          <div class="toggle-switch" :class="{ active: invertY }" @click="invertY = !invertY">
             <div class="toggle-knob" />
           </div>
         </label>
@@ -787,6 +764,7 @@ const bindingRows = computed(() =>
   justify-content: space-between;
   gap: 1rem;
   cursor: pointer;
+  margin-bottom: 1rem;
 
   .toggle-info {
     display: flex;

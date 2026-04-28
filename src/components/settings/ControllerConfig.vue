@@ -71,13 +71,7 @@ onUnmounted(() => {
     <h2>Controller Options</h2>
 
     <label class="toggle-row">
-      <div class="toggle-info">
-        <span class="toggle-name">Block horizontal stick input</span>
-        <span class="toggle-desc">
-          In tank drive, zeroes out the X axis of both sticks so only forward/back (Y axis) is sent.
-          Useful to prevent accidental lateral drift commands.
-        </span>
-      </div>
+      <span class="toggle-name">Block horizontal stick input</span>
       <div
         class="toggle-switch"
         :class="{ active: blockHorizontal }"
@@ -88,33 +82,15 @@ onUnmounted(() => {
     </label>
 
     <label class="toggle-row">
-      <div class="toggle-info">
-        <span class="toggle-name">Invert X axis</span>
-        <span class="toggle-desc">
-          Flips the left/right direction on both joysticks.
-        </span>
-      </div>
-      <div
-        class="toggle-switch"
-        :class="{ active: invertX }"
-        @click="invertX = !invertX"
-      >
+      <span class="toggle-name">Invert X axis</span>
+      <div class="toggle-switch" :class="{ active: invertX }" @click="invertX = !invertX">
         <div class="toggle-knob" />
       </div>
     </label>
 
     <label class="toggle-row">
-      <div class="toggle-info">
-        <span class="toggle-name">Invert Y axis</span>
-        <span class="toggle-desc">
-          Flips the forward/back direction on both joysticks.
-        </span>
-      </div>
-      <div
-        class="toggle-switch"
-        :class="{ active: invertY }"
-        @click="invertY = !invertY"
-      >
+      <span class="toggle-name">Invert Y axis</span>
+      <div class="toggle-switch" :class="{ active: invertY }" @click="invertY = !invertY">
         <div class="toggle-knob" />
       </div>
     </label>
@@ -202,32 +178,17 @@ onUnmounted(() => {
 
 .toggle-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
 
-  .toggle-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-
-    .toggle-name {
-      font-family: 'Overpass', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--white);
-    }
-
-    .toggle-desc {
-      font-family: 'Overpass', sans-serif;
-      font-size: 0.78rem;
-      color: var(--dark-white);
-      opacity: 0.7;
-      line-height: 1.5;
-    }
+  .toggle-name {
+    font-family: 'Overpass', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--white);
   }
 }
 
@@ -242,7 +203,6 @@ onUnmounted(() => {
   position: relative;
   transition: background-color 0.18s;
   cursor: pointer;
-  margin-top: 2px;
 
   &.active {
     background-color: var(--tf-green);
