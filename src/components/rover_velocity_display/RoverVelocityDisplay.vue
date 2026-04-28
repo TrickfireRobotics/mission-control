@@ -50,8 +50,9 @@ function getPercentage(input: number | null | undefined) {
 <template>
   <div>
     <table>
-      <tr>
-        <th class="barColumn">
+      <tbody>
+        <tr>
+          <th class="barColumn">
           <div class="barcontainer">
             <div id="frontLeftMotorBar" class="bar"></div>
           </div>
@@ -87,6 +88,7 @@ function getPercentage(input: number | null | undefined) {
           <p id="backRightMotor">{{ telemetry.backRightDrive.value }}</p>
         </th>
       </tr>
+      </tbody>
     </table>
   </div>
 </template>
