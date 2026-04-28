@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRoslibStore } from '@/store/roslibStore';
 
@@ -13,8 +13,8 @@ const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
  * Stored address format: ws://<host>:<port>
  */
 const connectionPresets: Record<string, string> = {
-  'Rover — Competition (10.0.0.10)': 'ws://10.0.0.10:9090',
-  'Rover — Local Network (192.168.0.146)': 'ws://192.168.0.146:9090',
+  'Rover - Competition (10.0.0.10)': 'ws://10.0.0.10:9090',
+  'Rover - Local Network (192.168.0.146)': 'ws://192.168.0.146:9090',
   'Development (localhost)': 'ws://localhost:9090',
 };
 
@@ -40,104 +40,6 @@ function updateSelectedIdx(newIdx: number) {
 function updateCustomAddress(newAddress: string) {
   if (currentIdx.value !== customIdx) return;
   settings.updateSettings({ websocketAddress: newAddress });
-}
-
-// ── Auto-discovery ──────────────────────────────────────────────────────────
-
-const isScanning = ref(false);
-const scanStatus = ref<string | null>(null);
-const scanSuccess = ref(false);
-
-/**
- * Attempts to open a WebSocket connection to the given URL.
- * Resolves true if the connection opens within `timeoutMs`, false otherwise.
- */
-function tryConnect(url: string, timeoutMs: number): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    let settled = false;
-    let ws: WebSocket;
-
-    try {
-      ws = new WebSocket(url);
-    } catch {
-      resolve(false);
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      if (!settled) {
-        settled = true;
-        try {
-          ws.close();
-        } catch (error) {
-          void error;
-        }
-        resolve(false);
-      }
-    }, timeoutMs);
-
-    ws.onopen = () => {
-      if (!settled) {
-        settled = true;
-        clearTimeout(timer);
-        try {
-          ws.close();
-        } catch (error) {
-          void error;
-        }
-        resolve(true);
-      }
-    };
-
-    ws.onerror = () => {
-      if (!settled) {
-        settled = true;
-        clearTimeout(timer);
-        resolve(false);
-      }
-    };
-  });
-}
-
-/**
- * Scans known network addresses for an active rover ROS bridge.
- * Tries each candidate in order and selects the first one that responds.
- */
-async function scanForRover() {
-  if (isScanning.value) return;
-
-  isScanning.value = true;
-  scanSuccess.value = false;
-  scanStatus.value = 'Scanning network for rover…';
-
-  // Candidates in priority order (presets first, then fallbacks)
-  const candidates = [
-    ...Object.values(connectionPresets),
-    'ws://rover.local:9090', // mDNS hostname
-    'ws://192.168.0.145:9090', // alternate local
-    'ws://192.168.1.10:9090', // another common subnet
-  ];
-
-  // Deduplicate while preserving order
-  const unique = [...new Set(candidates)];
-
-  for (const url of unique) {
-    const host = url.replace(/^wss?:\/\//, '').replace(/\/.*$/, '');
-    scanStatus.value = `Trying ${host}…`;
-
-    const found = await tryConnect(url, 1500);
-
-    if (found) {
-      settings.updateSettings({ websocketAddress: url });
-      scanStatus.value = `Found rover at ${host}`;
-      scanSuccess.value = true;
-      isScanning.value = false;
-      return;
-    }
-  }
-
-  scanStatus.value = 'No rover found — check your network connection.';
-  isScanning.value = false;
 }
 </script>
 
@@ -192,29 +94,15 @@ async function scanForRover() {
       <code class="address-value">{{ settings.settings.websocketAddress }}</code>
     </div>
 
-    <!-- Auto-discovery -->
-    <div class="discovery-section">
-      <button
-        class="discover-btn"
-        :disabled="isScanning"
-        :title="'Scan common network addresses for an active rover ROS bridge'"
-        @click="scanForRover"
-      >
-        <span v-if="isScanning" class="spinner" />
-        {{ isScanning ? 'Scanning…' : 'Auto-Discover Rover' }}
-      </button>
-
-      <p
-        v-if="scanStatus"
-        class="scan-status"
-        :class="{
-          'scan-success': scanSuccess,
-          'scan-fail': !scanSuccess && !isScanning && scanStatus,
-        }"
-      >
-        {{ scanStatus }}
-      </p>
-    </div>
+    <button
+      class="retry-btn"
+      :class="{ 'retry-btn--connected': roslib.isWebSocketConnected }"
+      :disabled="roslib.isWebSocketConnected"
+      title="Retry WebSocket connection to rover"
+      @click="roslib.reconnect()"
+    >
+      {{ roslib.isWebSocketConnected ? 'Connected' : 'Retry Connection' }}
+    </button>
   </div>
 </template>
 
@@ -318,56 +206,19 @@ input[type='url'] {
   }
 }
 
-.discovery-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.discover-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.retry-btn {
   width: 100%;
-  justify-content: center;
   padding: 9px 14px;
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  &--connected {
+    // Visually muted — clearly not interactive
+    opacity: 0.35;
+    cursor: default;
     pointer-events: none;
-  }
-}
-
-.spinner {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--pure-black);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.scan-status {
-  font-size: 0.82rem;
-  text-align: center;
-  color: var(--dark-white);
-  font-family: 'Overpass', sans-serif;
-  padding: 0.25rem;
-
-  &.scan-success {
-    color: var(--tf-green);
-  }
-
-  &.scan-fail {
-    color: var(--error);
+    // Override the global green button style with a neutral look
+    background-color: var(--light-grey) !important;
+    color: var(--dark-white) !important;
+    border-color: transparent !important;
   }
 }
 </style>

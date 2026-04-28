@@ -21,6 +21,7 @@ export interface RoslibManager {
   isWebSocketConnected: Ref<boolean>;
   latency: Ref<number>;
   getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
+  reconnect: () => void;
 }
 
 /**
@@ -235,5 +236,8 @@ export function roslibManager(): RoslibManager {
     stop,
     getTopic,
     isWebSocketConnected,
+    reconnect: () => {
+      if (serverHost) connect(serverHost);
+    },
   };
 }
