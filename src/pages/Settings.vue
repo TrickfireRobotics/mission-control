@@ -41,6 +41,8 @@ import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 
   &--connection {
     border-top-color: var(--tf-green);
+    width: min(100%, 48rem);
+    align-self: flex-start;
   }
 }
 </style>
