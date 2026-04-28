@@ -108,6 +108,8 @@ const pageIconArr: PageIcon = [
       <span id="logo-text">Mission Control</span>
     </section>
 
+    <div class="status-divider" aria-hidden="true" />
+
     <!-- Page tabs -->
     <section id="page-section">
       <RouterLink
@@ -126,6 +128,8 @@ const pageIconArr: PageIcon = [
 
     <!-- Right-side status & controls -->
     <section id="states-section">
+      <div class="status-divider" aria-hidden="true" />
+
       <!-- Operation mode -->
       <div id="op-selector">
         <button
@@ -228,8 +232,6 @@ nav {
   flex-shrink: 0;
   gap: 0.85rem;
   padding: 0 1.25rem;
-  // Subtle neutral divider - no green border
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
 
   #logo {
     height: 2.4rem;
@@ -339,12 +341,12 @@ nav {
   gap: 0;
   flex-shrink: 0;
   padding: 0 0.75rem;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .status-divider {
   width: 1px;
-  height: 60%;
+  align-self: stretch;
+  height: auto;
   background-color: var(--light-grey);
   margin: 0 0.5rem;
 }
