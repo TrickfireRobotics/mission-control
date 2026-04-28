@@ -1,10 +1,7 @@
 <!-- Should have " setup lang="ts" " in script tag for proper Composition and enforce typescript-->
 <script setup lang="ts">
-import RoverTelemetry from '@/assets/TransparentRoverVelocityModel.svg';
-import { CanBusID, type MoteusMotorState, useTelemetryData } from '@/lib/roslibUtils/telemetry';
-import { mergeProps, ref, type Ref, computed } from 'vue';
-import { onMounted } from 'vue';
-import GenericMotorTelemetry from '../telemetry/moteus/GenericMotorTelemetry.vue';
+import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
+import { computed } from 'vue';
 
 // Voltage: 0-36 for old drive motors (0-48 for new drive motors), 0-48 for arm motors.
 const MAX_VOLTAGE = 36;
@@ -46,6 +43,13 @@ function getPercentage(input: number | null | undefined) {
   }
   return (input / MAX_VOLTAGE) * 100 + '%';
 }
+
+function formatMotorValue(value: number | null | undefined): string {
+  if (value === null || value === undefined) {
+    return '0.00';
+  }
+  return value.toFixed(2);
+}
 </script>
 <template>
   <div>
@@ -56,17 +60,17 @@ function getPercentage(input: number | null | undefined) {
             <div class="barcontainer">
               <div id="frontLeftMotorBar" class="bar"></div>
             </div>
-            <p id="frontLeftMotor">{{ telemetry.frontLeftDrive.value }}</p>
+            <p id="frontLeftMotor">{{ formatMotorValue(telemetry.frontLeftDrive.value) }}</p>
 
             <div class="barcontainer">
               <div id="midLeftMotorBar" class="bar"></div>
             </div>
-            <p id="midLeftMotor">{{ telemetry.midLeftDrive.value }}</p>
+            <p id="midLeftMotor">{{ formatMotorValue(telemetry.midLeftDrive.value) }}</p>
 
             <div class="barcontainer">
               <div id="backLeftMotorBar" class="bar"></div>
             </div>
-            <p id="backLeftMotor">{{ telemetry.backLeftDrive.value }}</p>
+            <p id="backLeftMotor">{{ formatMotorValue(telemetry.backLeftDrive.value) }}</p>
           </th>
           <th>
             <img src="@/assets/TransparentRoverVelocityModel.svg" draggable="false" />
@@ -75,17 +79,17 @@ function getPercentage(input: number | null | undefined) {
             <div class="barcontainer">
               <div id="frontRightMotorBar" class="bar"></div>
             </div>
-            <p id="frontRightMotor">{{ telemetry.frontRightDrive.value }}</p>
+            <p id="frontRightMotor">{{ formatMotorValue(telemetry.frontRightDrive.value) }}</p>
 
             <div class="barcontainer">
               <div id="midRightMotorBar" class="bar"></div>
             </div>
-            <p id="midRightMotor">{{ telemetry.midRightDrive.value }}</p>
+            <p id="midRightMotor">{{ formatMotorValue(telemetry.midRightDrive.value) }}</p>
 
             <div class="barcontainer">
               <div id="backRightMotorBar" class="bar"></div>
             </div>
-            <p id="backRightMotor">{{ telemetry.backRightDrive.value }}</p>
+            <p id="backRightMotor">{{ formatMotorValue(telemetry.backRightDrive.value) }}</p>
           </th>
         </tr>
       </tbody>
@@ -163,6 +167,10 @@ p {
   margin-right: auto;
   margin-left: auto;
   display: block;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Overpass', monospace;
+  width: 3.5rem;
+  min-height: 1.2em;
 }
 table {
   position: absolute;
