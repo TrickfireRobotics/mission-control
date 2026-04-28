@@ -27,7 +27,7 @@ const settings = useSettingsStore();
 const currentTab = ref(0);
 const router = useRouter();
 
-/** Strip ws:// prefix and any path — show just host:port. */
+/** Strip ws:// prefix and any path - show just host:port. */
 const roverHostDisplay = computed(() =>
   settings.settings.websocketAddress.replace(/^wss?:\/\//, '').replace(/\/.*$/, ''),
 );
@@ -54,17 +54,17 @@ const pageIconArr: PageIcon = [
   {
     icon: HomeIcon,
     label: 'Home',
-    helperText: 'Dashboard — cameras, telemetry, operation mode, motor status, battery, and map',
+    helperText: 'Dashboard - cameras, telemetry, operation mode, motor status, battery, and map',
   },
   {
     icon: CameraIcon,
     label: 'Cameras',
-    helperText: 'All camera feeds — select which cameras to display',
+    helperText: 'All camera feeds - select which cameras to display',
   },
   {
     icon: MapIcon,
     label: 'Map',
-    helperText: 'Interactive map — rover GPS position, target waypoint, and planned path',
+    helperText: 'Interactive map - rover GPS position, target waypoint, and planned path',
   },
   {
     icon: RobotIndustrialIcon,
@@ -80,7 +80,7 @@ const pageIconArr: PageIcon = [
   {
     icon: InformationIcon,
     label: 'Telemetry',
-    helperText: 'Motor speeds, positions, temperatures — record and export to CSV',
+    helperText: 'Motor speeds, positions, temperatures - record and export to CSV',
   },
   {
     icon: ControllerIcon,
@@ -160,7 +160,7 @@ const pageIconArr: PageIcon = [
       <RouterLink
         to="/Settings"
         class="status-pill"
-        :title="`Rover ROS bridge — ${
+        :title="`Rover ROS bridge - ${
           roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'
         } (${roverHostDisplay})\nClick to open Settings`"
       >
@@ -175,7 +175,7 @@ const pageIconArr: PageIcon = [
       <!-- Camera -->
       <div
         class="status-pill"
-        :title="`Camera stream — ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
+        :title="`Camera stream - ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
       >
         <span class="status-pill__label">CAM</span>
         <component
@@ -188,7 +188,7 @@ const pageIconArr: PageIcon = [
       <!-- Gamepad -->
       <div
         class="status-pill"
-        :title="`Gamepad — ${controller.isGamepadConnected ? 'Connected' : 'Not detected'}`"
+        :title="`Gamepad - ${controller.isGamepadConnected ? 'Connected' : 'Not detected'}`"
       >
         <span class="status-pill__label">CTRL</span>
         <component
@@ -205,7 +205,7 @@ const pageIconArr: PageIcon = [
           class="status-pill__ping"
           :class="{ 'text--green': roslib.latency && roslib.latency < 100 }"
         >
-          {{ roslib.latency ? Math.round(roslib.latency) + ' ms' : '— ms' }}
+          {{ roslib.latency ? Math.round(roslib.latency) + ' ms' : '- ms' }}
         </span>
       </div>
     </section>
@@ -213,7 +213,7 @@ const pageIconArr: PageIcon = [
 </template>
 
 <style lang="scss" scoped>
-// ── Nav shell ────────────────────────────────────────────────────────────────
+//  Nav shell
 nav {
   display: flex;
   height: var(--nav-bar-size);
@@ -221,14 +221,14 @@ nav {
   overflow: hidden;
 }
 
-// ── Logo ─────────────────────────────────────────────────────────────────────
+//  Logo
 #logo-section {
   display: flex;
   align-items: center;
   flex-shrink: 0;
   gap: 0.85rem;
   padding: 0 1.25rem;
-  // Subtle neutral divider — no green border
+  // Subtle neutral divider - no green border
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 
   #logo {
@@ -247,7 +247,7 @@ nav {
   }
 }
 
-// ── Page-tab strip ───────────────────────────────────────────────────────────
+//  Page-tab strip
 #page-section {
   display: flex;
   flex: 1;
@@ -307,7 +307,7 @@ nav {
     transition: color 0.12s, opacity 0.12s;
   }
 
-  // Hover — brighter chip
+  // Hover - brighter chip
   &:not(.nav-tab--active):hover {
     background-color: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.2);
@@ -319,7 +319,7 @@ nav {
     }
   }
 
-  // Active — solid TF green, black text (highest contrast per style guide)
+  // Active - solid TF green, black text (highest contrast per style guide)
   &--active {
     background-color: var(--tf-green);
     border-color: var(--tf-green);
@@ -332,7 +332,7 @@ nav {
   }
 }
 
-// ── Right-side status section ────────────────────────────────────────────────
+//  Right-side status section
 #states-section {
   display: flex;
   align-items: center;
@@ -448,7 +448,7 @@ nav {
   }
 }
 
-// ── Colour utilities ─────────────────────────────────────────────────────────
+//  Colour utilities
 .icon--green {
   color: var(--tf-green);
 }

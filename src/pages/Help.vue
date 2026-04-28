@@ -16,15 +16,15 @@
           <tbody>
             <tr>
               <td class="key-cell"><kbd>Disable</kbd></td>
-              <td>Stop all rover motion — safe state, no commands sent</td>
+              <td>Stop all rover motion - safe state, no commands sent</td>
             </tr>
             <tr>
               <td class="key-cell"><kbd>TeleOp</kbd></td>
-              <td>Manual teleoperation via gamepad — driving and arm control active</td>
+              <td>Manual teleoperation via gamepad - driving and arm control active</td>
             </tr>
             <tr>
               <td class="key-cell"><kbd>Auto</kbd></td>
-              <td>Autonomous navigation — rover follows planned waypoints</td>
+              <td>Autonomous navigation - rover follows planned waypoints</td>
             </tr>
           </tbody>
         </table>
@@ -35,7 +35,7 @@
 
       <!-- Driving (Gamepad) -->
       <section class="help-card">
-        <h2>Driving — Gamepad</h2>
+        <h2>Driving - Gamepad</h2>
         <table class="help-table">
           <tbody>
             <tr>
@@ -56,7 +56,7 @@
 
       <!-- Arm (Gamepad) -->
       <section class="help-card">
-        <h2>Arm — Gamepad</h2>
+        <h2>Arm - Gamepad</h2>
         <table class="help-table">
           <tbody>
             <tr>
@@ -99,11 +99,11 @@
             The <strong>Map</strong> page lets you place GPS waypoints for autonomous navigation.
           </li>
           <li>
-            <strong>Telemetry</strong> shows per-motor data — use the record function to export a
+            <strong>Telemetry</strong> shows per-motor data - use the record function to export a
             CSV for post-run analysis.
           </li>
           <li>
-            Connection settings are <strong>persistent</strong> — your last rover address is
+            Connection settings are <strong>persistent</strong> - your last rover address is
             remembered between sessions.
           </li>
         </ul>
@@ -139,21 +139,21 @@
         <h2>Troubleshooting</h2>
         <ul class="help-list">
           <li>
-            <strong>ROVER indicator red</strong> — check that the rover is powered on and the
+            <strong>ROVER indicator red</strong> - check that the rover is powered on and the
             rosbridge server is running (<code
               >ros2 launch rosbridge_server rosbridge_websocket_launch.xml</code
             >).
           </li>
           <li>
-            <strong>High ping / timeouts</strong> — ensure you're on the same network segment as the
+            <strong>High ping / timeouts</strong> - ensure you're on the same network segment as the
             rover and no firewall is blocking port 9090.
           </li>
           <li>
-            <strong>Gamepad not detected</strong> — press any button on the gamepad to wake it, then
+            <strong>Gamepad not detected</strong> - press any button on the gamepad to wake it, then
             check the CTRL indicator in the navbar.
           </li>
           <li>
-            <strong>Camera feed blank</strong> — verify the camera topics are being published on the
+            <strong>Camera feed blank</strong> - verify the camera topics are being published on the
             rover.
           </li>
         </ul>

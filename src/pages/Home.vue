@@ -1,5 +1,5 @@
 <!--
-  Home dashboard — velocity, camera preview, rover connection, motor status, battery/systems, map preview
+  Home dashboard - velocity, camera preview, rover connection, motor status, battery/systems, map preview
 -->
 <script setup lang="ts">
 import RoverVelocityDisplay from '@/components/rover_velocity_display/RoverVelocityDisplay.vue';
@@ -25,7 +25,7 @@ import BatteryIcon from 'vue-material-design-icons/Battery.vue';
       </p>
     </div>
 
-    <!-- [1,3] Rover Connection — accessible directly from the dashboard -->
+    <!-- [1,3] Rover Connection -->
     <div class="home-connection-panel">
       <ConnectionSettings />
     </div>

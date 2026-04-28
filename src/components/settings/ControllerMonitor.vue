@@ -3,7 +3,10 @@ import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { gamepadNames, joystickNames } from '@/lib/controller/controllerBindings';
 import drivebaseBindings from '@/lib/controller/drivebaseAndArmBinding.json';
 
-interface ButtonState { pressed: boolean; value: number }
+interface ButtonState {
+  pressed: boolean;
+  value: number;
+}
 interface GamepadSnapshot {
   id: string;
   axes: number[];
@@ -13,9 +16,9 @@ interface GamepadSnapshot {
 const snapshot = ref<GamepadSnapshot | null>(null);
 let rafId: number | null = null;
 
-// ── Trigger initialisation fix ─────────────────────────────────────────────
-// The browser Gamepad API reports Xbox triggers at 0.5 before first touch.
-// We record the value on first read and ignore it until the trigger deviates.
+//  Trigger initialisation fix
+// The browser Gamepad API reports Xbox triggers at 0.5 before first touch
+// Record the value on first read and ignore it until the trigger deviates
 const triggerInit: Record<number, number | null> = { 6: null, 7: null };
 const triggerReady: Record<number, boolean> = { 6: false, 7: false };
 
@@ -47,23 +50,35 @@ function poll() {
   rafId = requestAnimationFrame(poll);
 }
 
-onMounted(() => { rafId = requestAnimationFrame(poll); });
-onUnmounted(() => { if (rafId !== null) cancelAnimationFrame(rafId); });
+onMounted(() => {
+  rafId = requestAnimationFrame(poll);
+});
+onUnmounted(() => {
+  if (rafId !== null) cancelAnimationFrame(rafId);
+});
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-function btnPressed(idx: number) { return snapshot.value?.buttons[idx]?.pressed ?? false; }
-function btnValue(idx: number)   { return snapshot.value?.buttons[idx]?.value   ?? 0; }
-function axisValue(idx: number)  { return snapshot.value?.axes[idx] ?? 0; }
-function fmt(v: number)          { return v.toFixed(2); }
+//  Helpers
+function btnPressed(idx: number) {
+  return snapshot.value?.buttons[idx]?.pressed ?? false;
+}
+function btnValue(idx: number) {
+  return snapshot.value?.buttons[idx]?.value ?? 0;
+}
+function axisValue(idx: number) {
+  return snapshot.value?.axes[idx] ?? 0;
+}
+function fmt(v: number) {
+  return v.toFixed(2);
+}
 
 function stickDotStyle(xIdx: number, yIdx: number) {
   return {
     left: `${50 + axisValue(xIdx) * 40}%`,
-    top:  `${50 + axisValue(yIdx) * 40}%`,
+    top: `${50 + axisValue(yIdx) * 40}%`,
   };
 }
 
-// ── Bindings table ─────────────────────────────────────────────────────────
+//  Bindings table
 const buttonByName = Object.fromEntries(
   Object.entries(gamepadNames).map(([i, n]) => [n, Number(i)]),
 );
@@ -74,8 +89,8 @@ const axisByName = Object.fromEntries(
 const bindingRows = computed(() =>
   drivebaseBindings.bindings.map((b) => {
     const isAxis = b.type === 'joystick';
-    const idx    = isAxis ? axisByName[b.name] : buttonByName[b.name];
-    const live   = isAxis ? axisValue(idx) : btnValue(idx);
+    const idx = isAxis ? axisByName[b.name] : buttonByName[b.name];
+    const live = isAxis ? axisValue(idx) : btnValue(idx);
     return { name: b.name, type: b.type, topic: b.publisher || null, live, isAxis };
   }),
 );
@@ -83,16 +98,15 @@ const bindingRows = computed(() =>
 
 <template>
   <div class="monitor">
-    <!-- ── Header ─────────────────────────────────────────────────────────── -->
+    <!--  Header  -->
     <div class="monitor-header">
       <h2>Controller Input</h2>
       <span v-if="snapshot" class="pad-name">{{ snapshot.id }}</span>
       <span v-else class="pad-disconnected">No gamepad detected</span>
     </div>
 
-    <!-- ── Controller visualisation ─────────────────────────────────────── -->
+    <!--  Controller visualisation  -->
     <div v-if="snapshot" class="ctrl-viz">
-
       <!-- Row 1: Triggers + Bumpers + Centre buttons -->
       <div class="top-row">
         <!-- LT -->
@@ -126,24 +140,33 @@ const bindingRows = computed(() =>
         <!-- Left stick -->
         <div class="stick-group">
           <div class="stick-pad">
-            <div class="stick-ch-h" /><div class="stick-ch-v" />
+            <div class="stick-ch-h" />
+            <div class="stick-ch-v" />
             <div class="stick-dot" :style="stickDotStyle(0, 1)" />
           </div>
           <div class="stick-vals">
-            <span>X <em>{{ fmt(axisValue(0)) }}</em></span>
-            <span>Y <em>{{ fmt(axisValue(1)) }}</em></span>
+            <span
+              >X <em>{{ fmt(axisValue(0)) }}</em></span
+            >
+            <span
+              >Y <em>{{ fmt(axisValue(1)) }}</em></span
+            >
           </div>
         </div>
 
         <!-- D-Pad -->
         <div class="dpad">
-          <div class="dpad-row"><div class="dpad-btn" :class="{ active: btnPressed(12) }">▲</div></div>
+          <div class="dpad-row">
+            <div class="dpad-btn" :class="{ active: btnPressed(12) }">▲</div>
+          </div>
           <div class="dpad-row">
             <div class="dpad-btn" :class="{ active: btnPressed(14) }">◄</div>
             <div class="dpad-gap" />
             <div class="dpad-btn" :class="{ active: btnPressed(15) }">►</div>
           </div>
-          <div class="dpad-row"><div class="dpad-btn" :class="{ active: btnPressed(13) }">▼</div></div>
+          <div class="dpad-row">
+            <div class="dpad-btn" :class="{ active: btnPressed(13) }">▼</div>
+          </div>
         </div>
 
         <!-- L3 / R3 -->
@@ -155,31 +178,72 @@ const bindingRows = computed(() =>
         <!-- Face buttons -->
         <div class="face">
           <div class="face-row">
-            <div class="face-btn" :class="{ active: btnPressed(3) }"
-              :style="btnPressed(3) ? { background: '#f5d142', color: '#000', borderColor: '#f5d142' } : {}">Y</div>
+            <div
+              class="face-btn"
+              :class="{ active: btnPressed(3) }"
+              :style="
+                btnPressed(3)
+                  ? { background: '#f5d142', color: '#000', borderColor: '#f5d142' }
+                  : {}
+              "
+            >
+              Y
+            </div>
           </div>
           <div class="face-row">
-            <div class="face-btn" :class="{ active: btnPressed(2) }"
-              :style="btnPressed(2) ? { background: '#5b9bd5', color: '#000', borderColor: '#5b9bd5' } : {}">X</div>
+            <div
+              class="face-btn"
+              :class="{ active: btnPressed(2) }"
+              :style="
+                btnPressed(2)
+                  ? { background: '#5b9bd5', color: '#000', borderColor: '#5b9bd5' }
+                  : {}
+              "
+            >
+              X
+            </div>
             <div class="face-gap" />
-            <div class="face-btn" :class="{ active: btnPressed(1) }"
-              :style="btnPressed(1) ? { background: '#e8514a', color: '#fff', borderColor: '#e8514a' } : {}">B</div>
+            <div
+              class="face-btn"
+              :class="{ active: btnPressed(1) }"
+              :style="
+                btnPressed(1)
+                  ? { background: '#e8514a', color: '#fff', borderColor: '#e8514a' }
+                  : {}
+              "
+            >
+              B
+            </div>
           </div>
           <div class="face-row">
-            <div class="face-btn" :class="{ active: btnPressed(0) }"
-              :style="btnPressed(0) ? { background: '#4cce6e', color: '#000', borderColor: '#4cce6e' } : {}">A</div>
+            <div
+              class="face-btn"
+              :class="{ active: btnPressed(0) }"
+              :style="
+                btnPressed(0)
+                  ? { background: '#4cce6e', color: '#000', borderColor: '#4cce6e' }
+                  : {}
+              "
+            >
+              A
+            </div>
           </div>
         </div>
 
         <!-- Right stick -->
         <div class="stick-group">
           <div class="stick-pad">
-            <div class="stick-ch-h" /><div class="stick-ch-v" />
+            <div class="stick-ch-h" />
+            <div class="stick-ch-v" />
             <div class="stick-dot" :style="stickDotStyle(2, 3)" />
           </div>
           <div class="stick-vals">
-            <span>X <em>{{ fmt(axisValue(2)) }}</em></span>
-            <span>Y <em>{{ fmt(axisValue(3)) }}</em></span>
+            <span
+              >X <em>{{ fmt(axisValue(2)) }}</em></span
+            >
+            <span
+              >Y <em>{{ fmt(axisValue(3)) }}</em></span
+            >
           </div>
         </div>
       </div>
@@ -188,7 +252,7 @@ const bindingRows = computed(() =>
     <!-- No pad -->
     <p v-else class="no-pad">Press any button on your controller to activate it.</p>
 
-    <!-- ── Bindings table ──────────────────────────────────────────────────── -->
+    <!--  Bindings table  -->
     <div class="bindings-section">
       <h2>Active Bindings</h2>
       <table class="bindings-table">
@@ -210,7 +274,7 @@ const bindingRows = computed(() =>
             <td class="col-type">{{ row.type }}</td>
             <td class="col-topic">
               <code v-if="row.topic">{{ row.topic }}</code>
-              <span v-else class="unbound">—</span>
+              <span v-else class="unbound">-</span>
             </td>
             <td class="col-value">
               <!-- Axis: centred bar, pink = negative, green = positive -->
@@ -218,7 +282,7 @@ const bindingRows = computed(() =>
                 <div class="bar-track bar-track--axis">
                   <div class="bar-neg" :style="{ width: `${Math.max(0, -row.live) * 50}%` }" />
                   <div class="bar-centre" />
-                  <div class="bar-pos" :style="{ width: `${Math.max(0,  row.live) * 50}%` }" />
+                  <div class="bar-pos" :style="{ width: `${Math.max(0, row.live) * 50}%` }" />
                 </div>
               </template>
               <!-- Button / trigger: left-to-right fill -->
@@ -237,7 +301,7 @@ const bindingRows = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-// ── Shell ─────────────────────────────────────────────────────────────────
+//  Shell
 .monitor {
   display: flex;
   flex-direction: column;
@@ -248,7 +312,9 @@ const bindingRows = computed(() =>
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  h2 { font-size: 1.05rem; }
+  h2 {
+    font-size: 1.05rem;
+  }
   .pad-name {
     font-family: 'Overpass', sans-serif;
     font-size: 0.75rem;
@@ -269,7 +335,6 @@ const bindingRows = computed(() =>
   }
 }
 
-// ── Shared button token ────────────────────────────────────────────────────
 %btn {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
@@ -293,14 +358,12 @@ const bindingRows = computed(() =>
   }
 }
 
-// ── Controller visualisation ───────────────────────────────────────────────
 .ctrl-viz {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
 }
 
-// ── Top row: triggers + bumpers + centre buttons ───────────────────────────
 .top-row {
   display: flex;
   align-items: center;
@@ -313,7 +376,9 @@ const bindingRows = computed(() =>
   gap: 0.4rem;
   flex: 1;
 
-  &--right { flex-direction: row-reverse; }
+  &--right {
+    flex-direction: row-reverse;
+  }
 
   .trig-label {
     font-family: 'Barlow Condensed', sans-serif;
@@ -374,7 +439,6 @@ const bindingRows = computed(() =>
   border-radius: 3px;
 }
 
-// ── Bottom row: sticks / dpad / L3+R3 / face ──────────────────────────────
 .bottom-row {
   display: flex;
   align-items: center;
@@ -382,7 +446,6 @@ const bindingRows = computed(() =>
   gap: 0.75rem;
 }
 
-// Stick
 .stick-group {
   display: flex;
   flex-direction: column;
@@ -399,12 +462,21 @@ const bindingRows = computed(() =>
   position: relative;
   overflow: hidden;
 
-  .stick-ch-h, .stick-ch-v {
+  .stick-ch-h,
+  .stick-ch-v {
     position: absolute;
     background-color: rgba(255, 255, 255, 0.08);
   }
-  .stick-ch-h { width: 100%; height: 1px; top: 50%; }
-  .stick-ch-v { height: 100%; width: 1px; left: 50%; }
+  .stick-ch-h {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+  }
+  .stick-ch-v {
+    height: 100%;
+    width: 1px;
+    left: 50%;
+  }
 
   .stick-dot {
     position: absolute;
@@ -424,10 +496,13 @@ const bindingRows = computed(() =>
   font-size: 0.65rem;
   color: var(--dark-white);
   opacity: 0.6;
-  em { font-style: normal; color: var(--white); opacity: 1; }
+  em {
+    font-style: normal;
+    color: var(--white);
+    opacity: 1;
+  }
 }
 
-// D-Pad
 .dpad {
   display: flex;
   flex-direction: column;
@@ -451,7 +526,6 @@ const bindingRows = computed(() =>
   height: 1.7rem;
 }
 
-// L3 / R3
 .l3r3 {
   display: flex;
   flex-direction: column;
@@ -464,7 +538,6 @@ const bindingRows = computed(() =>
   font-size: 0.6rem;
 }
 
-// Face buttons
 .face {
   display: flex;
   flex-direction: column;
@@ -498,12 +571,13 @@ const bindingRows = computed(() =>
   padding: 1rem 0;
 }
 
-// ── Bindings table ─────────────────────────────────────────────────────────
 .bindings-section {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  h2 { font-size: 1rem; }
+  h2 {
+    font-size: 1rem;
+  }
 }
 
 .bindings-table {
@@ -561,23 +635,22 @@ const bindingRows = computed(() =>
     padding: 1px 4px;
     border-radius: 3px;
   }
-  .unbound { opacity: 0.3; }
+  .unbound {
+    opacity: 0.3;
+  }
 }
 
 .col-value {
   width: 12rem;
 }
 
-// Inner wrapper — flex so bar + number sit side by side
 .col-value-inner {
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
-// Bar track is a fixed container; inner divs size it via width %
 .bar-track {
-  // Use display:block so width on children works correctly (not flex item sizing)
   display: block;
   position: relative;
   height: 6px;
@@ -588,7 +661,6 @@ const bindingRows = computed(() =>
   width: 8rem;
 
   &--axis {
-    // axis bar uses absolute children — centred pivot
   }
 }
 
@@ -615,7 +687,7 @@ const bindingRows = computed(() =>
   background-color: var(--tf-green);
 
   &--full {
-    left: 0; // for buttons/triggers: fill from left edge
+    left: 0;
   }
 }
 

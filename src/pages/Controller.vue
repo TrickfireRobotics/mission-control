@@ -8,7 +8,7 @@ import drivebaseBindings from '@/lib/controller/drivebaseAndArmBinding.json';
 const settings = useSettingsStore();
 const controller = useControllerStore();
 
-// ── Gamepad polling ───────────────────────────────────────────────────────────
+//  Gamepad polling
 interface ButtonState {
   pressed: boolean;
   value: number;
@@ -22,7 +22,7 @@ interface GamepadSnapshot {
 const snapshot = ref<GamepadSnapshot | null>(null);
 let rafId: number | null = null;
 
-// Xbox triggers report 0.5 before first touch — ignore until the value deviates.
+// Xbox triggers report 0.5 before first touch - ignore until the value deviates.
 const triggerInit: Record<number, number | null> = { 6: null, 7: null };
 const triggerReady: Record<number, boolean> = { 6: false, 7: false };
 
@@ -60,7 +60,7 @@ onUnmounted(() => {
   if (rafId !== null) cancelAnimationFrame(rafId);
 });
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+//  Helpers
 function btnPressed(idx: number) {
   return snapshot.value?.buttons[idx]?.pressed ?? false;
 }
@@ -80,13 +80,13 @@ function stickDotStyle(xIdx: number, yIdx: number) {
   };
 }
 
-// ── Settings ──────────────────────────────────────────────────────────────────
+//  Settings
 const blockHorizontal = computed({
   get: () => settings.settings.controller.tankDriveBlockHorizontal,
   set: (v) => settings.updateControllerSettings({ tankDriveBlockHorizontal: v }),
 });
 
-// ── Bindings table ────────────────────────────────────────────────────────────
+//  Bindings table
 const buttonByName = Object.fromEntries(
   Object.entries(gamepadNames).map(([i, n]) => [n, Number(i)]),
 );
@@ -106,7 +106,7 @@ const bindingRows = computed(() =>
 
 <template>
   <div class="ctrl-page">
-    <!-- ── Left column ──────────────────────────────────────────────────────── -->
+    <!--  Left column  -->
     <div class="left-col">
       <!-- Box 1: Device info -->
       <section class="card">
@@ -293,7 +293,7 @@ const bindingRows = computed(() =>
       </section>
     </div>
 
-    <!-- ── Right column: Bindings ───────────────────────────────────────────── -->
+    <!--  Right column: Bindings  -->
     <div class="right-col">
       <section class="card card--bindings">
         <h2 class="bindings-title">Active Bindings</h2>
@@ -317,7 +317,7 @@ const bindingRows = computed(() =>
                 <td class="col-type">{{ row.type }}</td>
                 <td class="col-topic">
                   <code v-if="row.topic">{{ row.topic }}</code>
-                  <span v-else class="unbound">—</span>
+                  <span v-else class="unbound">-</span>
                 </td>
                 <td class="col-value">
                   <template v-if="row.isAxis">
@@ -344,7 +344,7 @@ const bindingRows = computed(() =>
 </template>
 
 <style lang="scss" scoped>
-// ── Page shell ────────────────────────────────────────────────────────────────
+//  Page shell
 .ctrl-page {
   height: calc(100vh - var(--nav-bar-size));
   display: grid;
@@ -354,13 +354,13 @@ const bindingRows = computed(() =>
   overflow: hidden;
 }
 
-// ── Columns ───────────────────────────────────────────────────────────────────
+//  Columns
 .left-col {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
   overflow: hidden;
-  // Don't stretch cards to fill — let them be auto height
+  // Don't stretch cards to fill - let them be auto height
   align-self: start;
 }
 
@@ -371,7 +371,7 @@ const bindingRows = computed(() =>
   height: 100%;
 }
 
-// ── Shared card ───────────────────────────────────────────────────────────────
+//  Shared card
 .card {
   background-color: var(--component-background);
   border: 1px solid var(--light-grey);
@@ -400,7 +400,7 @@ const bindingRows = computed(() =>
   }
 }
 
-// ── Device card ───────────────────────────────────────────────────────────────
+//  Device card
 .section-header {
   display: flex;
   align-items: center;
@@ -468,7 +468,7 @@ const bindingRows = computed(() =>
   font-style: italic;
 }
 
-// ── Shared button token ───────────────────────────────────────────────────────
+//  Shared button token
 %btn {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
@@ -492,7 +492,7 @@ const bindingRows = computed(() =>
   }
 }
 
-// ── Controller visualiser ─────────────────────────────────────────────────────
+//  Controller visualiser
 .ctrl-viz {
   display: flex;
   flex-direction: column;
@@ -729,7 +729,7 @@ const bindingRows = computed(() =>
   height: 1.3rem;
 }
 
-// ── Drive settings ─────────────────────────────────────────────────────────────
+//  Drive settings
 .toggle-row {
   display: flex;
   align-items: flex-start;
@@ -794,7 +794,7 @@ const bindingRows = computed(() =>
   }
 }
 
-// ── Bindings ──────────────────────────────────────────────────────────────────
+//  Bindings
 .bindings-title {
   flex-shrink: 0;
 }

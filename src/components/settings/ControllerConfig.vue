@@ -11,7 +11,7 @@ const blockHorizontal = computed({
   set: (v) => settings.updateControllerSettings({ tankDriveBlockHorizontal: v }),
 });
 
-// Live gamepad name — read directly from the browser API
+// Live gamepad name - read directly from the browser API
 const connectedGamepadName = ref<string | null>(null);
 let rafId: number | null = null;
 
@@ -28,8 +28,12 @@ function pollName() {
   rafId = requestAnimationFrame(pollName);
 }
 
-onMounted(() => { rafId = requestAnimationFrame(pollName); });
-onUnmounted(() => { if (rafId !== null) cancelAnimationFrame(rafId); });
+onMounted(() => {
+  rafId = requestAnimationFrame(pollName);
+});
+onUnmounted(() => {
+  if (rafId !== null) cancelAnimationFrame(rafId);
+});
 </script>
 
 <template>
@@ -60,11 +64,15 @@ onUnmounted(() => { if (rafId !== null) cancelAnimationFrame(rafId); });
       <div class="toggle-info">
         <span class="toggle-name">Block horizontal stick input</span>
         <span class="toggle-desc">
-          In tank drive, zeroes out the X axis of both sticks so only forward/back
-          (Y axis) is sent. Useful to prevent accidental lateral drift commands.
+          In tank drive, zeroes out the X axis of both sticks so only forward/back (Y axis) is sent.
+          Useful to prevent accidental lateral drift commands.
         </span>
       </div>
-      <div class="toggle-switch" :class="{ active: blockHorizontal }" @click="blockHorizontal = !blockHorizontal">
+      <div
+        class="toggle-switch"
+        :class="{ active: blockHorizontal }"
+        @click="blockHorizontal = !blockHorizontal"
+      >
         <div class="toggle-knob" />
       </div>
     </label>
@@ -84,7 +92,9 @@ onUnmounted(() => { if (rafId !== null) cancelAnimationFrame(rafId); });
   align-items: center;
   gap: 0.75rem;
 
-  h2 { font-size: 1.15rem; }
+  h2 {
+    font-size: 1.15rem;
+  }
 }
 
 .status-badge {
