@@ -4,8 +4,10 @@ import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 import { useRoslibStore } from '@/store/roslibStore';
 import { computed, watch } from 'vue';
 
-// Voltage: 0-36 for old drive motors (0-48 for new drive motors), 0-48 for arm motors.
-const MAX_VOLTAGE = 36;
+// Voltage:
+// - 0-36 for Moteus
+// - 0-48 for RMDx8
+const MAX_VOLTAGE = 48;
 const telemetry = useTelemetryData(
   [
     CanBusID.BackLeftDrive,

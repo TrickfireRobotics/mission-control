@@ -169,7 +169,4 @@ function getMoteusStateProxy(
 .period-text {
   margin-right: 5px;
 }
-
-.telemetry-motor {
-}
 </style>
