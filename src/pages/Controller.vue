@@ -73,6 +73,9 @@ function axisValue(idx: number) {
 function fmt(v: number) {
   return v.toFixed(2);
 }
+function fmtAxis(v: number) {
+  return `${v < 0 ? '-' : ' '}${Math.abs(v).toFixed(2)}`;
+}
 function stickDotStyle(xIdx: number, yIdx: number) {
   return {
     left: `${50 + axisValue(xIdx) * 40}%`,
@@ -166,10 +169,10 @@ const bindingRows = computed(() =>
               </div>
               <div class="stick-vals">
                 <span
-                  >X <em>{{ fmt(axisValue(0)) }}</em></span
+                  >X <em>{{ fmtAxis(axisValue(0)) }}</em></span
                 >
                 <span
-                  >Y <em>{{ fmt(axisValue(1)) }}</em></span
+                  >Y <em>{{ fmtAxis(axisValue(1)) }}</em></span
                 >
               </div>
             </div>
@@ -180,9 +183,9 @@ const bindingRows = computed(() =>
                 <div class="dpad-btn" :class="{ active: btnPressed(12) }">▲</div>
               </div>
               <div class="dpad-row">
-                <div class="dpad-btn" :class="{ active: btnPressed(14) }">◄</div>
+                <div class="dpad-btn" :class="{ active: btnPressed(14) }">◀</div>
                 <div class="dpad-gap" />
-                <div class="dpad-btn" :class="{ active: btnPressed(15) }">►</div>
+                <div class="dpad-btn" :class="{ active: btnPressed(15) }">▶</div>
               </div>
               <div class="dpad-row">
                 <div class="dpad-btn" :class="{ active: btnPressed(13) }">▼</div>
@@ -259,10 +262,10 @@ const bindingRows = computed(() =>
               </div>
               <div class="stick-vals">
                 <span
-                  >X <em>{{ fmt(axisValue(2)) }}</em></span
+                  >X <em>{{ fmtAxis(axisValue(2)) }}</em></span
                 >
                 <span
-                  >Y <em>{{ fmt(axisValue(3)) }}</em></span
+                  >Y <em>{{ fmtAxis(axisValue(3)) }}</em></span
                 >
               </div>
             </div>
@@ -348,7 +351,7 @@ const bindingRows = computed(() =>
 .ctrl-page {
   height: calc(100vh - var(--nav-bar-size));
   display: grid;
-  grid-template-columns: 22rem 1fr;
+  grid-template-columns: 28rem 1fr;
   gap: 0.75rem;
   padding: 0.85rem 1.25rem;
   overflow: hidden;
@@ -567,10 +570,8 @@ const bindingRows = computed(() =>
   display: flex;
   gap: 0.25rem;
   flex-shrink: 0;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  position: static;
 }
 
 .centre-btn {
@@ -578,6 +579,7 @@ const bindingRows = computed(() =>
   height: 1.3rem;
   padding: 0 0.4rem;
   font-size: 0.58rem;
+  position: relative;
   border-radius: 3px;
 
   &.xbox-btn {
@@ -601,6 +603,8 @@ const bindingRows = computed(() =>
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  /* keep both stick columns constant width so center items don't shift */
+  flex: 0 0 6.25rem;
 }
 
 .stick-pad {
@@ -650,10 +654,14 @@ const bindingRows = computed(() =>
   opacity: 0.55;
 
   span {
+    display: inline-flex;
+    align-items: center;
     white-space: nowrap;
   }
 
   em {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
     font-style: normal;
     color: var(--white);
     opacity: 1;
@@ -666,6 +674,7 @@ const bindingRows = computed(() =>
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  flex: 0 0 3.2rem;
 }
 
 .dpad-row {
@@ -692,6 +701,7 @@ const bindingRows = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex: 0 0 2.6rem;
 }
 
 .l3r3-btn {
@@ -707,6 +717,7 @@ const bindingRows = computed(() =>
   flex-direction: column;
   align-items: center;
   gap: 2px;
+  flex: 0 0 3.2rem;
 }
 
 .face-row {
