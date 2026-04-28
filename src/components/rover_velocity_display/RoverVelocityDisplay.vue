@@ -71,8 +71,10 @@ watch(
 <template>
   <div>
     <div class="diagram-header">
-      <span class="diagram-title">Drive Motor Input Voltage</span>
-      <span class="diagram-unit">(max {{ MAX_VOLTAGE }} V)</span>
+      <div class="diagram-header-content">
+        <span class="diagram-title">Drive Motor Input Voltage</span>
+        <span class="diagram-unit">(max {{ MAX_VOLTAGE }} V)</span>
+      </div>
     </div>
     <table>
       <tbody>
@@ -138,10 +140,16 @@ watch(
   left: 0;
   right: 0;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: 0.4rem;
   pointer-events: none;
+}
+
+.diagram-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .diagram-title {
