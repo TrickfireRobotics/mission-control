@@ -53,41 +53,41 @@ function getPercentage(input: number | null | undefined) {
       <tbody>
         <tr>
           <th class="barColumn">
-          <div class="barcontainer">
-            <div id="frontLeftMotorBar" class="bar"></div>
-          </div>
-          <p id="frontLeftMotor">{{ telemetry.frontLeftDrive.value }}</p>
+            <div class="barcontainer">
+              <div id="frontLeftMotorBar" class="bar"></div>
+            </div>
+            <p id="frontLeftMotor">{{ telemetry.frontLeftDrive.value }}</p>
 
-          <div class="barcontainer">
-            <div id="midLeftMotorBar" class="bar"></div>
-          </div>
-          <p id="midLeftMotor">{{ telemetry.midLeftDrive.value }}</p>
+            <div class="barcontainer">
+              <div id="midLeftMotorBar" class="bar"></div>
+            </div>
+            <p id="midLeftMotor">{{ telemetry.midLeftDrive.value }}</p>
 
-          <div class="barcontainer">
-            <div id="backLeftMotorBar" class="bar"></div>
-          </div>
-          <p id="backLeftMotor">{{ telemetry.backLeftDrive.value }}</p>
-        </th>
-        <th>
-          <img src="@/assets/TransparentRoverVelocityModel.svg" draggable="false" />
-        </th>
-        <th class="barColumn">
-          <div class="barcontainer">
-            <div id="frontRightMotorBar" class="bar"></div>
-          </div>
-          <p id="frontRightMotor">{{ telemetry.frontRightDrive.value }}</p>
+            <div class="barcontainer">
+              <div id="backLeftMotorBar" class="bar"></div>
+            </div>
+            <p id="backLeftMotor">{{ telemetry.backLeftDrive.value }}</p>
+          </th>
+          <th>
+            <img src="@/assets/TransparentRoverVelocityModel.svg" draggable="false" />
+          </th>
+          <th class="barColumn">
+            <div class="barcontainer">
+              <div id="frontRightMotorBar" class="bar"></div>
+            </div>
+            <p id="frontRightMotor">{{ telemetry.frontRightDrive.value }}</p>
 
-          <div class="barcontainer">
-            <div id="midRightMotorBar" class="bar"></div>
-          </div>
-          <p id="midRightMotor">{{ telemetry.midRightDrive.value }}</p>
+            <div class="barcontainer">
+              <div id="midRightMotorBar" class="bar"></div>
+            </div>
+            <p id="midRightMotor">{{ telemetry.midRightDrive.value }}</p>
 
-          <div class="barcontainer">
-            <div id="backRightMotorBar" class="bar"></div>
-          </div>
-          <p id="backRightMotor">{{ telemetry.backRightDrive.value }}</p>
-        </th>
-      </tr>
+            <div class="barcontainer">
+              <div id="backRightMotorBar" class="bar"></div>
+            </div>
+            <p id="backRightMotor">{{ telemetry.backRightDrive.value }}</p>
+          </th>
+        </tr>
       </tbody>
     </table>
   </div>
