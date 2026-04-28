@@ -1,10 +1,37 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
+import { computed, ref, watch, useTemplateRef } from 'vue';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useRoslibStore } from '@/store/roslibStore';
 
 const settings = useSettingsStore();
 const roslib = useRoslibStore();
+
+// Keeps the button grey for a short cooldown after a disconnect so brief
+// connection blips don't make it flash back to the active "Retry" state.
+const RETRY_COOLDOWN_MS = 1500;
+const cooldownActive = ref(false);
+let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
+
+watch(
+  () => roslib.isWebSocketConnected,
+  (connected) => {
+    if (!connected) {
+      // Start cooldown — keep showing as connected briefly after disconnect.
+      cooldownActive.value = true;
+      if (cooldownTimer) clearTimeout(cooldownTimer);
+      cooldownTimer = setTimeout(() => {
+        cooldownActive.value = false;
+      }, RETRY_COOLDOWN_MS);
+    } else {
+      // Genuinely reconnected — cancel any pending cooldown immediately.
+      if (cooldownTimer) clearTimeout(cooldownTimer);
+      cooldownActive.value = false;
+    }
+  },
+);
+
+// True while connected OR during the brief cooldown after a disconnect.
+const showAsConnected = computed(() => roslib.isWebSocketConnected || cooldownActive.value);
 
 const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
 
@@ -96,12 +123,12 @@ function updateCustomAddress(newAddress: string) {
 
     <button
       class="retry-btn"
-      :class="{ 'retry-btn--connected': roslib.isWebSocketConnected }"
-      :disabled="roslib.isWebSocketConnected"
+      :class="{ 'retry-btn--connected': showAsConnected }"
+      :disabled="showAsConnected"
       title="Retry WebSocket connection to rover"
       @click="roslib.reconnect()"
     >
-      {{ roslib.isWebSocketConnected ? 'Connected' : 'Retry Connection' }}
+      {{ showAsConnected ? 'Connected' : 'Retry Connection' }}
     </button>
   </div>
 </template>
