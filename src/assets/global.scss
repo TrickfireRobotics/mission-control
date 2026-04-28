@@ -118,10 +118,18 @@ button {
     &--on {
       background-color: var(--correct);
       color: var(--pure-black);
+
+      &:hover {
+        background-color: #00d400;
+      }
     }
     &--off {
       background-color: var(--error);
       color: var(--white);
+
+      &:hover {
+        background-color: #cc0000;
+      }
     }
   }
 }
