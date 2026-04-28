@@ -4,6 +4,10 @@ import { ref } from 'vue';
 export interface ControllerConfig {
   /** Zero out horizontal stick axes (X) when in tank-drive mode. */
   tankDriveBlockHorizontal: boolean;
+  /** Invert the X axis (left/right) on both joysticks. */
+  invertX: boolean;
+  /** Invert the Y axis (forward/back) on both joysticks. */
+  invertY: boolean;
 }
 
 export interface Settings {
@@ -16,6 +20,8 @@ function defaultSettings(): Settings {
     websocketAddress: 'ws://192.168.0.145:9090',
     controller: {
       tankDriveBlockHorizontal: false,
+      invertX: false,
+      invertY: false,
     },
   };
 }

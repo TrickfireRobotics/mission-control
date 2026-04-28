@@ -79,16 +79,24 @@ export class ControllerState {
       }
     }
 
-    const blockHorizontal =
-      useSettingsStore().settings.controller.tankDriveBlockHorizontal;
+    const { tankDriveBlockHorizontal, invertX, invertY } =
+      useSettingsStore().settings.controller;
 
     for (let i: number = 0; i < joystickArray.length; i++) {
       const friendlyName = joystickNames[i];
       const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
       if (currentValue != null) {
-        // Axes 0 and 2 are the left/right stick X axes.
-        // When tank-drive blocking is on, treat them as always zero.
-        const rawValue = blockHorizontal && (i === 0 || i === 2) ? 0 : joystickArray[i].valueOf();
+        // Axes 0 and 2 are X axes; axes 1 and 3 are Y axes.
+        const isXAxis = i === 0 || i === 2;
+        const isYAxis = i === 1 || i === 3;
+
+        // When tank-drive blocking is on, treat X axes as always zero.
+        let rawValue = tankDriveBlockHorizontal && isXAxis ? 0 : joystickArray[i].valueOf();
+
+        // Apply invert settings.
+        if (invertX && isXAxis) rawValue = -rawValue;
+        if (invertY && isYAxis) rawValue = -rawValue;
+
         this.friendlyNameToDelta.set(friendlyName, currentValue - rawValue);
         this.friendlyNameToCurrentValue.set(friendlyName, rawValue);
       }

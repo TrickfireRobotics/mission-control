@@ -11,6 +11,16 @@ const blockHorizontal = computed({
   set: (v) => settings.updateControllerSettings({ tankDriveBlockHorizontal: v }),
 });
 
+const invertX = computed({
+  get: () => settings.settings.controller.invertX,
+  set: (v) => settings.updateControllerSettings({ invertX: v }),
+});
+
+const invertY = computed({
+  get: () => settings.settings.controller.invertY,
+  set: (v) => settings.updateControllerSettings({ invertY: v }),
+});
+
 // Live gamepad name - read directly from the browser API
 const connectedGamepadName = ref<string | null>(null);
 let rafId: number | null = null;
@@ -58,7 +68,7 @@ onUnmounted(() => {
 
     <div class="divider" />
 
-    <h2>Driving Options</h2>
+    <h2>Controller Options</h2>
 
     <label class="toggle-row">
       <div class="toggle-info">
@@ -72,6 +82,38 @@ onUnmounted(() => {
         class="toggle-switch"
         :class="{ active: blockHorizontal }"
         @click="blockHorizontal = !blockHorizontal"
+      >
+        <div class="toggle-knob" />
+      </div>
+    </label>
+
+    <label class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-name">Invert X axis</span>
+        <span class="toggle-desc">
+          Flips the left/right direction on both joysticks.
+        </span>
+      </div>
+      <div
+        class="toggle-switch"
+        :class="{ active: invertX }"
+        @click="invertX = !invertX"
+      >
+        <div class="toggle-knob" />
+      </div>
+    </label>
+
+    <label class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-name">Invert Y axis</span>
+        <span class="toggle-desc">
+          Flips the forward/back direction on both joysticks.
+        </span>
+      </div>
+      <div
+        class="toggle-switch"
+        :class="{ active: invertY }"
+        @click="invertY = !invertY"
       >
         <div class="toggle-knob" />
       </div>
