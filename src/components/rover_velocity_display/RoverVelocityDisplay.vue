@@ -1,7 +1,8 @@
 <!-- Should have " setup lang="ts" " in script tag for proper Composition and enforce typescript-->
 <script setup lang="ts">
 import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
-import { computed } from 'vue';
+import { useRoslibStore } from '@/store/roslibStore';
+import { computed, watch } from 'vue';
 
 // Voltage: 0-36 for old drive motors (0-48 for new drive motors), 0-48 for arm motors.
 const MAX_VOLTAGE = 36;
@@ -50,9 +51,29 @@ function formatMotorValue(value: number | null | undefined): string {
   }
   return value.toFixed(2);
 }
+
+// Reset all motor values to zero when the rover disconnects
+const roslib = useRoslibStore();
+watch(
+  () => roslib.isWebSocketConnected,
+  (connected) => {
+    if (!connected) {
+      telemetry.frontLeftDrive.value = 0;
+      telemetry.midLeftDrive.value = 0;
+      telemetry.backLeftDrive.value = 0;
+      telemetry.frontRightDrive.value = 0;
+      telemetry.midRightDrive.value = 0;
+      telemetry.backRightDrive.value = 0;
+    }
+  },
+);
 </script>
 <template>
   <div>
+    <div class="diagram-header">
+      <span class="diagram-title">Drive Motor Input Voltage</span>
+      <span class="diagram-unit">(max {{ MAX_VOLTAGE }} V)</span>
+    </div>
     <table>
       <tbody>
         <tr>
@@ -60,17 +81,23 @@ function formatMotorValue(value: number | null | undefined): string {
             <div class="barcontainer">
               <div id="frontLeftMotorBar" class="bar"></div>
             </div>
-            <p id="frontLeftMotor">{{ formatMotorValue(telemetry.frontLeftDrive.value) }}</p>
+            <p id="frontLeftMotor">
+              {{ formatMotorValue(telemetry.frontLeftDrive.value) }}<span class="unit"></span>
+            </p>
 
             <div class="barcontainer">
               <div id="midLeftMotorBar" class="bar"></div>
             </div>
-            <p id="midLeftMotor">{{ formatMotorValue(telemetry.midLeftDrive.value) }}</p>
+            <p id="midLeftMotor">
+              {{ formatMotorValue(telemetry.midLeftDrive.value) }}<span class="unit"></span>
+            </p>
 
             <div class="barcontainer">
               <div id="backLeftMotorBar" class="bar"></div>
             </div>
-            <p id="backLeftMotor">{{ formatMotorValue(telemetry.backLeftDrive.value) }}</p>
+            <p id="backLeftMotor">
+              {{ formatMotorValue(telemetry.backLeftDrive.value) }}<span class="unit"></span>
+            </p>
           </th>
           <th>
             <img src="@/assets/TransparentRoverVelocityModel.svg" draggable="false" />
@@ -79,17 +106,23 @@ function formatMotorValue(value: number | null | undefined): string {
             <div class="barcontainer">
               <div id="frontRightMotorBar" class="bar"></div>
             </div>
-            <p id="frontRightMotor">{{ formatMotorValue(telemetry.frontRightDrive.value) }}</p>
+            <p id="frontRightMotor">
+              {{ formatMotorValue(telemetry.frontRightDrive.value) }}<span class="unit"></span>
+            </p>
 
             <div class="barcontainer">
               <div id="midRightMotorBar" class="bar"></div>
             </div>
-            <p id="midRightMotor">{{ formatMotorValue(telemetry.midRightDrive.value) }}</p>
+            <p id="midRightMotor">
+              {{ formatMotorValue(telemetry.midRightDrive.value) }}<span class="unit"></span>
+            </p>
 
             <div class="barcontainer">
               <div id="backRightMotorBar" class="bar"></div>
             </div>
-            <p id="backRightMotor">{{ formatMotorValue(telemetry.backRightDrive.value) }}</p>
+            <p id="backRightMotor">
+              {{ formatMotorValue(telemetry.backRightDrive.value) }}<span class="unit"></span>
+            </p>
           </th>
         </tr>
       </tbody>
@@ -99,6 +132,34 @@ function formatMotorValue(value: number | null | undefined): string {
 
 <!-- Should have lang="scss" and "scoped" to enable superpower of SCSS and make styles do not accidentally interact with other components styles-->
 <style lang="scss" scoped>
+.diagram-header {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.diagram-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--white);
+}
+
+.diagram-unit {
+  font-family: 'Overpass', monospace;
+  font-size: 0.65rem;
+  color: var(--dark-white);
+  opacity: 0.6;
+}
+
 div img {
   display: block;
   margin-right: auto;
@@ -113,6 +174,7 @@ div {
   overflow-y: auto;
   overflow-x: auto;
   background-color: var(--component-background);
+  position: relative;
 }
 .barcontainer {
   background-color: var(--light-grey);
@@ -171,6 +233,12 @@ p {
   font-family: 'Overpass', monospace;
   width: 3.5rem;
   min-height: 1.2em;
+
+  .unit {
+    font-size: 0.65em;
+    opacity: 0.55;
+    margin-left: 1px;
+  }
 }
 table {
   position: absolute;
