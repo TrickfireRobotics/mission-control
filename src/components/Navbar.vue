@@ -128,8 +128,6 @@ const pageIconArr: PageIcon = [
 
     <!-- Right-side status & controls -->
     <section id="states-section">
-      <div class="status-divider" aria-hidden="true" />
-
       <!-- Operation mode -->
       <div id="op-selector">
         <button
@@ -158,58 +156,70 @@ const pageIconArr: PageIcon = [
         </button>
       </div>
 
-      <div class="status-divider" />
+      <!-- thin separator between op-selector and status chips -->
+      <div class="chip-sep" aria-hidden="true" />
 
       <!-- Rover ROS bridge -->
       <RouterLink
         to="/Settings"
-        class="status-pill"
+        class="status-chip"
         :title="`Rover ROS bridge - ${
           roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'
         } (${roverHostDisplay})\nClick to open Settings`"
       >
-        <span class="status-pill__label">ROVER</span>
         <component
           :is="roslib.isWebSocketConnected ? PowerPlugIcon : PowerPlugOffIcon"
-          class="status-pill__icon"
+          class="status-chip__icon"
           :class="roslib.isWebSocketConnected ? 'icon--green' : 'icon--red'"
         />
+        <span class="status-chip__label">ROVER</span>
       </RouterLink>
 
       <!-- Camera -->
       <div
-        class="status-pill"
+        class="status-chip"
         :title="`Camera stream - ${roslib.isWebSocketConnected ? 'Connected' : 'Disconnected'}`"
       >
-        <span class="status-pill__label">CAM</span>
         <component
           :is="CameraIcon"
-          class="status-pill__icon"
+          class="status-chip__icon"
           :class="roslib.isWebSocketConnected ? 'icon--green' : 'icon--red'"
         />
+        <span class="status-chip__label">CAM</span>
       </div>
 
       <!-- Gamepad -->
       <div
-        class="status-pill"
+        class="status-chip"
         :title="`Gamepad - ${controller.isGamepadConnected ? 'Connected' : 'Not detected'}`"
       >
-        <span class="status-pill__label">CTRL</span>
         <component
           :is="ControllerIcon"
-          class="status-pill__icon"
+          class="status-chip__icon"
           :class="controller.isGamepadConnected ? 'icon--green' : 'icon--red'"
         />
+        <span class="status-chip__label">CTRL</span>
       </div>
 
       <!-- Ping -->
-      <div class="status-pill" title="Round-trip latency to rover ROS bridge">
-        <span class="status-pill__label">PING</span>
+      <div class="status-chip" title="Round-trip latency to rover ROS bridge">
         <span
-          class="status-pill__ping"
-          :class="{ 'text--green': roslib.latency && roslib.latency < 100 }"
+          class="status-chip__dot"
+          :class="{
+            'dot--good': roslib.latency && roslib.latency < 100,
+            'dot--warn': roslib.latency && roslib.latency >= 100 && roslib.latency < 300,
+            'dot--bad': !roslib.latency || roslib.latency >= 300,
+          }"
+        />
+        <span class="status-chip__label">PING</span>
+        <span
+          class="status-chip__value"
+          :class="{
+            'text--green': roslib.latency && roslib.latency < 100,
+            'text--warn': roslib.latency && roslib.latency >= 100 && roslib.latency < 300,
+          }"
         >
-          {{ roslib.latency ? Math.round(roslib.latency) + ' ms' : '- ms' }}
+          {{ roslib.latency ? `${Math.round(roslib.latency)} ms` : '— ms' }}
         </span>
       </div>
     </section>
@@ -270,7 +280,6 @@ nav {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  // Increase vertical breathing room and keep the icon/label visually centered
   gap: 0.25rem;
   padding: 0.42rem 0.85rem;
   min-width: 4.9rem;
@@ -290,7 +299,6 @@ nav {
     transition: color 0.12s, opacity 0.12s;
 
     :deep(svg) {
-      // Slightly smaller icon gives label more visual weight
       width: 1.25rem;
       height: 1.25rem;
     }
@@ -309,7 +317,6 @@ nav {
     transition: color 0.12s, opacity 0.12s;
   }
 
-  // Hover - brighter chip
   &:not(.nav-tab--active):hover {
     background-color: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.2);
@@ -321,7 +328,7 @@ nav {
     }
   }
 
-  // Active - solid TF green, black text (highest contrast per style guide)
+  // Active
   &--active {
     background-color: var(--tf-green);
     border-color: var(--tf-green);
@@ -338,7 +345,7 @@ nav {
 #states-section {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 0.2rem;
   flex-shrink: 0;
   padding: 0 0.75rem;
 }
@@ -394,58 +401,93 @@ nav {
   }
 }
 
-// Individual status indicator
-.status-pill {
-  display: flex;
-  flex-direction: column;
+// Thin separator between op-selector and status chips
+.chip-sep {
+  width: 1px;
+  height: 1.4rem;
+  background-color: var(--light-grey);
+  flex-shrink: 0;
+  margin: 0 0.25rem;
+}
+
+// Individual status indicator - horizontal chip, single baseline
+.status-chip {
+  display: inline-flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 1px;
-  padding: 0 0.65rem;
-  height: 100%;
+  gap: 0.38rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 5px;
   text-decoration: none;
+  cursor: default;
+  transition: background-color 0.15s;
 
-  &__label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--dark-white);
-    opacity: 0.6;
-  }
+  // Only linkable chips get a hover state
+  &[href],
+  &[to] {
+    cursor: pointer;
 
-  &__icon {
-    :deep(svg) {
-      width: 1.2rem;
-      height: 1.2rem;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.07);
     }
   }
 
-  &__sub {
-    font-family: 'Overpass', monospace;
-    font-size: 0.55rem;
-    font-weight: 400;
-    letter-spacing: 0;
-    max-width: 8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-transform: none;
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    :deep(svg) {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
   }
 
-  &__ping {
+  &__label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dark-white);
+    opacity: 0.55;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  // Status dot - used by PING in place of an icon
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
+    &.dot--good {
+      background: var(--tf-green);
+      box-shadow: 0 0 5px var(--tf-green);
+    }
+
+    &.dot--warn {
+      background: #f59e0b;
+      box-shadow: 0 0 5px #f59e0b88;
+    }
+
+    &.dot--bad {
+      background: var(--error);
+    }
+  }
+
+  // Numeric value - used by PING
+  &__value {
     font-family: 'Overpass', monospace;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 400;
     color: var(--dark-white);
     white-space: nowrap;
-    /* occupy same vertical space as icon and avoid width-driven reflow */
-    height: 1.2rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 3rem;
+    line-height: 1;
+    min-width: 2.8rem;
     text-align: right;
   }
 }
@@ -459,6 +501,9 @@ nav {
 }
 .text--green {
   color: var(--tf-green);
+}
+.text--warn {
+  color: #f59e0b;
 }
 .text--red {
   color: var(--error);
