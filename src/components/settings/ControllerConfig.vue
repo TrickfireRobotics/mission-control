@@ -21,6 +21,11 @@ const invertY = computed({
   set: (v) => settings.updateControllerSettings({ invertY: v }),
 });
 
+const deadzone = computed({
+  get: () => settings.settings.controller.deadzone,
+  set: (v) => settings.updateControllerSettings({ deadzone: v }),
+});
+
 // Live gamepad name - read directly from the browser API
 const connectedGamepadName = ref<string | null>(null);
 let rafId: number | null = null;
@@ -94,6 +99,26 @@ onUnmounted(() => {
         <div class="toggle-knob" />
       </div>
     </label>
+
+    <div class="slider-row">
+      <div class="slider-header">
+        <span class="toggle-name">Joystick deadzone</span>
+        <span class="slider-value">{{ deadzone.toFixed(2) }}</span>
+      </div>
+      <input
+        type="range"
+        min="0"
+        max="0.5"
+        step="0.01"
+        class="deadzone-slider"
+        :value="deadzone"
+        @input="deadzone = parseFloat(($event.target as HTMLInputElement).value)"
+      />
+      <div class="slider-labels">
+        <span>0.00</span>
+        <span>0.50</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -190,6 +215,44 @@ onUnmounted(() => {
     font-weight: 700;
     color: var(--white);
   }
+}
+
+.slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.4rem 0;
+}
+
+.slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slider-value {
+  font-family: 'Overpass Mono', 'Overpass', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--tf-green);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  color: var(--dark-white);
+  opacity: 0.5;
+}
+
+.deadzone-slider {
+  width: 100%;
+  accent-color: var(--tf-green);
+  cursor: pointer;
+  height: 4px;
 }
 
 // Toggle switch

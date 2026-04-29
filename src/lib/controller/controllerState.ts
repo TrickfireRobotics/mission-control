@@ -19,6 +19,10 @@ export class ControllerState {
   bindingEntryToPublisher = new Map();
   friendlyNameToCurrentValue: Map<string, number> = new Map();
   friendlyNameToDelta: Map<string, number> = new Map();
+  // Tracks the last value that was actually published to ROS so we can
+  // detect when we need to force-send a zero even if the rate limiter would
+  // otherwise drop it (e.g. trigger released <100 ms after last command)
+  friendlyNameToLastPublished: Map<string, number> = new Map();
 
   maxPublishRateHz: number | undefined = undefined;
 
@@ -31,6 +35,7 @@ export class ControllerState {
     for (const friendlyName of Object.values(gamepadNames).concat(Object.values(joystickNames))) {
       this.friendlyNameToCurrentValue.set(friendlyName, 0);
       this.friendlyNameToDelta.set(friendlyName, 0);
+      this.friendlyNameToLastPublished.set(friendlyName, 0);
     }
 
     fetch(jsonControllerBinding)
@@ -79,35 +84,46 @@ export class ControllerState {
       }
     }
 
-    const { tankDriveBlockHorizontal, invertX, invertY } =
+    const { tankDriveBlockHorizontal, invertX, invertY, deadzone } =
       useSettingsStore().settings.controller;
 
     for (let i: number = 0; i < joystickArray.length; i++) {
       const friendlyName = joystickNames[i];
       const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
       if (currentValue != null) {
-        // Axes 0 and 2 are X axes; axes 1 and 3 are Y axes.
+        // Axes 0 and 2 are X axes; axes 1 and 3 are Y axes
         const isXAxis = i === 0 || i === 2;
         const isYAxis = i === 1 || i === 3;
 
-        // When tank-drive blocking is on, treat X axes as always zero.
+        // When tank-drive blocking is on, treat X axes as always zero
         let rawValue = tankDriveBlockHorizontal && isXAxis ? 0 : joystickArray[i].valueOf();
 
-        // Apply invert settings.
+        // Apply invert settings
         if (invertX && isXAxis) rawValue = -rawValue;
         if (invertY && isYAxis) rawValue = -rawValue;
 
-        this.friendlyNameToDelta.set(friendlyName, currentValue - rawValue);
+        // Apply deadzone: clamp values near centre to exactly zero so we
+        // don't spam the ROS network with tiny drift commands
+        if (Math.abs(rawValue) < deadzone) rawValue = 0;
+
+        this.friendlyNameToDelta.set(friendlyName, rawValue - currentValue);
         this.friendlyNameToCurrentValue.set(friendlyName, rawValue);
       }
     }
 
     for (const [entry, publisher] of this.bindingEntryToPublisher) {
-      if (this.friendlyNameToDelta.get(entry.name)) {
-        publisher.publish(
-          { data: this.friendlyNameToCurrentValue.get(entry.name) },
-          { isDebugging: true },
-        );
+      const currentValue = this.friendlyNameToCurrentValue.get(entry.name) ?? 0;
+      const lastPublished = this.friendlyNameToLastPublished.get(entry.name) ?? 0;
+      const delta = this.friendlyNameToDelta.get(entry.name);
+
+      // Force-publish zero when transitioning to zero so the robot always
+      // receives a stop command, even if the rate limiter would otherwise
+      // drop the call (e.g. trigger released within the 100 ms rate window)
+      const stoppingNow = currentValue === 0 && lastPublished !== 0;
+
+      if (delta || stoppingNow) {
+        publisher.publish({ data: currentValue }, { isDebugging: true, force: stoppingNow });
+        this.friendlyNameToLastPublished.set(entry.name, currentValue);
       }
     }
   }

@@ -29,27 +29,53 @@ export interface MotorConfig {
 // ---------------------------------------------------------------------------
 
 export const motorConfigs: MotorConfig[] = [
-  // Drivetrain ---------------------------------------------------------------
   // Drivetrain — RMDx8 -------------------------------------------------------
-  { displayName: 'Front Left Drive',  canfdID: 25, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
-  { displayName: 'Mid Left Drive',    canfdID: 24, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
-  { displayName: 'Back Left Drive',   canfdID: 23, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
-  { displayName: 'Front Right Drive', canfdID: 22, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
-  { displayName: 'Mid Right Drive',   canfdID: 21, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
-  { displayName: 'Back Right Drive',  canfdID: 20, controller: DRIVE_CONTROLLER, group: 'drivetrain' },
+  {
+    displayName: 'Back Left Drive',
+    canfdID: 26,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
+  {
+    displayName: 'Back Right Drive',
+    canfdID: 25,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
+  {
+    displayName: 'Middle Left Drive',
+    canfdID: 24,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
+  {
+    displayName: 'Middle Right Drive',
+    canfdID: 23,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
+  {
+    displayName: 'Front Left Drive',
+    canfdID: 22,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
+  {
+    displayName: 'Front Right Drive',
+    canfdID: 21,
+    controller: DRIVE_CONTROLLER,
+    group: 'drivetrain',
+  },
 
   // Arm — Moteus -------------------------------------------------------------
-  { displayName: 'Arm Shoulder',    canfdID: 1, controller: ARM_CONTROLLER_SHOULDER, group: 'arm' },
-  { displayName: 'Arm Elbow',       canfdID: 2, controller: ARM_CONTROLLER_DEFAULT,  group: 'arm' },
-  { displayName: 'Arm Left Wrist',  canfdID: 3, controller: ARM_CONTROLLER_DEFAULT,  group: 'arm' },
-  { displayName: 'Arm Right Wrist', canfdID: 4, controller: ARM_CONTROLLER_DEFAULT,  group: 'arm' },
-  { displayName: 'Arm Turntable',   canfdID: 5, controller: ARM_CONTROLLER_DEFAULT,  group: 'arm' },
+  { displayName: 'Arm Shoulder', canfdID: 1, controller: ARM_CONTROLLER_SHOULDER, group: 'arm' },
+  { displayName: 'Arm Elbow', canfdID: 2, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
+  { displayName: 'Arm Left Wrist', canfdID: 3, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
+  { displayName: 'Arm Right Wrist', canfdID: 4, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
+  { displayName: 'Arm Turntable', canfdID: 5, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
 ];
 
-/** Convenience filter - drivetrain motors only. */
 export const drivetrainMotors = motorConfigs.filter((m) => m.group === 'drivetrain');
-
-/** Convenience filter - arm motors only. */
 export const armMotors = motorConfigs.filter((m) => m.group === 'arm');
 
 // ---------------------------------------------------------------------------
@@ -75,7 +101,7 @@ export enum CanBusID {
 }
 
 // ---------------------------------------------------------------------------
-// CAN ID → camelCase name map (used by useTelemetryData)
+// CAN ID → camelCase name map
 // ---------------------------------------------------------------------------
 
 export const canBusNameMap = {

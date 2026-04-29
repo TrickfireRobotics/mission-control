@@ -8,6 +8,12 @@ export interface ControllerConfig {
   invertX: boolean;
   /** Invert the Y axis (forward/back) on both joysticks. */
   invertY: boolean;
+  /**
+   * Joystick deadzone radius (0–0.5). Axis values whose absolute value is
+   * below this threshold are treated as exactly zero, preventing jitter
+   * commands when the stick rests near centre.
+   */
+  deadzone: number;
 }
 
 export interface Settings {
@@ -22,6 +28,7 @@ function defaultSettings(): Settings {
       tankDriveBlockHorizontal: false,
       invertX: false,
       invertY: false,
+      deadzone: 0.4,
     },
   };
 }
