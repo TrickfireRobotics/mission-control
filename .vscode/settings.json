@@ -25,5 +25,6 @@
     "[scss]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
+    "js/ts.experimental.useTsgo": false
 }

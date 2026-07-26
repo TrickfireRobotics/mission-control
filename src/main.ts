@@ -14,22 +14,22 @@ import Help from './pages/Help.vue';
 import { createPinia } from 'pinia';
 
 const routes = [
-  { path: '/', component: Home },
-  { path: '/Home', component: Home },
-  { path: '/Cameras', component: Cameras },
-  { path: '/Arm', component: Arm },
-  { path: '/Science', component: Science },
-  { path: '/Help', component: Help },
-  { path: '/Telemetry', component: Telemetry },
-  { path: '/Controller', component: Controller },
-  { path: '/Map', component: Map },
-  { path: '/Settings', component: Settings },
-  { path: '/Dev-tab', component: DevTab },
+    { path: '/', component: Home },
+    { path: '/Home', component: Home },
+    { path: '/Cameras', component: Cameras },
+    { path: '/Arm', component: Arm },
+    { path: '/Science', component: Science },
+    { path: '/Help', component: Help },
+    { path: '/Telemetry', component: Telemetry },
+    { path: '/Controller', component: Controller },
+    { path: '/Map', component: Map },
+    { path: '/Settings', component: Settings },
+    { path: '/Dev-tab', component: DevTab },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 const app = createApp(App);

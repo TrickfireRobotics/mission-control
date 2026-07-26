@@ -8,44 +8,46 @@ import { onActivated, onDeactivated } from 'vue';
 const example = useExampleStore();
 
 onActivated(() => {
-  example.helloWorldSub.start();
+    example.helloWorldSub.start();
 });
 // Cleanup Auto unsubscribes when not loaded to save bandwidth
 onDeactivated(() => {
-  example.helloWorldSub.stop();
+    example.helloWorldSub.stop();
 });
 const onAndOffHandler = () => {
-  if (example.helloWorldSub.isOn) {
-    example.helloWorldSub.stop();
-  } else {
-    example.helloWorldSub.start();
-  }
+    if (example.helloWorldSub.isOn) {
+        example.helloWorldSub.stop();
+    } else {
+        example.helloWorldSub.start();
+    }
 };
 </script>
 <template>
-  <div>
-    <div class="dialogue-box">
-      <h2>Example Data:</h2>
-      <p>
-        {{ example.helloWorldSub.msg?.data }}
-      </p>
+    <div>
+        <div class="dialogue-box">
+            <h2>Example Data:</h2>
+            <p>
+                {{ example.helloWorldSub.msg?.data }}
+            </p>
+        </div>
+        <button
+            @click="example.helloWorldPub.publish({ data: example.helloWorldSub.msg?.data + '!' })"
+        >
+            Add !
+        </button>
+        <button @click="example.helloWorldSub.stop()">Unsub</button>
+        <button @click="example.helloWorldSub.start()">sub</button>
+        <button
+            :class="{
+                'button-toggle--off': !example.helloWorldSub.isOn,
+                'button-toggle--on': example.helloWorldSub.isOn,
+            }"
+            @click="onAndOffHandler"
+        >
+            Example Subscriber Status:
+            {{ example.helloWorldSub.isOn ? 'On' : 'Off' }}
+        </button>
     </div>
-    <button @click="example.helloWorldPub.publish({ data: example.helloWorldSub.msg?.data + '!' })">
-      Add !
-    </button>
-    <button @click="example.helloWorldSub.stop()">Unsub</button>
-    <button @click="example.helloWorldSub.start()">sub</button>
-    <button
-      :class="{
-        'button-toggle--off': !example.helloWorldSub.isOn,
-        'button-toggle--on': example.helloWorldSub.isOn,
-      }"
-      @click="onAndOffHandler"
-    >
-      Example Subscriber Status:
-      {{ example.helloWorldSub.isOn ? 'On' : 'Off' }}
-    </button>
-  </div>
 </template>
 
 <!-- Should have lang="scss" and "scoped" to enable superpower of SCSS and make styles do not accidentally interact with other components styles-->
