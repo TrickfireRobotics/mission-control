@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+coverage
+.vite
+
+/cypress/videos/
+/cypress/screenshots/
+
+.DS_Store
+.idea
+.vscode
+
+public/site.webmanifest

@@ -12,26 +12,26 @@ const plugin = useDevTools ? [vueDevTools()] : [];
 // vite.config.ts has to be default export
 // eslint-disable-next-line no-restricted-exports
 export default defineConfig({
-  plugins: [vue({ ...templateCompilerOptions }), ...plugin],
-  server: {
-    // automatically opens in browser
-    open: true,
-    port: 8000,
-  },
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    plugins: [vue({ ...templateCompilerOptions }), ...plugin],
+    server: {
+        // automatically opens in browser
+        open: true,
+        port: 8000,
     },
-  },
-  // Fixes The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0 when updating packages
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: 'modern-compiler', // or "modern",
-        // Silence issue
-        silenceDeprecations: ['legacy-js-api'],
-      },
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
     },
-  },
-  base: process.env.GH_PAGES === 'true' ? '/mission-control/' : '/',
+    // Fixes The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0 when updating packages
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler', // or "modern",
+                // Silence issue
+                silenceDeprecations: ['legacy-js-api'],
+            },
+        },
+    },
+    base: process.env.GH_PAGES === 'true' ? '/mission-control/' : '/',
 });

@@ -8,15 +8,15 @@ import { type MoteusMotorState, useTelemetry } from '@/lib/roslibUtils/telemetry
 onMounted(() => initialize());
 
 export interface GenericMotorTelemetryProps {
-  displayName: string;
-  dataSourceMethod: (
-    param: number,
-    dataCallback: (result: { json_payload: string }) => void,
-  ) => void;
-  dataSourceParameter: number;
-  updateMs: number;
-  showAllFeatures: boolean;
-  motorType: string;
+    displayName: string;
+    dataSourceMethod: (
+        param: number,
+        dataCallback: (result: { json_payload: string }) => void,
+    ) => void;
+    dataSourceParameter: number;
+    updateMs: number;
+    showAllFeatures: boolean;
+    motorType: string;
 }
 
 const props = defineProps<GenericMotorTelemetryProps>();
@@ -25,300 +25,270 @@ const props = defineProps<GenericMotorTelemetryProps>();
 //       and a separate one for recording (recording shouldn't stop on navigate).
 const telemetry = useTelemetry();
 
-let isRecordingData = ref(false);
+const isRecordingData = ref(false);
 let csvData: SaveCSVData;
 
-// We use this to fill up csv data
-// Each element is another array that holds the actual data
-let showCheckbox = ref(true);
+const showCheckbox = ref(true);
 
 /**
- * This is used to store what kind of data we will be displaying
- * and handling through the whole thing.
- *
- * It should be possible to simply add another entry to this, and everything should
- * show up, assuming that the data received from the rover also has these values
+ * Describes one data field we can display / record for a motor.
  */
-interface MoteuesDataChoice {
-  identifier: keyof MoteusMotorState;
-  prettyName: string;
-  dataValue: string;
-  isSelected: boolean;
-  shouldRecordData: boolean;
+interface MotorDataField {
+    identifier: keyof MoteusMotorState;
+    prettyName: string;
+    dataValue: string;
+    isSelected: boolean;
+    shouldRecordData: boolean;
 }
 
-const moteusDataChoices: Ref<MoteuesDataChoice[]> = ref(
-  createDataChoices({
-    position: 'Position',
-    velocity: 'Velocity',
-    torque: 'Torque',
-    temperature: 'Temperature',
-    power: 'Power',
-    input_voltage: 'Controller Voltage',
-    q_current: 'Q Phase (Amps)',
-    d_current: 'D Phase (Amps)',
-  }),
+const motorDataFields: Ref<MotorDataField[]> = ref(
+    createDataChoices({
+        position: 'Position',
+        velocity: 'Velocity',
+        torque: 'Torque',
+        temperature: 'Temperature',
+        power: 'Power',
+        input_voltage: 'Voltage',
+        q_current: 'Q Phase',
+        d_current: 'D Phase',
+    }),
 );
 
 function initialize() {
-  csvData = new SaveCSVData();
+    csvData = new SaveCSVData();
 }
 
 function createDataChoices(
-  idToPretty: Partial<Record<keyof MoteusMotorState, string>>,
-): MoteuesDataChoice[] {
-  const output: MoteuesDataChoice[] = [];
-
-  for (const key in idToPretty) {
-    output.push({
-      identifier: key as keyof MoteusMotorState,
-      prettyName: idToPretty[key as keyof MoteusMotorState] as string,
-      dataValue: 'N/A',
-      isSelected: true,
-      shouldRecordData: true,
-    });
-  }
-
-  return output;
-}
-
-/**
- * Converts a piece of data related to one of the motors
- * into a nice string for the UI.
- * @param data - is the data value.
- */
-function moteusDataToString(data: string | number | null | undefined): string {
-  if (typeof data === 'string') {
-    data = parseFloat(data);
-  }
-
-  if (typeof data !== 'number') {
-    data = null;
-  }
-
-  if (!Number.isNaN(data) && data != null) {
-    if (Number.isInteger(data)) {
-      // if int
-      return data.toString();
-    } else {
-      return data.toFixed(5);
+    idToPretty: Partial<Record<keyof MoteusMotorState, string>>,
+): MotorDataField[] {
+    const output: MotorDataField[] = [];
+    for (const key in idToPretty) {
+        output.push({
+            identifier: key as keyof MoteusMotorState,
+            prettyName: idToPretty[key as keyof MoteusMotorState] as string,
+            dataValue: 'N/A',
+            isSelected: true,
+            shouldRecordData: true,
+        });
     }
-  } else {
-    return 'N/A';
-  }
+    return output;
 }
 
-/**
- * The callback for the data subscriber, which is responsible for reading
- * in the data and saving it.
- */
+function motorDataToString(data: string | number | null | undefined): string {
+    if (typeof data === 'string') data = parseFloat(data);
+    if (typeof data !== 'number') data = null;
+
+    if (!Number.isNaN(data) && data != null) {
+        return Number.isInteger(data) ? data.toString() : data.toFixed(5);
+    }
+    return 'N/A';
+}
+
 function dataCallback(result: MoteusMotorState[]) {
-  const motor = result.find((motor) => motor.can_id === props.dataSourceParameter);
-  if (!motor) {
-    return;
-  }
+    const motor = result.find((motor) => motor.can_id === props.dataSourceParameter);
+    if (!motor) return;
 
-  // update the data
+    for (const item of motorDataFields.value) {
+        item.dataValue = motorDataToString(motor[item.identifier]);
+    }
 
-  for (const item of moteusDataChoices.value) {
-    item.dataValue = moteusDataToString(motor[item.identifier]);
-  }
-
-  // Add it to the CSV file
-  constructRecordingEntry();
+    constructRecordingEntry();
 }
 
 function constructRecordingEntry() {
-  let tempDataArray: string[] = [];
-
-  // Go through each possible entry
-  for (const entry of moteusDataChoices.value) {
-    //If we have selected that entry to be recorded
-    if (entry.shouldRecordData) {
-      if (entry.dataValue !== 'N/A') {
-        tempDataArray.push(entry.dataValue);
-      } else {
-        tempDataArray.push(' ');
-      }
+    const row: string[] = [];
+    for (const entry of motorDataFields.value) {
+        if (entry.shouldRecordData) {
+            row.push(entry.dataValue !== 'N/A' ? entry.dataValue : ' ');
+        }
     }
-  }
-
-  csvData.addDataEntry(tempDataArray);
+    csvData.addDataEntry(row);
 }
 
-/**
- * Used for the dropdown menu
- * We use this to select if we should display
- * the entry targeted via itemName
- *
- */
 function itemClicked(itemName: string) {
-  let mything = getMoteusDataObjectFromIdentifier(itemName);
-  if (mything !== null) {
-    mything.isSelected = !mything.isSelected;
-  }
+    const field = getFieldByIdentifier(itemName);
+    if (field) field.isSelected = !field.isSelected;
 }
 
-/**
- * Handles the recording.
- *
- * After stopping the recording, it will build the csv file
- */
 function recordButtonPressed() {
-  if (!isRecordingData.value) {
-    showCheckbox.value = false;
+    if (!isRecordingData.value) {
+        showCheckbox.value = false;
+        csvData = new SaveCSVData();
 
-    csvData = new SaveCSVData();
-
-    let header: string[] = [];
-
-    for (const entry of moteusDataChoices.value) {
-      if (entry.shouldRecordData) {
-        header.push(entry.identifier);
-      }
+        const header: string[] = [];
+        for (const entry of motorDataFields.value) {
+            if (entry.shouldRecordData) header.push(entry.identifier);
+        }
+        csvData.setHeader(header);
+        telemetry.start(dataCallback);
+    } else {
+        showCheckbox.value = true;
+        telemetry.stop();
+        if (props.displayName) csvData.saveToFile(props.displayName);
     }
 
-    csvData.setHeader(header);
-
-    telemetry.start(dataCallback);
-  } else {
-    showCheckbox.value = true;
-
-    telemetry.stop();
-
-    if (props.displayName) {
-      csvData.saveToFile(props.displayName);
-    }
-  }
-
-  isRecordingData.value = !isRecordingData.value;
+    isRecordingData.value = !isRecordingData.value;
 }
 
-function getMoteusDataObjectFromIdentifier(itemName: string): MoteuesDataChoice | null {
-  for (const entry of moteusDataChoices.value) {
-    if (entry.identifier === itemName) {
-      return entry;
-    }
-  }
-
-  return null;
+function getFieldByIdentifier(itemName: string): MotorDataField | null {
+    return motorDataFields.value.find((e) => e.identifier === itemName) ?? null;
 }
 
-/**
- * Used as a callback for the checkboxes
- * All this does it hold the logical state
- */
 function checkboxClicked(name: string) {
-  let dataEntry = getMoteusDataObjectFromIdentifier(name);
-  if (dataEntry !== null) {
-    dataEntry.shouldRecordData = !dataEntry.shouldRecordData;
-  }
+    const field = getFieldByIdentifier(name);
+    if (field) field.shouldRecordData = !field.shouldRecordData;
 }
 
 defineExpose({ recordButtonPressed });
 </script>
 
 <template>
-  <div class="module-bg">
-    <div>
-      <h3>{{ displayName }}</h3>
-    </div>
-    <div class="flex-container">
-      <div class="dropdown">
-        <button
-          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
-        >
-          Select
-        </button>
-        <div class="dropdown-content">
-          <DropDownItem
-            v-for="item in moteusDataChoices"
-            :key="item.prettyName"
-            :item-name="item.prettyName"
-            :is-selected="item.isSelected"
-            @callback="itemClicked(item.identifier)"
-          ></DropDownItem>
+    <div class="motor-card">
+        <!-- ── Card header ── -->
+        <div class="card-header">
+            <div class="card-title-block">
+                <h3 class="motor-name">{{ displayName }}</h3>
+                <span class="motor-badge">{{ motorType }}</span>
+            </div>
+
+            <div class="card-actions">
+                <!-- Field selector dropdown -->
+                <div class="dropdown">
+                    <button class="button-secondary btn-sm">Fields</button>
+                    <div class="dropdown-content">
+                        <DropDownItem
+                            v-for="item in motorDataFields"
+                            :key="item.prettyName"
+                            :item-name="item.prettyName"
+                            :is-selected="item.isSelected"
+                            @callback="itemClicked(item.identifier)"
+                        />
+                    </div>
+                </div>
+
+                <!-- Record button -->
+                <button
+                    v-if="showAllFeatures"
+                    class="btn-sm"
+                    :class="{
+                        'button-toggle--on': !isRecordingData,
+                        'button-toggle--off': isRecordingData,
+                    }"
+                    @click="recordButtonPressed"
+                >
+                    {{ isRecordingData ? 'Stop' : 'Record' }}
+                </button>
+            </div>
         </div>
-      </div>
 
-      <div>
-        <button
-          v-if="showAllFeatures"
-          id="record_button"
-          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
-          @click="recordButtonPressed"
-        >
-          {{ isRecordingData ? 'Stop Recording' : 'Start Recording' }}
-        </button>
-      </div>
+        <!-- ── Data grid ── -->
+        <div class="data-grid">
+            <TelemetryDataDisplay
+                v-for="item in motorDataFields"
+                :key="item.identifier"
+                :item-name="item.prettyName"
+                :item-identifier="item.identifier"
+                :is-selected="item.isSelected"
+                :value="item.dataValue"
+                :should-record-data="item.shouldRecordData"
+                :should-show-check-box="showCheckbox"
+                :show-all-features="showAllFeatures"
+                @checkbox-clicked="checkboxClicked"
+            />
+        </div>
     </div>
-
-    <div class="flex-container flex-vertical">
-      <div class="moteus-reminder">
-        Type: <b>{{ motorType }}</b>
-      </div>
-
-      <TelemetryDataDisplay
-        v-for="item in moteusDataChoices"
-        :key="item.identifier"
-        :item-name="item.identifier"
-        :is-selected="item.isSelected"
-        :value="item.dataValue"
-        :should-record-data="item.shouldRecordData"
-        :should-show-check-box="showCheckbox"
-        :show-all-features="showAllFeatures"
-        @checkbox-clicked="checkboxClicked"
-      >
-      </TelemetryDataDisplay>
-    </div>
-  </div>
 </template>
 
 <style lang="scss" scoped>
-.module-bg {
-  background-color: rgb(109, 109, 109);
-  border-radius: 20px;
-  padding: 10px;
-  height: fit-content;
+// ── Card shell ───────────────────────────────────────────────────────────────
+.motor-card {
+    background: var(--grey);
+    border: 1px solid var(--light-grey);
+    border-top: 2px solid var(--tf-green-mid);
+    border-radius: 4px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
-.moteus-reminder {
-  margin: 4px;
+// ── Header ───────────────────────────────────────────────────────────────────
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
 }
 
-.flex-container {
-  display: flex;
-  justify-content: left;
+.card-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
 }
 
-.item {
-  font-weight: bolder;
+.motor-name {
+    font-size: 0.88rem;
+    color: var(--white);
+    margin: 0;
+    line-height: 1.2;
 }
 
-.dropdown-item {
-  color: black;
+.motor-badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--tf-green);
+    background: var(--tf-green-dim);
+    border: 1px solid var(--tf-green-mid);
+    border-radius: 3px;
+    padding: 1px 5px;
+    width: fit-content;
 }
 
-.flex-vertical {
-  flex-direction: column;
+// ── Action buttons ────────────────────────────────────────────────────────────
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
 }
 
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+}
+
+// ── Data grid ─────────────────────────────────────────────────────────────────
+.data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+}
+
+// ── Dropdown ─────────────────────────────────────────────────────────────────
 .dropdown {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 
 .dropdown-content {
-  border-radius: 7px;
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: var(--component-background);
+    border: 1px solid var(--light-grey);
+    border-radius: 4px;
+    min-width: 160px;
+    z-index: 50;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    padding: 4px;
 }
 
 .dropdown:hover .dropdown-content {
-  display: block;
+    display: block;
 }
 </style>
