@@ -6,13 +6,14 @@ import type { TopicType, TopicTypeMap } from './rosTypes';
  * A publisher that can send out messages to a certain topic.
  */
 export interface Publisher<T extends TopicType> {
-  /**
-   * Publishes the given data to the configured topic.
-   * @param data - is the data to publish.
-   * @param options - are the options to use during this publish.
-   * @param options.isDebugging - should debug output be displayed?
-   */
-  publish: (data: TopicTypeMap[T], options?: { isDebugging?: boolean }) => void;
+    /**
+     * Publishes the given data to the configured topic.
+     * @param data - is the data to publish.
+     * @param options - are the options to use during this publish.
+     * @param options.isDebugging - should debug output be displayed?
+     * @param options.force - bypass the rate limiter (use for critical stop/zero commands)
+     */
+    publish: (data: TopicTypeMap[T], options?: { isDebugging?: boolean; force?: boolean }) => void;
 }
 
 /**
@@ -22,12 +23,12 @@ export interface Publisher<T extends TopicType> {
  * @param options.maxRateHz - optional maximum publish rate in Hz; excess calls are dropped
  */
 export function createPublisher<T extends TopicType>(options: {
-  topicName: string;
-  topicType: T;
-  maxRateHz?: number;
+    topicName: string;
+    topicType: T;
+    maxRateHz?: number;
 }): Publisher<T> {
-  const ros = useRoslibStore();
-  return createPublisherForRos(ros.getTopic, options);
+    const ros = useRoslibStore();
+    return createPublisherForRos(ros.getTopic, options);
 }
 
 /**
@@ -35,35 +36,35 @@ export function createPublisher<T extends TopicType>(options: {
  * default one.
  */
 export function createPublisherForRos<T extends TopicType>(
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
-  options: {
-    topicName: string;
-    topicType: T;
-    maxRateHz?: number;
-  },
+    getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
+    options: {
+        topicName: string;
+        topicType: T;
+        maxRateHz?: number;
+    },
 ): Publisher<T> {
-  const { topicName, topicType, maxRateHz } = options;
-  const topic = getTopic<TopicTypeMap[T]>(topicName, topicType);
-  const minIntervalMs = maxRateHz != null ? 1000 / maxRateHz : 0;
-  let lastPublishTime = 0;
+    const { topicName, topicType, maxRateHz } = options;
+    const topic = getTopic<TopicTypeMap[T]>(topicName, topicType);
+    const minIntervalMs = maxRateHz != null ? 1000 / maxRateHz : 0;
+    let lastPublishTime = 0;
 
-  const publish: Publisher<T>['publish'] = (data, options) => {
-    if (minIntervalMs > 0) {
-      const now = Date.now();
-      if (now - lastPublishTime < minIntervalMs) {
-        return;
-      }
-      lastPublishTime = now;
-    }
-    const { isDebugging } = options || {};
-    topic.publish(data);
-    if (isDebugging) {
-      console.log(`[${topicName}] Publishing:`, data);
-    }
-  };
+    const publish: Publisher<T>['publish'] = (data, options) => {
+        const { isDebugging, force } = options || {};
+        if (!force && minIntervalMs > 0) {
+            const now = Date.now();
+            if (now - lastPublishTime < minIntervalMs) {
+                return;
+            }
+            lastPublishTime = now;
+        }
+        topic.publish(data);
+        if (isDebugging) {
+            console.log(`[${topicName}] Publishing${force ? ' (forced)' : ''}:`, data);
+        }
+    };
 
-  // TODO: Publisher that runs every interval has passed
-  // publishTimer(options:{callback? : () => void, interval : number, isDebugging? : boolean })
-  // returns Object so if needed to add more methods, cane easily do and it doesn't create topic object everytime
-  return { publish };
+    // TODO: Publisher that runs every interval has passed
+    // publishTimer(options:{callback? : () => void, interval : number, isDebugging? : boolean })
+    // returns Object so if needed to add more methods, cane easily do and it doesn't create topic object everytime
+    return { publish };
 }

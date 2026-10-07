@@ -1,50 +1,47 @@
 <script lang="ts" setup>
 export interface DropDownItemProps {
-  itemName: string;
-  isSelected: boolean;
+    itemName: string;
+    isSelected: boolean;
 }
 const props = defineProps<DropDownItemProps>();
 const emit = defineEmits(['callback']);
 </script>
 
 <template>
-  <div class="dropdown-item mycontainer prevent-select hover-highlight" @click="emit('callback')">
-    <div class="item-text">
-      <span>{{ props.itemName }}</span>
+    <div class="dropdown-item" @click="emit('callback')">
+        <span class="item-text">{{ props.itemName }}</span>
+        <span v-if="props.isSelected" class="item-check">✓</span>
     </div>
-    <div class="item-checkmark">
-      <b v-if="props.isSelected">✓</b>
-    </div>
-  </div>
 </template>
 
 <style lang="scss" scoped>
-.mycontainer {
-  display: flex;
-  margin: 2px;
-  justify-content: space-between;
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--dark-white);
+
+    &:hover {
+        background: var(--light-grey);
+        color: var(--white);
+    }
 }
 
 .item-text {
-  font-weight: bolder;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.item-checkmark {
-  font-weight: bolder;
-}
-
-.prevent-select {
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none; /* Standard syntax */
-}
-
-.dropdown-item {
-  color: blue;
-}
-
-.hover-highlight:hover {
-  background-color: rgb(161, 161, 161);
-  border-radius: 7px;
+.item-check {
+    font-size: 0.75rem;
+    color: var(--tf-green);
+    font-weight: 700;
 }
 </style>

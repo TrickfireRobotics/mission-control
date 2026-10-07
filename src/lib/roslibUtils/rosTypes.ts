@@ -4,48 +4,48 @@
 // Feel free to add to TopicTypeMap.
 // Most messages will use StdMsg.
 export type TopicTypeMap = {
-  'std_msgs/Int32': StdMsg<number>;
-  'std_msgs/Bool': StdMsg<boolean>;
-  'std_msgs/String': StdMsg<string>;
-  'std_msgs/Char': StdMsg<string>;
-  'std_msgs/Float32': StdMsg<number>;
-  'std_msgs/Time': StdMsg<number>;
-  'sensor_msgs/msg/CompressedImage': CompressedImage;
-  'sensor_msgs/msg/NavSatFix': NavSatFix;
+    'std_msgs/Int32': StdMsg<number>;
+    'std_msgs/Bool': StdMsg<boolean>;
+    'std_msgs/String': StdMsg<string>;
+    'std_msgs/Char': StdMsg<string>;
+    'std_msgs/Float32': StdMsg<number>;
+    'std_msgs/Time': StdMsg<number>;
+    'sensor_msgs/msg/CompressedImage': CompressedImage;
+    'sensor_msgs/msg/NavSatFix': NavSatFix;
 };
 
 export type TopicType = keyof TopicTypeMap;
 
 export type StdMsg<T> = {
-  data: T;
+    data: T;
 };
 
 export type CompressedImage = {
-  Header: {
-    //header is not confirmed on types
-    frame_id: string;
-    stamp: { sec: number; nanosec: number };
-  };
-  format: 'jpg' | 'png';
-  data: Uint8Array;
+    Header: {
+        //header is not confirmed on types
+        frame_id: string;
+        stamp: { sec: number; nanosec: number };
+    };
+    format: 'jpg' | 'png';
+    data: Uint8Array;
 };
 
 //https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/NavSatFix.html
 export type NavSatFix = {
-  header: {
-    stamp: {
-      sec: number;
-      nanosec: number;
+    header: {
+        stamp: {
+            sec: number;
+            nanosec: number;
+        };
+        frame_id: string;
     };
-    frame_id: string;
-  };
-  status: {
-    status: number;
-    service: number;
-  };
-  latitude: number;
-  longitude: number;
-  altitude: number;
-  position_covariance: number[];
-  position_covariance_type: number;
+    status: {
+        status: number;
+        service: number;
+    };
+    latitude: number;
+    longitude: number;
+    altitude: number;
+    position_covariance: number[];
+    position_covariance_type: number;
 };

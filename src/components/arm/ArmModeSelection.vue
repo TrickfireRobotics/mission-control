@@ -22,100 +22,100 @@ let current_arm_mode = ref(-1); // Default is disabled
 // let isLoaded = ref(false);
 
 function initialize() {
-  armModeService = new ROSLIB.Service({
-    ros: roslib.ros,
-    name: '/get_arm_mode',
-    serviceType: 'ArmMode',
-  });
+    armModeService = new ROSLIB.Service({
+        ros: roslib.ros,
+        name: '/get_arm_mode',
+        serviceType: 'ArmMode',
+    });
 
-  getCurrentArmMode();
+    getCurrentArmMode();
 }
 
 function getCurrentArmMode() {
-  var request = {
-    //Dummy data for now
-    input: 1,
-  };
+    var request = {
+        //Dummy data for now
+        input: 1,
+    };
 
-  armModeService.callService(request, function (result) {
-    console.log('Result from service ' + result.current_mode);
-    current_arm_mode.value = result.current_mode;
-    //isLoaded.value = true
-  });
+    armModeService.callService(request, function (result) {
+        console.log('Result from service ' + result.current_mode);
+        current_arm_mode.value = result.current_mode;
+        //isLoaded.value = true
+    });
 }
 
 function changeArmMode(targetMode: number) {
-  console.log('Target mode wanted' + targetMode);
-  const armModePublish = createPublisher({
-    topicName: 'update_arm_mode',
-    topicType: 'std_msgs/Int32',
-  });
-  armModePublish.publish({ data: targetMode });
-  getCurrentArmMode();
+    console.log('Target mode wanted' + targetMode);
+    const armModePublish = createPublisher({
+        topicName: 'update_arm_mode',
+        topicType: 'std_msgs/Int32',
+    });
+    armModePublish.publish({ data: targetMode });
+    getCurrentArmMode();
 }
 </script>
 
 <template>
-  <div class="mode-button-container">
-    <div class="mode-button-vertical">
-      <div>
-        <b class="mode-text">Arm Control Mode:</b>
-      </div>
-      <div>
-        <button
-          :class="{
-            'button-toggle--off': current_arm_mode !== 0,
-            'button-toggle--on': current_arm_mode === 0,
-          }"
-          @click="changeArmMode(0)"
-        >
-          Disabled
-        </button>
-        <button
-          :class="{
-            'button-toggle--off': current_arm_mode !== 1,
-            'button-toggle--on': current_arm_mode === 1,
-          }"
-          @click="changeArmMode(1)"
-        >
-          Individual Motor Control (Velocity)
-        </button>
-        <button
-          :class="{
-            'button-toggle--off': current_arm_mode !== 2,
-            'button-toggle--on': current_arm_mode === 2,
-          }"
-          @click="changeArmMode(2)"
-        >
-          Individual Motor Control (Position)
-        </button>
-        <button
-          :class="{
-            'button-toggle--off': current_arm_mode !== 3,
-            'button-toggle--on': current_arm_mode === 3,
-          }"
-          @click="changeArmMode(3)"
-        >
-          Inverse Kinematics
-        </button>
-      </div>
+    <div class="mode-button-container">
+        <div class="mode-button-vertical">
+            <div>
+                <b class="mode-text">Arm Control Mode:</b>
+            </div>
+            <div>
+                <button
+                    :class="{
+                        'button-toggle--off': current_arm_mode !== 0,
+                        'button-toggle--on': current_arm_mode === 0,
+                    }"
+                    @click="changeArmMode(0)"
+                >
+                    Disabled
+                </button>
+                <button
+                    :class="{
+                        'button-toggle--off': current_arm_mode !== 1,
+                        'button-toggle--on': current_arm_mode === 1,
+                    }"
+                    @click="changeArmMode(1)"
+                >
+                    Individual Motor Control (Velocity)
+                </button>
+                <button
+                    :class="{
+                        'button-toggle--off': current_arm_mode !== 2,
+                        'button-toggle--on': current_arm_mode === 2,
+                    }"
+                    @click="changeArmMode(2)"
+                >
+                    Individual Motor Control (Position)
+                </button>
+                <button
+                    :class="{
+                        'button-toggle--off': current_arm_mode !== 3,
+                        'button-toggle--on': current_arm_mode === 3,
+                    }"
+                    @click="changeArmMode(3)"
+                >
+                    Inverse Kinematics
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <style lang="scss" scoped>
 .mode-button-container {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .mode-text {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .mode-button-vertical {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 </style>

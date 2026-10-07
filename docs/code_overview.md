@@ -3,12 +3,12 @@
 Picture below shows how Camera and Controller interact with the codebase
 ![mission control overview](./resources/mission_control_overview.png)
 
-- **store**: Put all global states here. Every store should have one purpose. Put subscribers and publishers here, so that there is one place to find the topic names.
-- **components**: Single file component vue files that contain localized state (aka other components will not use it). Do not directly use createSubscriber and createPublisher here. Instead put them into the store.
-- **lib**: [Vue Composables](https://vuejs.org/guide/reusability/composables) and any large amount of .ts files goes here.
-- **pages** Each tab in the navbar has its pages. Generally, there should be no state stored here as the components and store should have them.
-- **App.vue**: Pubs and Subs that are always running and not part of a component such as the controller should be ran here.
-- **types.ts** Put all global types here.
+-   **store**: Put all global states here. Every store should have one purpose. Put subscribers and publishers here, so that there is one place to find the topic names.
+-   **components**: Single file component vue files that contain localized state (aka other components will not use it). Do not directly use createSubscriber and createPublisher here. Instead put them into the store.
+-   **lib**: [Vue Composables](https://vuejs.org/guide/reusability/composables) and any large amount of .ts files goes here.
+-   **pages** Each tab in the navbar has its pages. Generally, there should be no state stored here as the components and store should have them.
+-   **App.vue**: Pubs and Subs that are always running and not part of a component such as the controller should be ran here.
+-   **types.ts** Put all global types here.
 
 ## Design choices
 

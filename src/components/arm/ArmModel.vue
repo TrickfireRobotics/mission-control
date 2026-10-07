@@ -12,7 +12,7 @@ const elbow = scene.getObjectByName('Elbow') as Bone;
 const turntable = scene.getObjectByName('Turntable') as Bone;
 
 function degreesToRadians(degrees: number): number {
-  return degrees * (Math.PI / 180);
+    return degrees * (Math.PI / 180);
 }
 
 //default rotations on the 3d model
@@ -22,39 +22,39 @@ const elbowDefault = degreesToRadians(153.65);
 const turntableDefault = degreesToRadians(-37.76);
 
 useTelemetryData(
-  [CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable],
-  (data) => data.position,
-  null,
-  {
-    armShoulder: (position) => {
-      // Multiply the telemetry fraction by 2π to get the incoming additional radians.
-      const additionalShoulderRotation = position * -2 * Math.PI;
-      // The final rotation equals the default plus the telemetry offset.
-      const shoulderRotation = shoulderDefault + additionalShoulderRotation;
-      shoulder.rotation.x = shoulderRotation;
+    [CanBusID.ArmShoulder, CanBusID.ArmElbow, CanBusID.ArmTurntable],
+    (data) => data.position,
+    null,
+    {
+        armShoulder: (position) => {
+            // Multiply the telemetry fraction by 2π to get the incoming additional radians.
+            const additionalShoulderRotation = position * -2 * Math.PI;
+            // The final rotation equals the default plus the telemetry offset.
+            const shoulderRotation = shoulderDefault + additionalShoulderRotation;
+            shoulder.rotation.x = shoulderRotation;
+        },
+        armElbow: (position) => {
+            const additionalElbowRotation = position * 2 * Math.PI;
+            const elbowRotation = elbowDefault + additionalElbowRotation;
+            elbow.rotation.x = elbowRotation;
+        },
+        armTurntable: (position) => {
+            const additionalTurntableRotation = position * 2 * Math.PI;
+            const turntableRotation = turntableDefault + additionalTurntableRotation;
+            turntable.rotation.x = turntableRotation;
+        },
     },
-    armElbow: (position) => {
-      const additionalElbowRotation = position * 2 * Math.PI;
-      const elbowRotation = elbowDefault + additionalElbowRotation;
-      elbow.rotation.x = elbowRotation;
-    },
-    armTurntable: (position) => {
-      const additionalTurntableRotation = position * 2 * Math.PI;
-      const turntableRotation = turntableDefault + additionalTurntableRotation;
-      turntable.rotation.x = turntableRotation;
-    },
-  },
 );
 </script>
 <template>
-  <div id="arm">
-    <TresCanvas shadows alpha>
-      <TresAmbientLight :intensity="1" />
-      <TresDirectionalLight :intensity="3" :position="[1, 1, 1]" />
-      <TresPerspectiveCamera :position="[1.2, 0, 0]" />
-      <OrbitControls :enable-damping="false" :enable-pan="false" />
-      <primitive :object="scene" />
-    </TresCanvas>
-  </div>
+    <div id="arm">
+        <TresCanvas shadows alpha>
+            <TresAmbientLight :intensity="1" />
+            <TresDirectionalLight :intensity="3" :position="[1, 1, 1]" />
+            <TresPerspectiveCamera :position="[1.2, 0, 0]" />
+            <OrbitControls :enable-damping="false" :enable-pan="false" />
+            <primitive :object="scene" />
+        </TresCanvas>
+    </div>
 </template>
 <style lang="scss" scoped></style>

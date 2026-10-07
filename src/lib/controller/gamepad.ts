@@ -11,46 +11,46 @@ const MOTOR_COMMAND_MAX_RATE_HZ = 10;
 const indexToControllerName = new Map();
 const indexToControllerState = new Map();
 export function gamepadInit() {
-  const controller = useControllerStore();
-  window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
-  window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
-  function onGamePadConnectsHandler(e: GamepadEvent) {
-    console.log('HELLO CONTROLLER CONNECTED');
-    console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
-    indexToControllerName.set(e.gamepad.index, e.gamepad.id);
-    const state = new ControllerState(
-      'src\\lib\\controller\\drivebaseAndArmBinding.json',
-      DELTA_SENSITIVITY,
-      MOTOR_COMMAND_MAX_RATE_HZ,
-    );
-    indexToControllerState.set(e.gamepad.index, state);
+    const controller = useControllerStore();
+    window.addEventListener('gamepadconnected', onGamePadConnectsHandler);
+    window.addEventListener('gamepaddisconnected', onGamePadDisconnectsHandler);
+    function onGamePadConnectsHandler(e: GamepadEvent) {
+        console.log('HELLO CONTROLLER CONNECTED');
+        console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
+        indexToControllerName.set(e.gamepad.index, e.gamepad.id);
+        const state = new ControllerState(
+            'src\\lib\\controller\\drivebaseAndArmBinding.json',
+            DELTA_SENSITIVITY,
+            MOTOR_COMMAND_MAX_RATE_HZ,
+        );
+        indexToControllerState.set(e.gamepad.index, state);
 
-    if (indexToControllerName.has(0)) {
-      controller.setGamepadConnectedStatus(true);
-      setInterval(pollController, 1000 / POLLING_RATE_IN_HERTZ);
+        if (indexToControllerName.has(0)) {
+            controller.setGamepadConnectedStatus(true);
+            setInterval(pollController, 1000 / POLLING_RATE_IN_HERTZ);
+        }
     }
-  }
-  // When a controller is removed
-  function onGamePadDisconnectsHandler(e: GamepadEvent) {
-    console.log('Removing controller with index %d\n' + e.gamepad.id, e.gamepad.index);
-    indexToControllerName.delete(e.gamepad.index);
-    indexToControllerState.delete(e.gamepad.index);
-    controller.setGamepadConnectedStatus(false);
-  }
-
-  // Poll each controller
-  function pollController() {
-    indexToControllerState.forEach(processInput);
-  }
-
-  function processInput(state: ControllerState, key: number) {
-    const jsGamepad = navigator.getGamepads()[key];
-
-    if (jsGamepad !== null) {
-      state.updateState(jsGamepad);
-      //state.printNumbers();
+    // When a controller is removed
+    function onGamePadDisconnectsHandler(e: GamepadEvent) {
+        console.log('Removing controller with index %d\n' + e.gamepad.id, e.gamepad.index);
+        indexToControllerName.delete(e.gamepad.index);
+        indexToControllerState.delete(e.gamepad.index);
+        controller.setGamepadConnectedStatus(false);
     }
-  }
+
+    // Poll each controller
+    function pollController() {
+        indexToControllerState.forEach(processInput);
+    }
+
+    function processInput(state: ControllerState, key: number) {
+        const jsGamepad = navigator.getGamepads()[key];
+
+        if (jsGamepad !== null) {
+            state.updateState(jsGamepad);
+            //state.printNumbers();
+        }
+    }
 }
 // export function gamepadCleanup() => {
 //     onUnmounted(() => {

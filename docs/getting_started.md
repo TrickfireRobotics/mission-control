@@ -16,33 +16,33 @@ The mission-control repo is completely separate from the urc-2023 as it is webpa
 
 ## Recommended IDE Setup
 
-- [VSCode](https://code.visualstudio.com/)
+-   [VSCode](https://code.visualstudio.com/)
 
-- [Vue DevTools Chrome Extension](https://devtools.vuejs.org/getting-started/installation): Can Inspect Components State and integrated with Pinia, allowing to see store's state.
+-   [Vue DevTools Chrome Extension](https://devtools.vuejs.org/getting-started/installation): Can Inspect Components State and integrated with Pinia, allowing to see store's state.
 
 ## Libraries/Tools/Technologies that We Utilize
 
 In this particular codebase, we use the following libraries/tools/technologies. Please familiarize yourself with the concepts below:
 
-- Vue [Official Tutorial](https://vuejs.org/tutorial/#step-1) (We specifically use Vue 3 Composition API Single File Component)
-  - Prop drilling
-  - Reactiveness (when to use refs vs not)
-  - Lifecycle Hooks
-    - Read about Keep Alive onActivate() and onDeactivated() hooks vs onMounted() and onUnmounted() hooks
-- [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-oop.html)
-  - Difference between Primitives and object types and their respective naming convention
-- [Pinia](https://pinia.vuejs.org/) (Global state management store)
-  - How to create a store
-  - How to use a store
-- ROS2 (Robot Operating System)
-  - high level understanding of:
-    - Subscribers and Publisher paradigm
-    - Topics, messageTypes
-  - Please refer to the [urc-2023 documentation](https://github.com/TrickfireRobotics/urc-2023) for more information about Ros
-- HTML/SCSS
-- [Roslibjs Source Code](https://github.com/RobotWebTools/roslibjs)
-- Node Package Manager (NPM)
-  - Difference between dependency and Dev-dependency and when installing packages, which one to install too.
+-   Vue [Official Tutorial](https://vuejs.org/tutorial/#step-1) (We specifically use Vue 3 Composition API Single File Component)
+    -   Prop drilling
+    -   Reactiveness (when to use refs vs not)
+    -   Lifecycle Hooks
+        -   Read about Keep Alive onActivate() and onDeactivated() hooks vs onMounted() and onUnmounted() hooks
+-   [Typescript](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-oop.html)
+    -   Difference between Primitives and object types and their respective naming convention
+-   [Pinia](https://pinia.vuejs.org/) (Global state management store)
+    -   How to create a store
+    -   How to use a store
+-   ROS2 (Robot Operating System)
+    -   high level understanding of:
+        -   Subscribers and Publisher paradigm
+        -   Topics, messageTypes
+    -   Please refer to the [urc-2023 documentation](https://github.com/TrickfireRobotics/urc-2023) for more information about Ros
+-   HTML/SCSS
+-   [Roslibjs Source Code](https://github.com/RobotWebTools/roslibjs)
+-   Node Package Manager (NPM)
+    -   Difference between dependency and Dev-dependency and when installing packages, which one to install too.
 
 ## So... what should I do now?
 

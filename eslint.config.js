@@ -11,40 +11,40 @@ const path = require('node:path');
 const gitignorePath = path.resolve(__dirname, '.gitignore');
 
 module.exports = ts.config(
-  includeIgnoreFile(gitignorePath),
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  ...eslintPluginVue.configs['flat/recommended'],
-  {
-    files: ['*.vue', '**/*.vue'],
-    languageOptions: {
-      parserOptions: {
-        parser: '@typescript-eslint/parser',
-      },
-    },
-  },
-  {
-    rules: {
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
+    includeIgnoreFile(gitignorePath),
+    js.configs.recommended,
+    ...ts.configs.recommended,
+    ...eslintPluginVue.configs['flat/recommended'],
+    {
+        files: ['*.vue', '**/*.vue'],
+        languageOptions: {
+            parserOptions: {
+                parser: '@typescript-eslint/parser',
+            },
         },
-      ],
-      'vue/multi-word-component-names': ['off'],
-      'no-restricted-exports': [
-        'error',
-        {
-          restrictDefaultExports: {
-            direct: true,
-          },
-        },
-      ],
     },
-  },
-  {
-    rules: prettier.rules,
-  },
+    {
+        rules: {
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
+            'vue/multi-word-component-names': ['off'],
+            'no-restricted-exports': [
+                'error',
+                {
+                    restrictDefaultExports: {
+                        direct: true,
+                    },
+                },
+            ],
+        },
+    },
+    {
+        rules: prettier.rules,
+    },
 );
