@@ -65,7 +65,11 @@ export class ControllerState {
         } = JSON.parse(stringJson);
 
         // Fill bindingEntryToPublisher with entry and values.
+        // Entries with an empty publisher are intentionally unmapped inputs; skip them
+        // instead of advertising a ROS topic with an empty name.
         for (const entry of json.bindings) {
+            if (!entry.publisher) continue;
+
             const publisher = createPublisher({
                 topicName: entry.publisher,
                 topicType: 'std_msgs/Float32',
