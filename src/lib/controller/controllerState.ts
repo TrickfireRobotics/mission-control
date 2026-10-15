@@ -11,6 +11,8 @@ import { useSettingsStore } from '@/store/settingsStore';
  */
 
 export class ControllerState {
+  private static readonly KEEPALIVE_INTERVAL_MS = 200;
+
   // Same format as currentStateButtons
   deltaStateButtons = Array(16).fill(0);
   deltaSensitivity = 0;
@@ -22,6 +24,7 @@ export class ControllerState {
   // last value actually published, so we can force-send a zero on stop even if
   // the rate limiter would otherwise drop it
   friendlyNameToLastPublished: Map<string, number> = new Map();
+  friendlyNameToLastPublishTime: Map<string, number> = new Map();
 
   maxPublishRateHz: number | undefined = undefined;
 
@@ -35,6 +38,7 @@ export class ControllerState {
       this.friendlyNameToCurrentValue.set(friendlyName, 0);
       this.friendlyNameToDelta.set(friendlyName, 0);
       this.friendlyNameToLastPublished.set(friendlyName, 0);
+      this.friendlyNameToLastPublishTime.set(friendlyName, 0);
     }
 
     fetch(jsonControllerBinding)
@@ -107,19 +111,27 @@ export class ControllerState {
       }
     }
 
+    const now = Date.now();
     for (const [entry, publisher] of this.bindingEntryToPublisher) {
       const currentValue = this.friendlyNameToCurrentValue.get(entry.name) ?? 0;
       const lastPublished = this.friendlyNameToLastPublished.get(entry.name) ?? 0;
       const delta = this.friendlyNameToDelta.get(entry.name);
+      const lastPublishTime = this.friendlyNameToLastPublishTime.get(entry.name) ?? 0;
 
       // force-publish zero when transitioning to zero so the robot always receives a
       // stop command, even if the rate limiter would otherwise drop the call (e.g.
       // trigger released within the rate-limit window)
       const stoppingNow = currentValue === 0 && lastPublished !== 0;
 
-      if (delta || stoppingNow) {
+      // a held, unchanging input has no delta and stops publishing; resend periodically
+      // so the rover's command timeout doesn't trip while a trigger/stick is just held
+      const keepaliveDue =
+        currentValue !== 0 && now - lastPublishTime >= ControllerState.KEEPALIVE_INTERVAL_MS;
+
+      if (delta || stoppingNow || keepaliveDue) {
         publisher.publish({ data: currentValue }, { isDebugging: true, force: stoppingNow });
         this.friendlyNameToLastPublished.set(entry.name, currentValue);
+        this.friendlyNameToLastPublishTime.set(entry.name, now);
       }
     }
   }
