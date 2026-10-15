@@ -90,14 +90,19 @@ export const armMotors = motorConfigs.filter((m) => m.group === 'arm');
 /**
  * Type-safe enumeration of every motor's CAN ID.
  * Used in telemetry subscriptions, arm model, velocity display, etc.
+ *
+ * Must match the canfdID values in motorConfigs above (and ultimately the rover's
+ * lib/configs.py) - these used to be out of sync: 5 of 6 drivetrain IDs were wrong,
+ * including BackRightDrive = 20, which isn't a real motor at all, so that bar never
+ * received data.
  */
 export enum CanBusID {
-  FrontLeftDrive = 25,
+  FrontLeftDrive = 22,
   MidLeftDrive = 24,
-  BackLeftDrive = 23,
-  FrontRightDrive = 22,
-  MidRightDrive = 21,
-  BackRightDrive = 20,
+  BackLeftDrive = 26,
+  FrontRightDrive = 21,
+  MidRightDrive = 23,
+  BackRightDrive = 25,
   ArmShoulder = 1,
   ArmElbow = 2,
   ArmLeftWrist = 3,
