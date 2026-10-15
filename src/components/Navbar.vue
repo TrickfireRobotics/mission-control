@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 // Icons are from https://fonts.google.com/ names might be different but rely on vscode intelisense to get the matching name
 import MapIcon from 'vue-material-design-icons/Map.vue';
@@ -24,6 +24,13 @@ const controller = useControllerStore();
 const operation = useOperationStateStore();
 const currentTab = ref(0);
 const router = useRouter();
+
+const roverLinkState = computed(() => {
+  if (!roslib.isWebSocketConnected) return 'Disconnected';
+  if (!roslib.isHeartbeatAlive) return 'No heartbeat';
+
+  return 'Connected';
+});
 
 const setCurrentTab = (newValue: number) => {
   currentTab.value = newValue;
@@ -144,15 +151,16 @@ const pageIconArr: PageIcon = [
           Auto
         </button>
       </div>
-      <div
-        class="container"
-        :title="`Websocket: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
-      >
+      <div class="container" :title="`Websocket: ${roverLinkState}`">
         <h4 id="status">WS</h4>
         <component
           :is="PowerPlugIcon"
           class="page-icon"
-          :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
+          :class="{
+            green: roslib.isWebSocketConnected && roslib.isHeartbeatAlive,
+            yellow: roslib.isWebSocketConnected && !roslib.isHeartbeatAlive,
+            red: !roslib.isWebSocketConnected,
+          }"
         />
       </div>
       <div
@@ -309,6 +317,9 @@ nav {
   }
   .green {
     color: var(--correct);
+  }
+  .yellow {
+    color: #f59e0b;
   }
 }
 </style>
