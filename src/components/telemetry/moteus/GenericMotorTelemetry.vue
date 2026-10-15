@@ -261,7 +261,8 @@ defineExpose({ recordButtonPressed });
       <TelemetryDataDisplay
         v-for="item in moteusDataChoices"
         :key="item.identifier"
-        :item-name="item.identifier"
+        :item-name="item.prettyName"
+        :item-identifier="item.identifier"
         :is-selected="item.isSelected"
         :value="item.dataValue"
         :should-record-data="item.shouldRecordData"

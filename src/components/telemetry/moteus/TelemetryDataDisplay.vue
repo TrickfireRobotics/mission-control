@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 export interface TelemetryDataDisplayProps {
   itemName: string;
+  // raw identifier key used for the checkbox callback, separate from the display label
+  itemIdentifier: string;
   isSelected: boolean;
   value: string;
   shouldRecordData: boolean;
@@ -18,11 +20,11 @@ const emit = defineEmits(['checkboxClicked']);
       <input
         v-if="props.showAllFeatures"
         v-show="props.shouldShowCheckBox"
-        checked
+        :checked="props.shouldRecordData"
         class="checkbox-style"
         type="checkbox"
         title="Select to include this value when recording data into a .csv file"
-        @click="emit('checkboxClicked', props.itemName)"
+        @click="emit('checkboxClicked', props.itemIdentifier)"
       />
       <b>{{ props.itemName }}: </b>
     </div>
