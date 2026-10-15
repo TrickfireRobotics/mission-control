@@ -29,6 +29,7 @@ export interface RoslibManager {
   isHeartbeatAlive: Ref<boolean>;
   latency: Ref<number>;
   getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
+  reconnect: () => void;
 }
 
 /**
@@ -259,5 +260,8 @@ export function roslibManager(): RoslibManager {
     getTopic,
     isWebSocketConnected,
     isHeartbeatAlive,
+    reconnect: () => {
+      if (serverHost) connect(serverHost);
+    },
   };
 }

@@ -1,15 +1,41 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
+import { computed, ref, watch, useTemplateRef } from 'vue';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useRoslibStore } from '@/store/roslibStore';
 
 const settings = useSettingsStore();
+const roslib = useRoslibStore();
+
+// keeps the button showing "Connected" for a short cooldown after a disconnect so
+// brief connection blips don't flash it back to the active "Retry" state
+const RETRY_COOLDOWN_MS = 1500;
+const cooldownActive = ref(false);
+let cooldownTimer: ReturnType<typeof setTimeout> | null = null;
+
+watch(
+  () => roslib.isWebSocketConnected,
+  (connected) => {
+    if (cooldownTimer) clearTimeout(cooldownTimer);
+
+    if (!connected) {
+      cooldownActive.value = true;
+      cooldownTimer = setTimeout(() => {
+        cooldownActive.value = false;
+      }, RETRY_COOLDOWN_MS);
+    } else {
+      cooldownActive.value = false;
+    }
+  },
+);
+
+const showAsConnected = computed(() => roslib.isWebSocketConnected || cooldownActive.value);
 
 const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
 
 const connectionTypes: Record<string, string> = {
-  'Rover Production': 'ws://10.0.0.10:9090',
-  'Rover Local': 'ws://192.168.0.146:9090',
-  'Local Development': 'ws://localhost:9090',
+  Viator: 'ws://192.168.0.112:9090',
+  Apollo: 'ws://192.168.0.111:9090',
+  Simulation: 'ws://localhost:9090',
 };
 
 const connectionNames = Object.keys(connectionTypes);
@@ -66,5 +92,24 @@ function updateCustomWebsocket(newAddress: string) {
       :value="settings.settings.websocketAddress"
       @change="(e: Event) => updateCustomWebsocket((e.target as HTMLInputElement).value)"
     />
+    <button
+      class="retry-button"
+      :disabled="showAsConnected"
+      title="Retry WebSocket connection to rover"
+      @click="roslib.reconnect()"
+    >
+      {{ showAsConnected ? 'Connected' : 'Retry Connection' }}
+    </button>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.retry-button {
+  margin-top: 0.5rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+</style>
