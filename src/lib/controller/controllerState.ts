@@ -54,6 +54,9 @@ export class ControllerState {
 
     // Fill bindingEntryToPublisher with entry and values.
     for (const entry of json.bindings) {
+      // skip unmapped inputs instead of publishing to an empty topic name
+      if (!entry.publisher) continue;
+
       const publisher = createPublisher({
         topicName: entry.publisher,
         topicType: 'std_msgs/Float32',
