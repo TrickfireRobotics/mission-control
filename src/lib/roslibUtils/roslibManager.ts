@@ -8,6 +8,12 @@ const HEARTBEAT_DISCONNECT_SECONDS = 2;
 const RECONNECTION_GRACE_SECONDS = 2;
 const SECONDS_TO_TIMESTAMP = 1000;
 
+// how long a "connected" socket can be quiet before we treat it as hung
+const SOCKET_HANG_SECONDS = 10;
+
+// floor on how often we'll rebuild the connection
+const RECONNECT_INTERVAL_SECONDS = 2;
+
 const HEARTBEAT_CHECK_INTERVAL = 100;
 const HEARTBEAT_SEND_INTERVAL = 1000;
 
@@ -19,6 +25,8 @@ export interface RoslibManager {
   ros: ROSLIB.Ros;
   stop: Ref<boolean>;
   isWebSocketConnected: Ref<boolean>;
+  // whether the rover's heartbeat node is answering, separate from the socket being up
+  isHeartbeatAlive: Ref<boolean>;
   latency: Ref<number>;
   getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
 }
@@ -41,6 +49,9 @@ export function roslibManager(): RoslibManager {
 
   const stop: Ref<boolean> = ref(false);
   const isWebSocketConnected: Ref<boolean> = ref(false);
+  const isHeartbeatAlive: Ref<boolean> = ref(false);
+
+  let lastConnectAttempt: number = 0;
 
   let serverHost: string | null = settings.settings.value.websocketAddress;
 
@@ -119,7 +130,19 @@ export function roslibManager(): RoslibManager {
       // We can't do anything if a server host hasn't been set yet.
       if (serverHost == null) return;
 
-      if (Date.now() - heartbeatTime > HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP) {
+      const quietFor = Date.now() - heartbeatTime;
+      const heartbeatStale = quietFor > HEARTBEAT_DISCONNECT_SECONDS * SECONDS_TO_TIMESTAMP;
+
+      isHeartbeatAlive.value = isWebSocketConnected.value && !heartbeatStale;
+
+      if (Date.now() - lastConnectAttempt < RECONNECT_INTERVAL_SECONDS * SECONDS_TO_TIMESTAMP)
+        return;
+
+      // only reconnect if the socket is down or hung, not just because the heartbeat is quiet
+      const socketHung =
+        isWebSocketConnected.value && quietFor > SOCKET_HANG_SECONDS * SECONDS_TO_TIMESTAMP;
+
+      if (!isWebSocketConnected.value || socketHung) {
         connect(serverHost);
       }
     }, HEARTBEAT_CHECK_INTERVAL);
@@ -154,6 +177,8 @@ export function roslibManager(): RoslibManager {
    * @param address - is the new address to connect to.
    */
   function connect(address: string) {
+    lastConnectAttempt = Date.now();
+
     // Give the reconnection extra time so that it doesn't
     // immediately get killed.
     heartbeatTime = Date.now() + RECONNECTION_GRACE_SECONDS * SECONDS_TO_TIMESTAMP;
@@ -198,11 +223,13 @@ export function roslibManager(): RoslibManager {
 
   ros.on('error', (error) => {
     isWebSocketConnected.value = false;
+    isHeartbeatAlive.value = false;
     console.error(error);
   });
 
   ros.on('close', () => {
     isWebSocketConnected.value = false;
+    isHeartbeatAlive.value = false;
   });
 
   // Reconnect if the websocket address changes.
@@ -231,5 +258,6 @@ export function roslibManager(): RoslibManager {
     stop,
     getTopic,
     isWebSocketConnected,
+    isHeartbeatAlive,
   };
 }
