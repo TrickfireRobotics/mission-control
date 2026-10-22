@@ -4,64 +4,9 @@ import GenericMotorTelemetry from '@/components/telemetry/moteus/GenericMotorTel
 import { ref, onMounted, watch, useTemplateRef } from 'vue';
 import { RobotInfo } from '@/lib/interface/robotInfo';
 import { useRoslibStore } from '@/store/roslibStore';
+import { drivetrainMotors, armMotors } from '@/lib/motorConfig';
 
-let moteusMotors = [
-  {
-    displayName: 'Front Left Drive Motor',
-    canfdID: 25,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Mid Left Drive Motor',
-    canfdID: 24,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Back Left Drive Motor',
-    canfdID: 23,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Front Right Drive Motor',
-    canfdID: 22,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Mid Right Drive Motor',
-    canfdID: 21,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Back Right Drive Motor',
-    canfdID: 20,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Arm Shoulder',
-    canfdID: 1,
-    controller: 'Moteus n1',
-  },
-  {
-    displayName: 'Arm Elbow',
-    canfdID: 2,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Arm Left Wrist',
-    canfdID: 3,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Arm Right Wrist',
-    canfdID: 4,
-    controller: 'Moteus r4.11',
-  },
-  {
-    displayName: 'Arm Turntable',
-    canfdID: 5,
-    controller: 'Moteus r4.11',
-  },
-];
+const allMotors = [...drivetrainMotors, ...armMotors];
 
 let updateTimeMs = ref(100);
 
@@ -128,7 +73,7 @@ function getMoteusStateProxy(
 
     <div class="page" v-if="isFinishedLoading">
       <GenericMotorTelemetry
-        v-for="item in moteusMotors"
+        v-for="item in allMotors"
         :key="item.displayName"
         ref="myChild"
         class="telemetry-motor"

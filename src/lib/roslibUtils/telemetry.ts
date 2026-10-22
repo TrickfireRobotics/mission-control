@@ -1,6 +1,11 @@
 import { useSubscriber } from '@/lib/roslibUtils/createSubscriber';
 import { ref, type Ref } from 'vue';
 
+// re-exported from the single motor config source so existing imports
+// (ArmModel, RoverVelocityDisplay, …) continue to work unchanged
+export { CanBusID, canBusNameMap } from '@/lib/motorConfig';
+import { canBusNameMap } from '@/lib/motorConfig';
+
 export interface MoteusMotorState {
   /**
    * The CAN ID of the motor.
@@ -47,37 +52,6 @@ export interface MoteusMotorState {
    */
   d_current?: number | null;
 }
-
-/**
- * Every motor available on the rover.
- */
-export enum CanBusID {
-  FrontLeftDrive = 25,
-  MidLeftDrive = 24,
-  BackLeftDrive = 23,
-  FrontRightDrive = 22,
-  MidRightDrive = 21,
-  BackRightDrive = 20,
-  ArmShoulder = 1,
-  ArmElbow = 2,
-  ArmLeftWrist = 3,
-  ArmRightWrist = 4,
-  ArmTurntable = 5,
-}
-
-const canBusNameMap = {
-  [CanBusID.FrontLeftDrive]: 'frontLeftDrive',
-  [CanBusID.MidLeftDrive]: 'midLeftDrive',
-  [CanBusID.BackLeftDrive]: 'backLeftDrive',
-  [CanBusID.FrontRightDrive]: 'frontRightDrive',
-  [CanBusID.MidRightDrive]: 'midRightDrive',
-  [CanBusID.BackRightDrive]: 'backRightDrive',
-  [CanBusID.ArmShoulder]: 'armShoulder',
-  [CanBusID.ArmElbow]: 'armElbow',
-  [CanBusID.ArmLeftWrist]: 'armLeftWrist',
-  [CanBusID.ArmRightWrist]: 'armRightWrist',
-  [CanBusID.ArmTurntable]: 'armTurntable',
-} as const;
 
 type CanBusNameMap = typeof canBusNameMap;
 
