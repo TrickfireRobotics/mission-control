@@ -86,12 +86,7 @@ export function roslibManager(): RoslibManager {
     }
 
     if (topicCache[name].type !== type) {
-      throw new Error(
-        'Conflicting type for shared subscriber: original ' +
-          topicCache[name].type +
-          ' != new ' +
-          type,
-      );
+      throw new Error('Conflicting type for shared subscriber: original ' + topicCache[name].type + ' != new ' + type);
     }
 
     return topicCache[name].topic as ROSLIB.Topic<T>;
@@ -136,12 +131,10 @@ export function roslibManager(): RoslibManager {
 
       isHeartbeatAlive.value = isWebSocketConnected.value && !heartbeatStale;
 
-      if (Date.now() - lastConnectAttempt < RECONNECT_INTERVAL_SECONDS * SECONDS_TO_TIMESTAMP)
-        return;
+      if (Date.now() - lastConnectAttempt < RECONNECT_INTERVAL_SECONDS * SECONDS_TO_TIMESTAMP) return;
 
       // only reconnect if the socket is down or hung, not just because the heartbeat is quiet
-      const socketHung =
-        isWebSocketConnected.value && quietFor > SOCKET_HANG_SECONDS * SECONDS_TO_TIMESTAMP;
+      const socketHung = isWebSocketConnected.value && quietFor > SOCKET_HANG_SECONDS * SECONDS_TO_TIMESTAMP;
 
       if (!isWebSocketConnected.value || socketHung) {
         connect(serverHost);

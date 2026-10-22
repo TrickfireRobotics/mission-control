@@ -73,8 +73,7 @@ const pageIconArr: PageIcon = [
   {
     icon: RobotIndustrialIcon,
     label: 'Arm',
-    helperText:
-      '3D model of the arm, camera arms, Any information related to the arm should be here',
+    helperText: '3D model of the arm, camera arms, Any information related to the arm should be here',
   },
   {
     icon: FlaskIcon,
@@ -89,14 +88,12 @@ const pageIconArr: PageIcon = [
   {
     icon: InformationIcon,
     label: 'Telemetry',
-    helperText:
-      'All information about rover like motor speed etc, position, potential record and export to csv',
+    helperText: 'All information about rover like motor speed etc, position, potential record and export to csv',
   },
   {
     icon: TuneIcon,
     label: 'Settings',
-    helperText:
-      'any configuration like what input device (controller/keyboard) and change controller bindings',
+    helperText: 'any configuration like what input device (controller/keyboard) and change controller bindings',
   },
   {
     icon: BugIcon,
@@ -163,10 +160,7 @@ const pageIconArr: PageIcon = [
           }"
         />
       </div>
-      <div
-        class="container"
-        :title="`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`"
-      >
+      <div class="container" :title="`Camera: ${roslib.isWebSocketConnected ? `Connected` : `Disconnected`}`">
         <h4 id="status">CAM</h4>
         <component
           :is="CameraIcon"
@@ -174,10 +168,7 @@ const pageIconArr: PageIcon = [
           :class="{ green: roslib.isWebSocketConnected, red: !roslib.isWebSocketConnected }"
         />
       </div>
-      <div
-        class="container"
-        :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`"
-      >
+      <div class="container" :title="`Controller: ${controller.isGamepadConnected ? `Connected` : `Disconnected`}`">
         <h4 id="status">CTRL</h4>
         <component
           :is="ControllerIcon"

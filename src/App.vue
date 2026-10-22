@@ -24,9 +24,7 @@ onBeforeUnmount(() => {
 });
 
 // changes favicon based on if web socket is connected or not
-const favicon = computed(() =>
-  rosjs.isWebSocketConnected ? 'connected-favicon.ico' : 'favicon.ico',
-);
+const favicon = computed(() => (rosjs.isWebSocketConnected ? 'connected-favicon.ico' : 'favicon.ico'));
 
 useFavicon(favicon);
 </script>

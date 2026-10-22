@@ -9,10 +9,7 @@ onMounted(() => initialize());
 
 export interface GenericMotorTelemetryProps {
   displayName: string;
-  dataSourceMethod: (
-    param: number,
-    dataCallback: (result: { json_payload: string }) => void,
-  ) => void;
+  dataSourceMethod: (param: number, dataCallback: (result: { json_payload: string }) => void) => void;
   dataSourceParameter: number;
   updateMs: number;
   showAllFeatures: boolean;
@@ -64,9 +61,7 @@ function initialize() {
   csvData = new SaveCSVData();
 }
 
-function createDataChoices(
-  idToPretty: Partial<Record<keyof MoteusMotorState, string>>,
-): MoteuesDataChoice[] {
+function createDataChoices(idToPretty: Partial<Record<keyof MoteusMotorState, string>>): MoteuesDataChoice[] {
   const output: MoteuesDataChoice[] = [];
 
   for (const key in idToPretty) {
@@ -225,9 +220,7 @@ defineExpose({ recordButtonPressed });
     </div>
     <div class="flex-container">
       <div class="dropdown">
-        <button
-          :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }"
-        >
+        <button :class="{ 'button-toggle--on': !isRecordingData, 'button-toggle--off': isRecordingData }">
           Select
         </button>
         <div class="dropdown-content">
