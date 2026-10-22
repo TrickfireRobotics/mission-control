@@ -68,7 +68,7 @@ function getMoteusStateProxy(param: number, dataCallback: (result: { json_payloa
       </div>
     </div>
 
-    <div class="page" v-if="isFinishedLoading">
+    <div v-if="isFinishedLoading" class="page">
       <GenericMotorTelemetry
         v-for="item in allMotors"
         :key="item.displayName"

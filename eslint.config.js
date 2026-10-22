@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable no-undef */
 
 const js = require('@eslint/js');
 const eslintPluginVue = require('eslint-plugin-vue');
 const ts = require('typescript-eslint');
 const prettier = require('eslint-config-prettier');
 const { includeIgnoreFile } = require('@eslint/compat');
+const globals = require('globals');
 const path = require('node:path');
 
 const gitignorePath = path.resolve(__dirname, '.gitignore');
@@ -15,6 +15,17 @@ module.exports = ts.config(
   js.configs.recommended,
   ...ts.configs.recommended,
   ...eslintPluginVue.configs['flat/recommended'],
+  {
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
+    files: ['*.config.js', '*.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   {
     files: ['*.vue', '**/*.vue'],
     languageOptions: {
