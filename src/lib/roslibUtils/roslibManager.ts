@@ -1,5 +1,5 @@
-import ROSLIB from 'roslib';
-import { ref, type Ref, watch } from 'vue';
+import { Ros, Topic } from 'roslib';
+import { markRaw, ref, type Raw, type Ref, watch } from 'vue';
 import { useSettingsStore } from '@/store/settingsStore';
 import { storeToRefs } from 'pinia';
 import { createSubscriberForRos } from '@/lib/roslibUtils/createSubscriber';
@@ -22,13 +22,13 @@ const HEARTBEAT_SEND_INTERVAL = 1000;
  * reconnection and responds to changes in settings.
  */
 export interface RoslibManager {
-  ros: ROSLIB.Ros;
+  ros: Raw<Ros>;
   stop: Ref<boolean>;
   isWebSocketConnected: Ref<boolean>;
   // whether the rover's heartbeat node is answering, separate from the socket being up
   isHeartbeatAlive: Ref<boolean>;
   latency: Ref<number>;
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>;
+  getTopic: <T>(name: string, type: string) => Topic<T>;
   reconnect: () => void;
 }
 
@@ -40,7 +40,9 @@ export interface RoslibManager {
 export function roslibManager(): RoslibManager {
   const settings = storeToRefs(useSettingsStore());
 
-  const ros: ROSLIB.Ros = new ROSLIB.Ros({ url: undefined });
+  // roslib's core classes use real private class fields, which break if Vue/Pinia
+  // wraps them in a reactive Proxy (methods relying on `this.#field` throw at runtime).
+  const ros: Raw<Ros> = markRaw(new Ros({ url: undefined }));
 
   let heartbeatRunning: boolean = false;
   let heartbeatTime: number = 0;
@@ -62,16 +64,16 @@ export function roslibManager(): RoslibManager {
     string,
     {
       type: string;
-      topic: ROSLIB.Topic<unknown>;
+      topic: Topic<unknown>;
     }
   > = {};
 
   /**
    * Gets or creates a topic with the given name and type.
    */
-  function getTopic<T>(name: string, type: string): ROSLIB.Topic<T> {
+  function getTopic<T>(name: string, type: string): Topic<T> {
     if (!topicCache[name]) {
-      const topic = new ROSLIB.Topic<unknown>({
+      const topic = new Topic<unknown>({
         ros,
         name: name,
         messageType: type,
@@ -89,7 +91,7 @@ export function roslibManager(): RoslibManager {
       throw new Error('Conflicting type for shared subscriber: original ' + topicCache[name].type + ' != new ' + type);
     }
 
-    return topicCache[name].topic as ROSLIB.Topic<T>;
+    return topicCache[name].topic as Topic<T>;
   }
 
   /**
@@ -141,7 +143,7 @@ export function roslibManager(): RoslibManager {
       }
     }, HEARTBEAT_CHECK_INTERVAL);
 
-    const heartbeatPub = new ROSLIB.Topic({
+    const heartbeatPub = new Topic({
       ros: ros,
       name: '/heartbeat',
       messageType: 'std_msgs/Bool',
@@ -149,9 +151,7 @@ export function roslibManager(): RoslibManager {
     });
 
     // TODO: refactor to use time instead of boolean
-    const heartbeatData = new ROSLIB.Message({
-      data: true,
-    });
+    const heartbeatData = { data: true };
 
     const sendInterval = setInterval(() => {
       if (stop.value) {

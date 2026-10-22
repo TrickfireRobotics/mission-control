@@ -1,13 +1,13 @@
-import ROSLIB from 'roslib';
+import { Ros, Service } from 'roslib';
 
 export class RobotInfo {
-  myROS: ROSLIB.Ros;
-  getMoteusMotorStateService: ROSLIB.Service<{ target_can_id: number }, { json_payload: string }>;
+  myROS: Ros;
+  getMoteusMotorStateService: Service<{ target_can_id: number }, { json_payload: string }>;
 
-  constructor(givenROS: ROSLIB.Ros) {
+  constructor(givenROS: Ros) {
     this.myROS = givenROS;
 
-    this.getMoteusMotorStateService = new ROSLIB.Service({
+    this.getMoteusMotorStateService = new Service({
       ros: this.myROS,
       name: '/get_moteus_motor_state',
       serviceType: 'MoteusState',
