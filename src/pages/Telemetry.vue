@@ -41,10 +41,7 @@ function recordAllPressed() {
   recordingAll.value = !recordingAll.value;
 }
 
-function getMoteusStateProxy(
-  param: number,
-  dataCallback: (result: { json_payload: string }) => void,
-) {
+function getMoteusStateProxy(param: number, dataCallback: (result: { json_payload: string }) => void) {
   return robotInfo.getMoteusMotorState(param, dataCallback);
 }
 </script>

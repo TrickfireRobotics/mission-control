@@ -90,8 +90,7 @@ export class ControllerState {
       }
     }
 
-    const { tankDriveBlockHorizontal, invertX, invertY, deadzone } =
-      useSettingsStore().settings.controller;
+    const { tankDriveBlockHorizontal, invertX, invertY, deadzone } = useSettingsStore().settings.controller;
 
     for (let i: number = 0; i < joystickArray.length; i++) {
       const friendlyName = joystickNames[i];
@@ -128,8 +127,7 @@ export class ControllerState {
 
       // a held, unchanging input has no delta and stops publishing; resend periodically
       // so the rover's command timeout doesn't trip while a trigger/stick is just held
-      const keepaliveDue =
-        currentValue !== 0 && now - lastPublishTime >= ControllerState.KEEPALIVE_INTERVAL_MS;
+      const keepaliveDue = currentValue !== 0 && now - lastPublishTime >= ControllerState.KEEPALIVE_INTERVAL_MS;
 
       if (delta || stoppingNow || keepaliveDue) {
         publisher.publish({ data: currentValue }, { isDebugging: true, force: stoppingNow });

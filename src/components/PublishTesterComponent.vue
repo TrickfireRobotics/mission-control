@@ -50,8 +50,7 @@ function convertMessage(topicType: string, message: string) {
 
 function publishTest() {
   const topicName = topicNameInput.value;
-  const topicType =
-    messageTypeID.value === messageTypes.length ? customMessageType.value : messageTypeInput.value;
+  const topicType = messageTypeID.value === messageTypes.length ? customMessageType.value : messageTypeInput.value;
   const topicMessage = convertMessage(topicType, dataInput.value);
 
   if (topicName && topicType && topicMessage) {
@@ -151,8 +150,8 @@ function publishTest() {
 }
 
 label {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
   font-weight: 900;
   width: 120px;
   text-align: right;

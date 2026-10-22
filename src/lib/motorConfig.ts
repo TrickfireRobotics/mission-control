@@ -71,12 +71,7 @@ export const motorConfigs: MotorConfig[] = [
   { displayName: 'Arm Shoulder', canfdID: 1, controller: ARM_CONTROLLER_SHOULDER, group: 'arm' },
   { displayName: 'Arm Elbow', canfdID: 2, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
   { displayName: 'Arm Left Wrist', canfdID: 3, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
-  {
-    displayName: 'Arm Right Wrist',
-    canfdID: 4,
-    controller: ARM_CONTROLLER_DEFAULT,
-    group: 'arm',
-  },
+  { displayName: 'Arm Right Wrist', canfdID: 4, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
   { displayName: 'Arm Turntable', canfdID: 5, controller: ARM_CONTROLLER_DEFAULT, group: 'arm' },
 ];
 

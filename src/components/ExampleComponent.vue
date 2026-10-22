@@ -30,9 +30,7 @@ const onAndOffHandler = () => {
         {{ example.helloWorldSub.msg?.data }}
       </p>
     </div>
-    <button @click="example.helloWorldPub.publish({ data: example.helloWorldSub.msg?.data + '!' })">
-      Add !
-    </button>
+    <button @click="example.helloWorldPub.publish({ data: example.helloWorldSub.msg?.data + '!' })">Add !</button>
     <button @click="example.helloWorldSub.stop()">Unsub</button>
     <button @click="example.helloWorldSub.start()">sub</button>
     <button
