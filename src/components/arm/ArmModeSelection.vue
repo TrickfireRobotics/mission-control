@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ROSLIB from 'roslib';
+import { Service } from 'roslib';
 import { ref, onMounted } from 'vue';
 
 import { useRoslibStore } from '@/store/roslibStore';
@@ -9,7 +9,7 @@ onMounted(() => initialize());
 
 const roslib = useRoslibStore();
 
-let armModeService: ROSLIB.Service;
+let armModeService: Service<{ input: number }, { current_mode: number }>;
 
 /**
  * disabled = 0
@@ -22,7 +22,7 @@ let current_arm_mode = ref(-1); // Default is disabled
 // let isLoaded = ref(false);
 
 function initialize() {
-  armModeService = new ROSLIB.Service({
+  armModeService = new Service({
     ros: roslib.ros,
     name: '/get_arm_mode',
     serviceType: 'ArmMode',

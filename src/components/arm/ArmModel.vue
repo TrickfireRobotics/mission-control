@@ -4,7 +4,8 @@ import { OrbitControls, useGLTF } from '@tresjs/cientos';
 import { Bone } from 'three';
 import { CanBusID, useTelemetryData } from '@/lib/roslibUtils/telemetry';
 
-const { scene } = await useGLTF('newarm.glb');
+const { execute } = useGLTF('newarm.glb');
+const { scene } = await execute();
 
 //const wrist = scene.getObjectByName('Wrist') as Bone;
 const shoulder = scene.getObjectByName('Shoulder') as Bone;

@@ -1,4 +1,4 @@
-import ROSLIB from 'roslib';
+import type { Topic } from 'roslib';
 import type { TopicType, TopicTypeMap } from './rosTypes';
 import { onActivated, onDeactivated, onMounted, onUnmounted, type Ref, ref } from 'vue';
 import { useRoslibStore } from '@/store/roslibStore';
@@ -111,7 +111,7 @@ export function createSubscriber<T extends TopicType, CB extends boolean>(option
  * default one.
  */
 export function createSubscriberForRos<T extends TopicType, CB extends boolean>(
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
+  getTopic: <T>(name: string, type: string) => Topic<T>,
   options: {
     topicName: string;
     topicType: T;

@@ -1,4 +1,4 @@
-import ROSLIB from 'roslib';
+import type { Topic } from 'roslib';
 import { useRoslibStore } from '@/store/roslibStore';
 import type { TopicType, TopicTypeMap } from './rosTypes';
 
@@ -36,7 +36,7 @@ export function createPublisher<T extends TopicType>(options: {
  * default one.
  */
 export function createPublisherForRos<T extends TopicType>(
-  getTopic: <T>(name: string, type: string) => ROSLIB.Topic<T>,
+  getTopic: <T>(name: string, type: string) => Topic<T>,
   options: {
     topicName: string;
     topicType: T;

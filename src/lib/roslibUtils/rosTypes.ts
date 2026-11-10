@@ -27,7 +27,7 @@ export type CompressedImage = {
     stamp: { sec: number; nanosec: number };
   };
   format: 'jpg' | 'png';
-  data: Uint8Array;
+  data: Uint8Array<ArrayBuffer>;
 };
 
 //https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/NavSatFix.html

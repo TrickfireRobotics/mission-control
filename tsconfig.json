@@ -1,19 +1,15 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "package"],
   "compilerOptions": {
-    "importsNotUsedAsValues": "remove",
     "isolatedModules": false,
     "noImplicitAny": true,
     "strict": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     // Added to allow Object.hasOwn(). We are targeting the latest versions of javascript.
-    "target": "ES2022",
-    // Added "DOM" to tell Typescript that we have access to window
-    "lib": ["ES2022", "DOM"]
+    "target": "ES2022"
   },
 
   "references": [
