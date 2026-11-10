@@ -12,6 +12,8 @@ export type TopicTypeMap = {
   'std_msgs/Time': StdMsg<number>;
   'sensor_msgs/msg/CompressedImage': CompressedImage;
   'sensor_msgs/msg/NavSatFix': NavSatFix;
+  'sensor_msgs/msg/JointState': JointState;
+  'trajectory_msgs/msg/JointTrajectory': JointTrajectory;
 };
 
 export type TopicType = keyof TopicTypeMap;
@@ -48,4 +50,35 @@ export type NavSatFix = {
   altitude: number;
   position_covariance: number[];
   position_covariance_type: number;
+};
+
+//https://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/JointState.html
+export type JointState = {
+  header: {
+    stamp: { sec: number; nanosec: number };
+    frame_id: string;
+  };
+  name: string[];
+  position: number[];
+  velocity: number[];
+  effort: number[];
+};
+
+//https://docs.ros.org/en/noetic/api/trajectory_msgs/html/msg/JointTrajectoryPoint.html
+export type JointTrajectoryPoint = {
+  positions: number[];
+  velocities?: number[];
+  accelerations?: number[];
+  effort?: number[];
+  time_from_start: { sec: number; nanosec: number };
+};
+
+//https://docs.ros.org/en/noetic/api/trajectory_msgs/html/msg/JointTrajectory.html
+export type JointTrajectory = {
+  header?: {
+    stamp: { sec: number; nanosec: number };
+    frame_id: string;
+  };
+  joint_names: string[];
+  points: JointTrajectoryPoint[];
 };
