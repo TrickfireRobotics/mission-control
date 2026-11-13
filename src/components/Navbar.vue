@@ -13,6 +13,7 @@ import TuneIcon from 'vue-material-design-icons/Tune.vue';
 import BugIcon from 'vue-material-design-icons/Bug.vue';
 import PowerPlugIcon from 'vue-material-design-icons/PowerPlug.vue';
 import ControllerIcon from 'vue-material-design-icons/ControllerClassic.vue';
+import GamepadVariantIcon from 'vue-material-design-icons/GamepadVariant.vue';
 
 import { useRoslibStore } from '@/store/roslibStore';
 import { useControllerStore } from '@/store/controllerStore';
@@ -100,6 +101,11 @@ const pageIconArr: PageIcon = [
     label: 'Dev-Tab',
     helperText: 'Experimental page to test modules',
   },
+  {
+    icon: GamepadVariantIcon,
+    label: 'Controller',
+    helperText: 'Shows raw controller input for testing; input is not sent to the rover while this tab is open',
+  },
 ];
 </script>
 <template>
@@ -146,6 +152,28 @@ const pageIconArr: PageIcon = [
           @click="operation.setOperationState({ data: 'autonomous' })"
         >
           Auto
+        </button>
+      </div>
+      <div
+        id="controller-mode-selector"
+        class="container"
+        title="Controller mode: which joysticks + gripper bumpers control. Also toggled by double-tapping Back+Start on the gamepad."
+      >
+        <button
+          id="drivebase-mode-button"
+          title="Drivebase mode"
+          :class="{ checked: controller.gamePadMode === 'drivebase' }"
+          @click="controller.setGamePadMode('drivebase')"
+        >
+          Drive
+        </button>
+        <button
+          id="arm-mode-button"
+          title="Arm mode"
+          :class="{ checked: controller.gamePadMode === 'arm' }"
+          @click="controller.setGamePadMode('arm')"
+        >
+          Arm
         </button>
       </div>
       <div class="container" :title="`Websocket: ${roverLinkState}`">
@@ -299,6 +327,40 @@ nav {
 
         &#teleoperation-button.checked {
           background-color: hsl(120, 100%, 15%);
+        }
+      }
+    }
+
+    #controller-mode-selector {
+      margin: auto 0;
+      display: flex;
+      flex-direction: row;
+      padding: 0 0.5rem;
+      background-color: hsl(240, 20%, 10%);
+      border-radius: 4px;
+      height: 80%;
+      gap: 0.25rem;
+
+      button {
+        height: 80%;
+        cursor: pointer;
+        align-items: center;
+        padding: 0 1rem;
+        border-radius: 4px;
+        background-color: transparent;
+        color: white;
+
+        &.checked {
+          background-image: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        &#drivebase-mode-button.checked {
+          background-color: hsl(210, 100%, 27%);
+        }
+
+        &#arm-mode-button.checked {
+          background-color: hsl(30, 100%, 27%);
         }
       }
     }

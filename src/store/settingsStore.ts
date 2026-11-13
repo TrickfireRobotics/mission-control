@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export interface ControllerConfig {
-  tankDriveBlockHorizontal: boolean;
   invertX: boolean;
   invertY: boolean;
   // joystick deadzone radius (0-0.5); axis values below this are treated as zero
@@ -18,7 +17,6 @@ function defaultSettings(): Settings {
   return {
     websocketAddress: 'ws://192.168.0.145:9090',
     controller: {
-      tankDriveBlockHorizontal: false,
       invertX: false,
       invertY: false,
       deadzone: 0.4,

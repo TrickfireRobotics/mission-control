@@ -10,6 +10,7 @@ import Science from './pages/Science.vue';
 import Telemetry from './pages/Telemetry.vue';
 import Settings from './pages/Settings.vue';
 import Help from './pages/Help.vue';
+import Controller from './pages/Controller.vue';
 import { createPinia } from 'pinia';
 
 const routes = [
@@ -23,6 +24,7 @@ const routes = [
   { path: '/Map', component: Map },
   { path: '/Settings', component: Settings },
   { path: '/Dev-tab', component: DevTab },
+  { path: '/Controller', component: Controller },
 ];
 
 const router = createRouter({
