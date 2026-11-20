@@ -12,8 +12,9 @@ export interface Publisher<T extends TopicType> {
    * @param options - are the options to use during this publish.
    * @param options.isDebugging - should debug output be displayed?
    * @param options.force - bypass the rate limiter (use for critical stop/zero commands)
+   * @returns whether the message was sent, false when the rate limiter dropped it.
    */
-  publish: (data: TopicTypeMap[T], options?: { isDebugging?: boolean; force?: boolean }) => void;
+  publish: (data: TopicTypeMap[T], options?: { isDebugging?: boolean; force?: boolean }) => boolean;
 }
 
 /**
@@ -53,7 +54,7 @@ export function createPublisherForRos<T extends TopicType>(
     if (!force && minIntervalMs > 0) {
       const now = Date.now();
       if (now - lastPublishTime < minIntervalMs) {
-        return;
+        return false;
       }
       lastPublishTime = now;
     }
@@ -61,6 +62,8 @@ export function createPublisherForRos<T extends TopicType>(
     if (isDebugging) {
       console.log(`[${topicName}] Publishing${force ? ' (forced)' : ''}:`, data);
     }
+
+    return true;
   };
 
   // TODO: Publisher that runs every interval has passed

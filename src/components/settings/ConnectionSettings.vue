@@ -33,9 +33,10 @@ const showAsConnected = computed(() => roslib.isWebSocketConnected || cooldownAc
 const connectionInput = useTemplateRef<HTMLSelectElement>('ws-host');
 
 const connectionTypes: Record<string, string> = {
-  Viator: 'ws://192.168.0.112:9090',
-  Apollo: 'ws://192.168.0.111:9090',
-  Simulation: 'ws://localhost:9090',
+  'Viator': 'ws://192.168.0.112:9090',
+  'Apollo': 'ws://192.168.0.111:9090',
+  'Simulation Docker': 'ws://localhost:9090',
+  'Simulation Pixi': 'ws://localhost:9091',
 };
 
 const connectionNames = Object.keys(connectionTypes);

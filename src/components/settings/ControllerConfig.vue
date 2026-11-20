@@ -4,11 +4,6 @@ import { useSettingsStore } from '@/store/settingsStore';
 
 const settings = useSettingsStore();
 
-const tankDriveBlockHorizontal = computed({
-  get: () => settings.settings.controller.tankDriveBlockHorizontal,
-  set: (v) => settings.updateControllerSettings({ tankDriveBlockHorizontal: v }),
-});
-
 const invertX = computed({
   get: () => settings.settings.controller.invertX,
   set: (v) => settings.updateControllerSettings({ invertX: v }),
@@ -28,11 +23,6 @@ const deadzone = computed({
 <template>
   <div class="container">
     <h2>Controller Options</h2>
-
-    <label class="checkbox-row">
-      <input v-model="tankDriveBlockHorizontal" type="checkbox" />
-      Block horizontal input in tank-drive mode
-    </label>
 
     <label class="checkbox-row">
       <input v-model="invertX" type="checkbox" />
