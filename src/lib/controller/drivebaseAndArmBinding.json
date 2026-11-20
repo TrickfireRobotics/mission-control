@@ -16,37 +16,50 @@
       "name": "leftJoyXAxis",
       "type": "joystick",
       "mode": "arm",
-      "publisher": "arm_left_joy_x"
+      "publisher": "arm_baseplate_left_right"
     },
     {
       "name": "leftJoyYAxis",
       "type": "joystick",
       "mode": "arm",
-      "publisher": "arm_left_joy_y"
+      "publisher": "arm_shoulder_up_down"
     },
     {
       "name": "rightJoyXAxis",
       "type": "joystick",
       "mode": "arm",
-      "publisher": "arm_right_joy_x"
+      "publisher": "arm_gripper_left_right"
     },
     {
       "name": "rightJoyYAxis",
       "type": "joystick",
       "mode": "arm",
-      "publisher": "arm_right_joy_y"
+      "publisher": "arm_elbow_up_down"
+    },
+    {
+      "name": "leftTriggerButton",
+      "type": "analogButton",
+      "mode": "arm",
+      "publisher": "arm_gripper_up_down",
+      "scale": -1
+    },
+    {
+      "name": "rightTriggerButton",
+      "type": "analogButton",
+      "mode": "arm",
+      "publisher": "arm_gripper_up_down"
     },
     {
       "name": "leftBumperButton",
       "type": "digitalButton",
       "mode": "arm",
-      "publisher": "arm_gripper_close"
+      "publisher": "arm_claw_close"
     },
     {
       "name": "rightBumperButton",
       "type": "digitalButton",
       "mode": "arm",
-      "publisher": "arm_gripper_open"
+      "publisher": "arm_claw_open"
     }
   ]
 }

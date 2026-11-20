@@ -1,7 +1,6 @@
 import { ControllerState } from './controllerState';
 import { useControllerStore } from '@/store/controllerStore';
 
-const DELTA_SENSITIVITY = 0.01;
 const POLLING_RATE_IN_HERTZ = 20;
 // Cap how fast motor commands are published to the network.
 // Matches the robot's 10 Hz polling rate and prevents burst flooding
@@ -24,12 +23,9 @@ export function gamepadInit() {
   function onGamePadConnectsHandler(e: GamepadEvent) {
     console.log('Controller connected with index %d\n' + e.gamepad.id, e.gamepad.index);
     indexToControllerName.set(e.gamepad.index, e.gamepad.id);
-    const state = new ControllerState(
-      'src\\lib\\controller\\drivebaseAndArmBinding.json',
-      DELTA_SENSITIVITY,
-      MOTOR_COMMAND_MAX_RATE_HZ,
-      { reportLiveValues: true },
-    );
+    const state = new ControllerState('src\\lib\\controller\\drivebaseAndArmBinding.json', MOTOR_COMMAND_MAX_RATE_HZ, {
+      reportLiveValues: true,
+    });
     indexToControllerState.set(e.gamepad.index, state);
 
     controller.setGamepadConnectedStatus(true);

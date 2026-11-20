@@ -4,11 +4,9 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useControllerStore } from '@/store/controllerStore';
 
 /* This stores controller data for each controller connected to the system.
- * Button data are always sent, no matter what.
- * Joystick/Triggers have to go above a certain threshold (deltaSenitivity)
- * in order to be sent in order to avoid flooding the ROS network with
- * cotroller data. Essentially, we look at the velocity of the joystick/trigger
- * and determine if it is fast enough to send data.
+ * A binding only publishes when its commanded value differs from what its topic
+ * last carried, plus a periodic keepalive while an input is held, so holding a
+ * stick or trigger steady doesn't flood the ROS network with identical messages.
  */
 
 type BindingEntry = {
@@ -16,6 +14,10 @@ type BindingEntry = {
   type: 'digitalButton' | 'analogButton' | 'joystick';
   mode: 'drivebase' | 'arm';
   publisher: string;
+  scale?: number;
+  // friendly name of a button that negates this input while held. Triggers only read
+  // 0..1, so the shoulder/elbow get their "other direction" from the same-side bumper.
+  invertedBy?: string;
 };
 
 export class ControllerState {
@@ -23,15 +25,14 @@ export class ControllerState {
   // how long between the two Y presses counts as a "double tap"
   private static readonly MODE_TOGGLE_DOUBLE_TAP_WINDOW_MS = 600;
   private static readonly BUTTON_PRESS_THRESHOLD = 0.5;
-
-  // Same format as currentStateButtons
-  deltaStateButtons = Array(16).fill(0);
-  deltaSensitivity = 0;
+  // analog triggers often idle a little above zero, and a resting trigger must not
+  // creep the arm. Sticks use the user-configurable deadzone instead.
+  private static readonly TRIGGER_DEADZONE = 0.06;
 
   //Key bindings
   bindingEntryToPublisher: Map<BindingEntry, Publisher<'std_msgs/Float32'>> = new Map();
+  topicToPublisher: Map<string, Publisher<'std_msgs/Float32'>> = new Map();
   friendlyNameToCurrentValue: Map<string, number> = new Map();
-  friendlyNameToDelta: Map<string, number> = new Map();
   // last value actually published and when, keyed by topic name (not friendly name,
   // since the same stick/button can be bound to a different topic per mode)
   topicToLastPublished: Map<string, number> = new Map();
@@ -49,21 +50,14 @@ export class ControllerState {
   // the Controller tab's live display.
   private reportLiveValues: boolean;
 
-  // Takes in a string that points to the binding JSON file as well as the deltaSensitivity
-  constructor(
-    jsonControllerBinding: string,
-    deltaSensitivity: number,
-    maxPublishRateHz?: number,
-    options?: { reportLiveValues?: boolean },
-  ) {
-    this.deltaSensitivity = deltaSensitivity;
+  // Takes in a string that points to the binding JSON file
+  constructor(jsonControllerBinding: string, maxPublishRateHz?: number, options?: { reportLiveValues?: boolean }) {
     this.maxPublishRateHz = maxPublishRateHz;
     this.reportLiveValues = options?.reportLiveValues ?? false;
 
-    // Set up the current value and delta value maps with friendly names of inputs
+    // Set up the current value map with friendly names of inputs
     for (const friendlyName of Object.values(gamepadNames).concat(Object.values(joystickNames))) {
       this.friendlyNameToCurrentValue.set(friendlyName, 0);
-      this.friendlyNameToDelta.set(friendlyName, 0);
     }
 
     fetch(jsonControllerBinding)
@@ -84,11 +78,15 @@ export class ControllerState {
       // skip unmapped inputs instead of publishing to an empty topic name
       if (!entry.publisher) continue;
 
-      const publisher = createPublisher({
-        topicName: entry.publisher,
-        topicType: 'std_msgs/Float32',
-        maxRateHz: this.maxPublishRateHz,
-      });
+      let publisher = this.topicToPublisher.get(entry.publisher);
+      if (publisher == null) {
+        publisher = createPublisher({
+          topicName: entry.publisher,
+          topicType: 'std_msgs/Float32',
+          maxRateHz: this.maxPublishRateHz,
+        });
+        this.topicToPublisher.set(entry.publisher, publisher);
+      }
 
       this.bindingEntryToPublisher.set(entry, publisher);
     }
@@ -103,7 +101,6 @@ export class ControllerState {
       const friendlyName = gamepadNames[i];
       const currentValue = this.friendlyNameToCurrentValue.get(friendlyName);
       if (currentValue != null) {
-        this.friendlyNameToDelta.set(friendlyName, currentValue - buttonArray[i].value);
         this.friendlyNameToCurrentValue.set(friendlyName, buttonArray[i].value);
       }
     }
@@ -128,7 +125,6 @@ export class ControllerState {
 
         if (Math.abs(rawValue) < deadzone) rawValue = 0;
 
-        this.friendlyNameToDelta.set(friendlyName, rawValue - currentValue);
         this.friendlyNameToCurrentValue.set(friendlyName, rawValue);
       }
     }
@@ -137,48 +133,89 @@ export class ControllerState {
       controller.setLiveInputValues(this.friendlyNameToCurrentValue);
     }
 
-    const now = Date.now();
+    const topicCommands = new Map<
+      string,
+      { value: number; publisher: Publisher<'std_msgs/Float32'>; active: boolean }
+    >();
+
     for (const [entry, publisher] of this.bindingEntryToPublisher) {
-      const currentValue = this.friendlyNameToCurrentValue.get(entry.name) ?? 0;
-      const lastPublished = this.topicToLastPublished.get(entry.publisher) ?? 0;
-      const lastPublishTime = this.topicToLastPublishTime.get(entry.publisher) ?? 0;
+      const command = topicCommands.get(entry.publisher) ?? { value: 0, publisher, active: false };
+      if (entry.mode === controller.gamePadMode && !controller.isTestTabFocused) {
+        command.value += this.resolveBindingValue(entry);
+        command.active = true;
+      }
+      topicCommands.set(entry.publisher, command);
+    }
+
+    const now = Date.now();
+    for (const [topic, command] of topicCommands) {
+      const currentValue = command.active ? Math.max(-1, Math.min(1, command.value)) : 0;
+      const lastPublished = this.topicToLastPublished.get(topic) ?? 0;
+      const lastPublishTime = this.topicToLastPublishTime.get(topic) ?? 0;
 
       // bindings for the inactive mode never publish, but if they were mid-motion when
       // the mode switched (or the Controller tab muted input), force one zero through
       // so the rover isn't left running blind
-      if (entry.mode !== controller.gamePadMode || controller.isTestTabFocused) {
+      if (!command.active) {
         if (lastPublished !== 0) {
-          publisher.publish({ data: 0 }, { isDebugging: true, force: true });
-          this.topicToLastPublished.set(entry.publisher, 0);
-          this.topicToLastPublishTime.set(entry.publisher, now);
+          command.publisher.publish({ data: 0 }, { isDebugging: true, force: true });
+          this.topicToLastPublished.set(topic, 0);
+          this.topicToLastPublishTime.set(topic, now);
         }
         continue;
       }
 
-      const delta = this.friendlyNameToDelta.get(entry.name);
+      // compare against what the topic last actually carried rather than against the
+      // previous poll's raw input: a trigger held steady while its invert bumper is
+      // tapped changes the commanded value without any input delta
+      const changed = currentValue !== lastPublished;
 
       // force-publish zero when transitioning to zero so the robot always receives a
       // stop command, even if the rate limiter would otherwise drop the call (e.g.
       // trigger released within the rate-limit window)
       const stoppingNow = currentValue === 0 && lastPublished !== 0;
 
-      // a held, unchanging input has no delta and stops publishing; resend periodically
-      // so the rover's command timeout doesn't trip while a trigger/stick is just held
+      // a held, unchanging input stops publishing; resend periodically so the rover's
+      // command timeout doesn't trip while a trigger/stick is just held
       const keepaliveDue = currentValue !== 0 && now - lastPublishTime >= ControllerState.KEEPALIVE_INTERVAL_MS;
 
-      if (delta || stoppingNow || keepaliveDue) {
-        publisher.publish({ data: currentValue }, { isDebugging: true, force: stoppingNow });
-        this.topicToLastPublished.set(entry.publisher, currentValue);
-        this.topicToLastPublishTime.set(entry.publisher, now);
+      if (changed || keepaliveDue) {
+        const published = command.publisher.publish({ data: currentValue }, { isDebugging: true, force: stoppingNow });
+        // the rate limiter drops publishes silently, so only remember what it accepted,
+        // otherwise a dropped change looks sent and isn't retried until the keepalive
+        if (published) {
+          this.topicToLastPublished.set(topic, currentValue);
+          this.topicToLastPublishTime.set(topic, now);
+        }
       }
     }
+  }
+
+  // The value a binding should publish: its input, zeroed inside the trigger deadzone
+  // and negated while its invert button (if any) is held.
+  private resolveBindingValue(entry: BindingEntry): number {
+    let value = this.friendlyNameToCurrentValue.get(entry.name) ?? 0;
+
+    if (entry.type === 'analogButton' && Math.abs(value) < ControllerState.TRIGGER_DEADZONE) {
+      value = 0;
+    }
+
+    if (entry.invertedBy != null && this.isButtonPressed(entry.invertedBy)) {
+      value = -value;
+    }
+
+    return value * (entry.scale ?? 1);
+  }
+
+  private isButtonPressed(friendlyName: string): boolean {
+    return (this.friendlyNameToCurrentValue.get(friendlyName) ?? 0) > ControllerState.BUTTON_PRESS_THRESHOLD;
   }
 
   // Detects a double-tap of the Y button and toggles between drivebase and arm
   // mode. Requires press-release-press within the double-tap window, so holding
   // Y down doesn't repeatedly toggle.
   private updateModeToggle() {
-    const yPressed = (this.friendlyNameToCurrentValue.get('yButton') ?? 0) > ControllerState.BUTTON_PRESS_THRESHOLD;
+    const yPressed = this.isButtonPressed('yButton');
 
     const now = Date.now();
 

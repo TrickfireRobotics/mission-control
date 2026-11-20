@@ -157,7 +157,7 @@ const pageIconArr: PageIcon = [
       <div
         id="controller-mode-selector"
         class="container"
-        title="Controller mode: which joysticks + gripper bumpers control. Also toggled by double-tapping Back+Start on the gamepad."
+        title="Controller mode: drivebase drives the wheels with both sticks, arm jogs the arm with the sticks, triggers and A/B. Also toggled by double-tapping Y on the gamepad."
       >
         <button
           id="drivebase-mode-button"

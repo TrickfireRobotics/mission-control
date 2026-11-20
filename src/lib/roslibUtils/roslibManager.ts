@@ -8,9 +8,6 @@ const HEARTBEAT_DISCONNECT_SECONDS = 2;
 const RECONNECTION_GRACE_SECONDS = 2;
 const SECONDS_TO_TIMESTAMP = 1000;
 
-// how long a "connected" socket can be quiet before we treat it as hung
-const SOCKET_HANG_SECONDS = 10;
-
 // floor on how often we'll rebuild the connection
 const RECONNECT_INTERVAL_SECONDS = 2;
 
@@ -135,10 +132,7 @@ export function roslibManager(): RoslibManager {
 
       if (Date.now() - lastConnectAttempt < RECONNECT_INTERVAL_SECONDS * SECONDS_TO_TIMESTAMP) return;
 
-      // only reconnect if the socket is down or hung, not just because the heartbeat is quiet
-      const socketHung = isWebSocketConnected.value && quietFor > SOCKET_HANG_SECONDS * SECONDS_TO_TIMESTAMP;
-
-      if (!isWebSocketConnected.value || socketHung) {
+      if (!isWebSocketConnected.value) {
         connect(serverHost);
       }
     }, HEARTBEAT_CHECK_INTERVAL);

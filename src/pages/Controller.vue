@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onActivated, onDeactivated } from 'vue';
-import { useControllerStore } from '@/store/controllerStore';
+import { useControllerStore, type GamePadMode } from '@/store/controllerStore';
 import { gamepadNames, joystickNames } from '@/lib/controller/controllerBindings';
 
 const controller = useControllerStore();
@@ -16,6 +16,22 @@ onDeactivated(() => {
 
 const buttonNames = Object.values(gamepadNames);
 const axisNames = Object.values(joystickNames);
+
+// mirrors src/lib/controller/drivebaseAndArmBinding.json - keep in sync when bindings change
+const controlLayout: Record<GamePadMode, { input: string; does: string }[]> = {
+  drivebase: [
+    { input: 'left stick Y', does: 'left wheels forward/back' },
+    { input: 'right stick Y', does: 'right wheels forward/back' },
+  ],
+  arm: [
+    { input: 'left stick Y', does: 'shoulder up/down' },
+    { input: 'right stick Y', does: 'elbow up/down' },
+    { input: 'left stick X', does: 'baseplate left/right' },
+    { input: 'right stick X', does: 'wrist left/right' },
+    { input: 'LT / RT', does: 'wrist down/up' },
+    { input: 'LB / RB', does: 'claw close / open' },
+  ],
+};
 </script>
 
 <template>
@@ -43,6 +59,14 @@ const axisNames = Object.values(joystickNames);
         <div v-for="name in axisNames" :key="name" class="value-row">
           <span class="name">{{ name }}</span>
           <span class="value">{{ (controller.liveInputValues[name] ?? 0).toFixed(2) }}</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>{{ controller.gamePadMode }} mapping</h2>
+        <div v-for="control in controlLayout[controller.gamePadMode]" :key="control.input" class="value-row">
+          <span class="name">{{ control.input }}</span>
+          <span class="value">{{ control.does }}</span>
         </div>
       </section>
 
